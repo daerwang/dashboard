@@ -115,7 +115,6 @@ public interface AmlBatchService {
 	 * @return the list
 	 */
 	List<AmlBatchCif> findAmlBatchCifByDatatableSearch(String search, String requestId);
-	String executeAmlBatchRequestApproval(String requestId);
 	String determineAmlBatchRequestStatus(String requestId);
 	
 	DashboardLog createDashboardLog(DashboardLog entity);
@@ -132,7 +131,8 @@ public interface AmlBatchService {
 	DashboardComment findDashboardCommentById(Integer id);
 	String deleteDashboardComment(DashboardComment entity);
 	
-	String executeAmlBatchRequestReversal(String requestId);
-	String executeAmlBatchRequestDisapproval(String requestId);
+	String executeAmlBatchRequestApproval(String requestId, String storedProcedure);
+	String executeAmlBatchRequestReversal(String requestId, String storedProcedure);
+	String executeAmlBatchRequestDisapproval(String requestId, String storedProcedure);
 	
 }

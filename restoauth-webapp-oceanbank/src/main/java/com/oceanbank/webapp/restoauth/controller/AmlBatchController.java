@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +70,9 @@ public class AmlBatchController {
 	@Autowired
 	private UserServiceImpl userService;
 	
+	@Autowired
+    ServletContext context; 
+	
 	/** The AmlBatchContainerConverter converter. */
 	private DashboardConverter<AmlBatchCif, AmlBatchCifResponse> amlBatchCifConverter = new AmlBatchCifConverter();
 	
@@ -80,6 +85,17 @@ public class AmlBatchController {
 	/** The logger. */
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	
+	private Boolean isProductionEnvironment(){
+		Boolean isProd = false;
+		String search = "as400prod";
+		String contextConfigLocation= context.getInitParameter("contextConfigLocation");
+		if(contextConfigLocation.toLowerCase().indexOf(search.toLowerCase()) != -1 ) {
+			isProd = true;
+		} 
+		
+		return isProd;
+	}
+	
 	
 	@RequestMapping(value = RestWebServiceUrl.EXECUTE_BATCH_APPROVAL_REQUEST_BY_REQUEST_ID, method = RequestMethod.GET)
 	public AmlBatchRequestResponse executeAmlBatchRequestApproval(@PathVariable("requestId") String requestId) throws DashboardException{
@@ -88,8 +104,10 @@ public class AmlBatchController {
 		AmlBatchRequestResponse bean = null;
 		AmlBatchRequest forUpdate = dashboardservice.findByRequestId(requestId);	
 		
+		String storedProcedure = isProductionEnvironment() ? DashboardConstant.SP_EXECUTE_AML_BATCH_APPROVAL : DashboardConstant.SP_EXECUTE_AML_BATCH_APPROVAL_700;
+		
 		// 1. execute SP
-		result = dashboardservice.executeAmlBatchRequestApproval(requestId).trim();
+		result = dashboardservice.executeAmlBatchRequestApproval(requestId, storedProcedure).trim();
 		//result = "complete";
 		// 2. check SP output if OK or exception
 		if(!result.equalsIgnoreCase("OK")){
@@ -141,9 +159,11 @@ public class AmlBatchController {
 		AmlBatchRequestResponse bean = null;
 		AmlBatchRequest forUpdate = dashboardservice.findByRequestId(requestId);	
 		
+		String storedProcedure = isProductionEnvironment() ? DashboardConstant.SP_EXECUTE_AML_BATCH_REVERSAL : DashboardConstant.SP_EXECUTE_AML_BATCH_REVERSAL_700;
+		
 		// 1. execute SP
-		//result = dashboardservice.executeAmlBatchRequestReversal(requestId).trim();
-		result = "OK";
+		result = dashboardservice.executeAmlBatchRequestReversal(requestId, storedProcedure).trim();
+		//result = "OK";
 		// 2. check SP output if OK or exception
 		if(!result.equalsIgnoreCase("OK")){
 			
@@ -191,8 +211,10 @@ public class AmlBatchController {
 		AmlBatchRequestResponse bean = null;
 		AmlBatchRequest forUpdate = dashboardservice.findByRequestId(requestId);	
 		
+		String storedProcedure = isProductionEnvironment() ? DashboardConstant.SP_EXECUTE_AML_BATCH_DISAPPROVAL : DashboardConstant.SP_EXECUTE_AML_BATCH_DISAPPROVAL_700;
+		
 		// 1. execute SP
-		result = dashboardservice.executeAmlBatchRequestDisapproval(requestId).trim();
+		result = dashboardservice.executeAmlBatchRequestDisapproval(requestId, storedProcedure).trim();
 		//result = "complete";
 		// 2. check SP output if OK or exception
 		if(!result.equalsIgnoreCase("OK")){

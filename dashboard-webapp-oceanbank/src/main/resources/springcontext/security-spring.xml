@@ -97,7 +97,7 @@
 	<bean id="oauthAccessToken"
 		class="com.oceanbank.webapp.common.model.RestOauthAccessToken">
 		<property name="accessToken" value="${oauth.accesstoken.local}"></property>
-		<property name="restApi" value="${oauth.restApi.dev}"></property>
+		<property name="restApi" value="${oauth.restApi.local}"></property>
 		<property name="obDashboardRolesList">
 			<list>
 				<ref bean="obDashboardRoles"/>

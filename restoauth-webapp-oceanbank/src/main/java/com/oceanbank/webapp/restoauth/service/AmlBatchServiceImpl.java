@@ -232,9 +232,9 @@ public class AmlBatchServiceImpl implements AmlBatchService{
 	}
 
 	@Override
-	public String executeAmlBatchRequestApproval(String requestId) {
+	public String executeAmlBatchRequestApproval(String requestId, String storedProcedure) {
 
-		StoredProcedureQuery proc = em.createStoredProcedureQuery(DashboardConstant.SP_EXECUTE_AML_BATCH_APPROVAL_700);
+		StoredProcedureQuery proc = em.createStoredProcedureQuery(storedProcedure);
 		proc.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		proc.registerStoredProcedureParameter(2, String.class, ParameterMode.OUT);
 
@@ -247,9 +247,9 @@ public class AmlBatchServiceImpl implements AmlBatchService{
 	}
 	
 	@Override
-	public String executeAmlBatchRequestReversal(String requestId) {
+	public String executeAmlBatchRequestReversal(String requestId, String storedProcedure) {
 	
-		StoredProcedureQuery proc = em.createStoredProcedureQuery(DashboardConstant.SP_EXECUTE_AML_BATCH_REVERSAL_700);
+		StoredProcedureQuery proc = em.createStoredProcedureQuery(storedProcedure);
 		proc.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		proc.registerStoredProcedureParameter(2, String.class, ParameterMode.OUT);
 
@@ -262,8 +262,8 @@ public class AmlBatchServiceImpl implements AmlBatchService{
 	}
 	
 	@Override
-	public String executeAmlBatchRequestDisapproval(String requestId) {
-		StoredProcedureQuery proc = em.createStoredProcedureQuery(DashboardConstant.SP_EXECUTE_AML_BATCH_DISAPPROVAL_700);
+	public String executeAmlBatchRequestDisapproval(String requestId, String storedProcedure) {
+		StoredProcedureQuery proc = em.createStoredProcedureQuery(storedProcedure);
 		proc.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		proc.registerStoredProcedureParameter(2, String.class, ParameterMode.OUT);
 

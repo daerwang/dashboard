@@ -121,6 +121,9 @@ public class DashboardConstant {
 	public static final String SP_EXECUTE_AML_BATCH_APPROVAL_700 = "IBMOB700.execute_aml_approval_700";
 	public static final String SP_EXECUTE_AML_BATCH_REVERSAL_700 = "IBMOB700.execute_aml_reversal_700";
 	public static final String SP_EXECUTE_AML_BATCH_DISAPPROVAL_700 = "IBMOB700.execute_aml_disapproval_700";
+	public static final String SP_EXECUTE_AML_BATCH_APPROVAL = "IBMOB700.execute_aml_approval";
+	public static final String SP_EXECUTE_AML_BATCH_REVERSAL = "IBMOB700.execute_aml_reversal";
+	public static final String SP_EXECUTE_AML_BATCH_DISAPPROVAL = "IBMOB700.execute_aml_disapproval";
 	public static final String AML_BATCH_STATUS_CIF_NOT_FOUND = "CIF not found";
 	public static final String AML_BATCH_STATUS_ONE_OR_MORE_CIF_NOT_FOUND = "one or more CIF not found";
 	public static final String AML_BATCH_STATUS_APPROVED = "Approved";
