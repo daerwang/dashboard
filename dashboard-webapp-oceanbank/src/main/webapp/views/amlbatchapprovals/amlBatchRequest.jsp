@@ -421,7 +421,7 @@ select option{color: #555;}
 		        		    	type: "DELETE",
 		        			  	url: '../..' + deleteDashboardUpload + row_idUpload,
 		        			    success: function(data) { 
-		        			    	   table = $('#amlBatchRequestUploadDatatable').DataTable();
+		        			    	   table = $('#dashboardUploadDatatable').DataTable();
 		        			    	   table.ajax.reload();
 		        					   isHighlight = false;
 		        			    },

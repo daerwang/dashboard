@@ -31,10 +31,10 @@ public class DashboardConstant {
 	public static final String MAIL_CODE_BLANK = "Empty";
 	public static final String DASHBOARD_TRANSACTION_APPROVAL = "Approval";
 	public static final String PDF_MERGING_CLASSPATH_LOCATION = "classpath:editpdf/testpdfresult/merged.pdf";
-	public static final String PDF_MERGING_FILE_LOCATION = "C://mmedina//merged.pdf";
-	public static final String PDF_MERGING_INDIVIDUAL_FILE_LOCATION = "C://mmedina//individual";
-	public static final String PDF_FILE_LOCATION = "C://mmedina";
-	public static final String PDF_TESTING_TEMPLATE_FILE = "C://mmedina//template//template2.pdf";
+	public static final String PDF_MERGING_FILE_LOCATION = "C://dashboard//merged.pdf";
+	public static final String PDF_MERGING_INDIVIDUAL_FILE_LOCATION = "C://dashboard//individual";
+	public static final String PDF_FILE_LOCATION = "C://dashboard";
+	public static final String PDF_TESTING_TEMPLATE_FILE = "C://dashboard//template//template2.pdf";
 
 	
 	// Dashboard Paths for IRS 1042-S
@@ -80,10 +80,10 @@ public class DashboardConstant {
 	public static final String SHOW_UPLOAD_EXCEL_CONVERTER_MODAL = "/excelConverter/upload/modal";
 	public static final String SHOW_UPLOAD_EXCEL_CONVERTER_MODAL_TILES = "/excelconverter/uploadExcelModal";
 	public static final String OPEN_ADVISOR_TEXT_FILE_NEW_WINDOW = "/excelconverter/textFileToNewWindow";
-	public static final String TXT_MERGING_INDIVIDUAL_FILE_LOCATION = "C://mmedina//advisorfile";
-	public static final String AML_BATCH_REQUEST_UPLOAD_FILE_LOCATION = "C://mmedina//amlbatchrequestupload";
-	public static final String COMMON_FILE_LOCATION = "C://mmedina//common";
-	public static final String TXT_MERGING_INDIVIDUAL_FILE_LOCATION_FULL = "C://mmedina//advisorfile//advisorConverted.txt";
+	public static final String TXT_MERGING_INDIVIDUAL_FILE_LOCATION = "C://dashboard//advisorfile";
+	public static final String AML_BATCH_REQUEST_UPLOAD_FILE_LOCATION = "C://dashboard//amlbatchrequestupload";
+	public static final String COMMON_FILE_LOCATION = "C://dashboard//common";
+	public static final String TXT_MERGING_INDIVIDUAL_FILE_LOCATION_FULL = "C://dashboard//advisorfile//advisorConverted.txt";
 	
 	// AML Batch Request
 	public static final String SHOW_AML_BATCH_PAGE = "/aml";
