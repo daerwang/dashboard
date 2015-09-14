@@ -1,0 +1,68 @@
+<configuration>
+
+	<appender name="STDOUT-ALL" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>web - %date [%thread] %-5level %logger{36} - %message%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Logging configuration -->  
+    <appender name="STDINFO" class="ch.qos.logback.core.ConsoleAppender">
+        <Target>System.out</Target>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+            <Target>System.err</Target>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder> 
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%thread] %logger{10} [%file:%line] %msg%n</pattern> 
+        </encoder> 
+    </appender>
+    <appender name="STDWARN" class="ch.qos.logback.core.ConsoleAppender">
+            <Target>System.err</Target>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder> 
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%thread] %logger{10} [%file:%line] %msg%n</pattern> 
+        </encoder> 
+    </appender>
+    <appender name="STDDEBUG" class="ch.qos.logback.core.ConsoleAppender">
+            <Target>System.out</Target>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder> 
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%thread] %logger{10} [%file:%line] %msg%n</pattern> 
+        </encoder> 
+    </appender>
+
+<!-- 	<logger name="org.springframework" level="DEBUG" /> -->
+<!-- 	<logger name="org.springframework.transaction" level="DEBUG" /> -->
+
+	<!-- level DEBUG will only print if declared -->
+	<root level="INFO">
+        <appender-ref ref="STDINFO"/>
+        <appender-ref ref="STDERR" />
+        <appender-ref ref="STDWARN" />
+<!--         <appender-ref ref="STDDEBUG" /> -->
+    </root>
+
+
+</configuration>				

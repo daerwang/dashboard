@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+    "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+    "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+	<!-- Login page -->
+	<definition name="tiles_login" extends="page_template_1">
+	    <put-attribute name="clearBody"	value="/views/homepage/login.jsp" />
+	</definition>
+	
+	<!-- Home page -->
+	<definition name="tiles_home" extends="page_template_3">
+ 		<put-attribute name="topMenuBar"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageHeader"	value="" />
+	    <put-attribute name="pageDataTable"	value="/views/homepage/homePage.jsp" />
+	</definition>
+	
+	<!-- Administration page -->
+	<definition name="tiles_administration" extends="page_template_3">
+ 		<put-attribute name="topMenuBar"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageHeader"	value="/views/manageusers/pageHeader/userHeader.jsp" />
+	    <put-attribute name="pageDataTable"	value="/views/manageusers/pageDataTable/userDataTableServerSide.jsp" />
+	</definition>
+
+	<!-- Change Password page -->
+	<definition name="tiles_change_password" extends="page_template_3">
+ 		<put-attribute name="topMenuBar"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageHeader"	value="/views/changepassword/pageHeader/changePasswordHeader.jsp" />
+	    <put-attribute name="pageDataTable"	value="/views/changepassword/pageBody/changePasswordBody.jsp" />
+	</definition>
+	
+	<!-- Error page -->
+	<definition name="tiles_403accessDeniedPage" extends="page_template_3">
+ 		<put-attribute name="topMenuBar"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageHeader"	value="" />
+	    <put-attribute name="pageDataTable"	value="/views/errorpages/403accessDeniedPage.jsp" />
+	</definition>
+	<definition name="tiles_noAmlBatchRequestPageAvailable" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/errorpages/NoAmlBatchRequestPageAvailable.jsp" />
+	</definition>
+	
+	<!-- KYC Approval and Disapproval page -->
+	<definition name="tiles_amlBatch" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/amlbatchapprovals/amlBatchDatatable.jsp" />
+	</definition>
+	<definition name="tiles_amlBatchRequest" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/amlbatchapprovals/amlBatchRequest.jsp" />
+	</definition>
+	<definition name="tiles_amlBatchRequestLog" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/amlbatchapprovals/amlBatchRequestLog.jsp" />
+	</definition>
+
+	<!-- IRS 1042-S Form page -->
+	<definition name="tiles_irs1042sForm" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/irs1042sforms/irs1042sFormDatatable.jsp" />
+	</definition>
+	
+	<!-- Text Converter page -->
+	<definition name="tiles_excelConverter" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/excelconverter/excelConverter.jsp" />
+	</definition>
+	
+	
+	
+	
+	
+	
+	
+</tiles-definitions>

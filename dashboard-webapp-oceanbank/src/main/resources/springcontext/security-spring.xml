@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd 
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd ">
+
+	
+	<context:property-placeholder location="classpath:database/obapplication.properties" />
+	
+	<sec:http use-expressions="true" auto-config="false" entry-point-ref="loginUrlAuthenticationEntryPoint">
+		<sec:access-denied-handler error-page="/error/403accessDeniedPage" />
+		
+		<!-- Secured Pages -->
+		<sec:intercept-url pattern="/aml**" access="hasAnyRole('Administrator','AML_Batch')" />
+		<sec:intercept-url pattern="/administration**" access="hasRole('Administrator')" />
+		<sec:intercept-url pattern="/oceanbank/irs/1042sform**" access="hasAnyRole('Administrator', '1042S_Form')" />
+		<sec:intercept-url pattern="/excelConverter**" access="hasAnyRole('Administrator','Excel_Converter')" />
+	
+		<!-- Permit All -->
+		<sec:intercept-url pattern="/home*" access="permitAll" />
+		<sec:intercept-url pattern="/login*" access="permitAll" />
+		<sec:intercept-url pattern="/logout*" access="permitAll" />
+		<sec:intercept-url pattern="/user/bootstrap/validator*" access="permitAll" />
+		<sec:intercept-url pattern="/resources/**" access="permitAll" />
+		<sec:intercept-url pattern="/bootstrap/**" access="permitAll" />
+		<sec:intercept-url pattern="/photos/**" access="permitAll" />   
+		<sec:intercept-url pattern="/css/**" access="permitAll" />
+		<sec:intercept-url pattern="/datatables/**" access="permitAll" />
+		<sec:intercept-url pattern="/jquery/**" access="permitAll" />
+		<sec:intercept-url pattern="/login/changepassword**" access="permitAll" />
+		<sec:intercept-url pattern="/login/changepassword/execute**" access="permitAll" />
+		<sec:intercept-url pattern="/error/403accessDeniedPage**" access="permitAll" />
+		<sec:intercept-url pattern="/views/**" access="permitAll" />
+		
+		
+		<sec:intercept-url pattern="/invalidSession*" access="isAnonymous()" />
+		<sec:intercept-url pattern="/**" access="isAuthenticated()" />
+		
+		<sec:custom-filter position="FORM_LOGIN_FILTER" ref="formLoginFilter" />
+
+		<sec:session-management invalid-session-url="/login" session-fixation-protection="none" />
+
+		<sec:logout invalidate-session="false" 
+			logout-success-url="/login?loggedout=true"
+			logout-url="/j_spring_security_logout" 
+			delete-cookies="JSESSIONID" />
+			
+	</sec:http>
+
+
+	<bean id="formLoginFilter"
+		class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="filterProcessesUrl" value="/j_spring_security_check" />
+		<property name="authenticationSuccessHandler" ref="obAuthenticationHandler" />
+		<property name="authenticationFailureHandler">
+			<!--bean class=" org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler 
+				"/ -->
+			<bean id="authenticationFailureHandler"
+				class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+				<property name="exceptionMappings">
+					<props>
+						<prop
+							key="org.springframework.security.authentication.BadCredentialsException">/login?error=badCredentials</prop>
+						<prop
+							key="org.springframework.security.authentication.CredentialsExpiredException">/login/credentialsExpired</prop>
+						<prop
+							key="org.springframework.security.authentication.LockedException">/login/accountLocked</prop>
+						<prop
+							key="org.springframework.security.authentication.InternalAuthenticationServiceException">/login?error=badConnection</prop>
+					</props>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="loginUrlAuthenticationEntryPoint"
+		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<property name="loginFormUrl" value="/login"></property>
+	</bean>
+
+	<bean id="obAuthenticationHandler"
+		class="com.oceanbank.webapp.dashboard.security.ObAuthenticationHandler" />
+
+	<sec:authentication-manager alias="authenticationManager">
+		<sec:authentication-provider
+			user-service-ref="obAuthenticationProvider" />
+	</sec:authentication-manager>
+
+	<bean id="obAuthenticationProvider"
+		class="com.oceanbank.webapp.dashboard.security.ObAuthenticationProvider" />
+
+
+	<bean id="oauthAccessToken"
+		class="com.oceanbank.webapp.common.model.RestOauthAccessToken">
+		<property name="accessToken" value="${oauth.accesstoken.local}"></property>
+		<property name="restApi" value="${oauth.restApi.dev}"></property>
+		<property name="obDashboardRolesList">
+			<list>
+				<ref bean="obDashboardRoles"/>
+			</list>
+		</property>
+	</bean>
+
+	
+	<bean id = "obDashboardRoles" class="com.oceanbank.webapp.common.model.ObDashboardRoles">
+		<property name="category" value="test"></property>
+		<property name="description" value="The Roles here are for testing."></property>
+		<property name="roleNames">
+			<list>
+				<value>Guest</value> 	<!-- view just the home page -->
+				<value>User</value>	 	<!-- view specific functions -->
+				<value>Tester</value>	<!-- same as User but more -->
+				<value>Administrator</value> <!-- see all -->
+				<value>AML_Batch</value>
+				<value>1042S_Form</value>
+				<value>Excel_Converter</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="dashboardSpringContext"
+		class="com.oceanbank.webapp.common.model.DashboardSpringContext">
+		<property name="amlBatchTransactionType">
+			<list>
+				<value></value> 	
+				<value>Approval</value>	 	
+				<value>Disapproval</value>	
+				<value>Reversal</value> 
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+		<property name="errorHandler" ref="restResponseErrorHandler"></property>
+		<property name="messageConverters">
+	        <list>
+	        	<bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.FormHttpMessageConverter"/>
+	            <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter">
+	            	<property name="supportedMediaTypes">
+	                    <list>
+	                        <value>application/pdf</value>
+	                    </list>
+	                </property>
+	            </bean>
+	            <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>
+	            
+	            <!-- This must come after our image converter -->
+                <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>
+
+                <!-- Converter for images -->
+                <bean class="org.springframework.http.converter.BufferedImageHttpMessageConverter"/>
+	        </list>
+	    </property>
+	</bean>
+
+	<bean id="restResponseErrorHandler"
+		class="com.oceanbank.webapp.common.handler.RestResponseErrorHandler" />
+
+</beans>

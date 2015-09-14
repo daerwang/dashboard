@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+		
+		
+	
+
+	<context:component-scan base-package="com.oceanbank.webapp.dashboard.controller" />
+	<context:component-scan base-package="com.oceanbank.webapp.dashboard.service" />
+	<context:component-scan base-package="com.oceanbank.webapp.common.handler" />
+	
+	<!-- Activates various annotations to be detected in bean classes -->
+	<context:annotation-config />
+	 
+	<!-- Configures the annotation-driven Spring MVC Controller programming model.
+		 Note that, with Spring 3.0, this tag works in Servlet MVC only!  --> 
+	<!-- commented out so that custom annotation would work like @ActiveUser result is that mvc:view-controller will not work	-->
+	<mvc:annotation-driven /> 
+	
+
+	<!-- <mvc:view-controller path="/registration" view-name="registration" /> -->
+
+
+	<mvc:resources mapping="/bootstrap/**" location="/themes/bootstrap/" />
+	<mvc:resources mapping="/resources/**" location="/resources/localization" />
+	<mvc:resources mapping="/css/**" location="/themes/oceanbank-styles/" />
+	<mvc:resources mapping="/font-awesome/**" location="/themes/font-awesome/" />
+	<mvc:resources mapping="/photos/**" location="/themes/photos/" />
+	<mvc:resources mapping="/datatables/**" location="/themes/datatables/" />
+	<mvc:resources mapping="/jquery/**" location="/themes/jquery/" />
+	
+	<!-- Import Tiles-related configuration -->
+	<import resource="classpath*:springcontext/tiles-spring.xml" />
+
+	<!-- Spring Default Views -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/views/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+	
+	
+
+	<mvc:interceptors>
+		<bean id="localeChangeInterceptor"
+			class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+			<property name="paramName" value="lang" />
+		</bean>
+	</mvc:interceptors>
+
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+		<property name="defaultLocale" value="en" />
+	</bean>
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:localization/messages" />
+		<property name="useCodeAsDefaultMessage" value="true" />
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="cacheSeconds" value="0" />
+	</bean>
+
+	<bean id="multipartResolver"  class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+	
+
+</beans>
