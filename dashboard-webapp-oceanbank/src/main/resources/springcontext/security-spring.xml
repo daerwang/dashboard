@@ -20,6 +20,7 @@
 		<sec:intercept-url pattern="/excelConverter**" access="hasAnyRole('Administrator','Excel_Converter')" />
 	
 		<!-- Permit All -->
+		<sec:intercept-url pattern="/.progress*" access="permitAll" />
 		<sec:intercept-url pattern="/home*" access="permitAll" />
 		<sec:intercept-url pattern="/login*" access="permitAll" />
 		<sec:intercept-url pattern="/logout*" access="permitAll" />
@@ -97,7 +98,7 @@
 	<bean id="oauthAccessToken"
 		class="com.oceanbank.webapp.common.model.RestOauthAccessToken">
 		<property name="accessToken" value="${oauth.accesstoken.local}"></property>
-		<property name="restApi" value="${oauth.restApi.local}"></property>
+		<property name="restApi" value="${oauth.restApi.dev}"></property>
 		<property name="obDashboardRolesList">
 			<list>
 				<ref bean="obDashboardRoles"/>
@@ -129,7 +130,7 @@
 				<value></value> 	
 				<value>Approval</value>	 	
 				<value>Disapproval</value>	
-				<value>Reversal</value> 
+<!-- 				<value>Reversal</value>  -->
 			</list>
 		</property>
 	</bean>

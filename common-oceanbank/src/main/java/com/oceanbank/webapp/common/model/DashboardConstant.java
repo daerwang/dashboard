@@ -104,11 +104,13 @@ public class DashboardConstant {
 	public static final String SHOW_LOADING_AML_BATCH_CIF_BY_MODAL = "/aml/request/cif/modal/loading";
 	public static final String SHOW_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL_BY_REQUEST_ID = "/aml/amlbatchcif/upload/{requestId}";
 	public static final String SHOW_AML_BATCH_REQUEST_UPLOAD_BY_REQUEST_ID = "/aml/amlbatchrequest/upload/{requestId}";
-	public static final String EXECUTE_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL = "/aml/request/cif/modal/upload/execute";
+	
+	public static final String EXECUTE_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL = "/fileUpload/aml";
+	
 	public static final String EXECUTE_AML_BATCH_REQUEST_UPLOAD = "/aml/dashboardupload/upload/execute";
 	public static final String OPEN_AML_BATCH_REQUEST_UPLOAD = "/aml/dashboardupload/upload/openNewWindow/{id}";
 	public static final String DELETE_DASHBOARDUPLOAD_BY_ID = "/aml/dashboardupload/delete/{id}";
-	public static final String EXECUTE_UPLOAD_EXCEL_CONVERTER_MODAL = "/excelConverter/upload";
+	public static final String EXECUTE_UPLOAD_EXCEL_CONVERTER_MODAL = "/fileUpload/excelConverter"; // ***** here
 	public static final String EXECUTE_AML_BATCH_APPROVAL_BY_REQUEST_ID = "/aml/request/cif/modal/execute/approval/{requestId}";
 	public static final String EXECUTE_AML_BATCH_REVERSAL_BY_REQUEST_ID = "/aml/request/cif/modal/execute/reversal/{requestId}";
 	public static final String EXECUTE_AML_BATCH_DISAPPROVAL_BY_REQUEST_ID = "/aml/request/cif/modal/execute/disapproval/{requestId}";

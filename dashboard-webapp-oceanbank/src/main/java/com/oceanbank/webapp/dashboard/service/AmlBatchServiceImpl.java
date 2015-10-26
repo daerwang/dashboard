@@ -12,8 +12,11 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -501,11 +504,27 @@ public class AmlBatchServiceImpl extends OauthTokenBean implements AmlBatchServi
                 while (cellIterator.hasNext())
                 {
                     Cell cell = cellIterator.next();
-                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    if(cell.getColumnIndex() == 2 && row.getRowNum() != 0){
+                    	// do nothing
+                    }else{
+                    	cell.setCellType(Cell.CELL_TYPE_STRING);
+                    }
                     switch (cell.getCellType())
                     {
                         case Cell.CELL_TYPE_NUMERIC:
-                            writer.write(cell.getStringCellValue() + "|");
+                        	String value1 = null;
+                            if(cell.getColumnIndex() == 2 && row.getRowNum() != 0){
+                        		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                        		try {
+                        			Date dateValue = cell.getDateCellValue();  
+                        			value1 = df.format(dateValue);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+                            }
+
+                            writer.write(value1 + "|");
+                            escape = true;
                             break;
                         case Cell.CELL_TYPE_STRING:
                         	String value = cell.getStringCellValue();
@@ -518,6 +537,7 @@ public class AmlBatchServiceImpl extends OauthTokenBean implements AmlBatchServi
                         		double number = Double.parseDouble(value);
                         		value = String.format( "%.2f", number );
                             }
+                        	
                             writer.write(value + "|");
                             escape = true;
                             break;

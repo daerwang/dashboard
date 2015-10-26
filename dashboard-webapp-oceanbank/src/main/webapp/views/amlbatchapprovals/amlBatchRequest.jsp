@@ -364,7 +364,23 @@ select option{color: #555;}
 				}
 			 });
 			
-			uploadExcelFileDialog.open();
+			if($('#selectedType').is(':enabled')){
+				
+			    BootstrapDialog.alert({
+	            	title: 'WARNING',
+		            message: 'Please save the request first before adding CIF.',
+		            type: BootstrapDialog.TYPE_WARNING, 
+		            closable: true, 
+		            draggable: true, 
+		            buttonLabel: 'Ok'
+		        });	
+		        
+			}else{
+			
+				uploadExcelFileDialog.open();
+			}
+			
+			
 		});   // Upload Button
 		
 		$('#newUploadButton').on('click', function(e) {

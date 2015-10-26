@@ -281,7 +281,8 @@ public class AmlBatchServiceImpl implements AmlBatchService{
 		final List<AmlBatchCif> list = findAmlBatchCifByRequestId(requestId);
 		
 		if(list.isEmpty()){
-			result = DashboardConstant.AML_BATCH_STATUS_NO_CIF_TO_PROCESS;
+			//result = DashboardConstant.AML_BATCH_STATUS_NO_CIF_TO_PROCESS;
+			result = DashboardConstant.AML_BATCH_STATUS_AWAITING_EXECUTION;
 		}else{
 			final List<AmlBatchCif> list2 = amlBatchCif.findByRequestIdAndStatus(requestId, DashboardConstant.AML_BATCH_STATUS_CIF_NOT_FOUND);
 			final List<AmlBatchCif> list3 = amlBatchCif.findByRequestIdAndStatus(requestId, DashboardConstant.AML_BATCH_STATUS_APPROVED);

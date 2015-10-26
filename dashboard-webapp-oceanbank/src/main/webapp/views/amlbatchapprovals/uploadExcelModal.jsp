@@ -12,22 +12,38 @@ $(document).ready(function() {
 		
 	    $('#fileupload').fileupload({
 	        url: executeUploadExcel,
+	        forceIframeTransport: true,
 	        dataType: 'json',
 	        formData: {requestId: requestId},
-	        done: function (e, data) {
-	            $('<p/>').text(data.result.fileName + ', ' + data.result.fileSize).appendTo('#files');
+	        add: function (e, data) {
+	            data.submit();
+	            
+	            time = setInterval(function() {
+	                $.get(executeUploadExcel + "/.progress", function(data) {
+	                    if(!data){
+	                    	console.log('no data');
+	                    	return;
+	                    }
+	                    
+	                    data = data.split("/");
 
+	                    var progress = Math.round(data[0] / data[1] * 100);
+	                    $('.progress-bar').text(progress + "%");
+	    	            $('#progress .progress-bar').css('width', progress + '%');
+	                }); 
+	           }, 500); 
+	        },
+	        done: function (e, data) {
+	            
+	            clearInterval(time);  
+        		$('#progress .progress-bar').css('width', '100%');
+        		//console.log(data);
+        		$('<p/>').text(data.result.fileName + ', ' + data.result.fileSize).appendTo('#files');
 	            setTimeout(function() {
 	            	table.ajax.reload();
 	            	uploadExcelFileDialog.close();
 
-				}, 2500);
-	        },
-	        progressall: function (e, data) {
-	        	
-	            var progress = parseInt(data.loaded / data.total * 100, 10);
-	            $('#progress .progress-bar').css('width', progress + '%');
-	            
+				}, 2000);
 	        },
 	        //dropZone: $('#drop-zone'),
 	        fail: function(e, data){

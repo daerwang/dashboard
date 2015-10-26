@@ -29,6 +29,17 @@
 			classpath*:springcontext/security-spring.xml
 		</param-value>
 	</context-param>
+	
+	<!-- Upload Progress Filter-->
+	<filter>
+		<filter-name>uploadFilter</filter-name>
+		<filter-class>com.oceanbank.webapp.dashboard.upload.UploadProgressFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>uploadFilter</filter-name>
+		<url-pattern>/fileUpload/excelConverter/.progress</url-pattern>
+		<url-pattern>/fileUpload/aml/.progress</url-pattern>
+	</filter-mapping>
 
 	<!-- Spring Security -->
 	<filter>
@@ -50,5 +61,6 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
+	
 
 </web-app>

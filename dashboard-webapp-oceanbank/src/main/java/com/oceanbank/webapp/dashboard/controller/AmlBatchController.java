@@ -715,6 +715,12 @@ public class AmlBatchController {
 			throw new DashboardException(e.getMessage(), e.getCause());
 		}
 		
+//		try {
+//			Thread.sleep(15000L);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+		
 		return result;
 	}
 	

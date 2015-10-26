@@ -23,8 +23,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import ch.qos.logback.classic.Logger;
 
 import com.oceanbank.webapp.common.exception.DashboardException;
 import com.oceanbank.webapp.common.model.DashboardConstant;
@@ -61,8 +64,7 @@ public class ExcelConverterController {
 	}
 	
 	@RequestMapping(value = DashboardConstant.EXECUTE_UPLOAD_EXCEL_CONVERTER_MODAL, method = RequestMethod.POST)
-	//@ResponseBody
-	public ExcelFileMeta executeExcelConverterUpload(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
+	public @ResponseBody ExcelFileMeta executeExcelConverterUpload(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
 
         Iterator<String> itr =  request.getFileNames();
         MultipartFile mpf = null;
@@ -91,8 +93,7 @@ public class ExcelConverterController {
         fileMeta.setFileName(mpf.getOriginalFilename());
         fileMeta.setFileSize(mpf.getSize()/1024+" Kb - OK");
         fileMeta.setFileType(mpf.getContentType());
-    
-        
+
 		return fileMeta;
 	}
 	

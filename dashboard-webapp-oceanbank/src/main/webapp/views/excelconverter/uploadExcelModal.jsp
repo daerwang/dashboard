@@ -9,25 +9,41 @@ $(document).ready(function() {
 	var openTextFileNewWindow = "<c:url value="${openTextFileNewWindow}"/>";
 	
 	$(function () {
-		
+		var time;
 	    $('#fileupload').fileupload({
 	        url: executeUploadExcel,
 	        forceIframeTransport: true,
-	        done: function (e, data) {
-	            //$('<p/>').text(data.result.fileName + ', ' + data.result.fileSize).appendTo('#files');
+	        dataType: 'json',
+	        add: function (e, data) {
+	            data.submit();
 	            
+	            time = setInterval(function() {
+	                $.get(executeUploadExcel + "/.progress", function(data) {
+	                    if(!data){
+	                    	console.log('no data');
+	                    	return;
+	                    }
+	                    
+	                    data = data.split("/");
+
+	                    var progress = Math.round(data[0] / data[1] * 100);
+	                    $('.progress-bar').text(progress + "%");
+	    	            $('#progress .progress-bar').css('width', progress + '%');
+	                }); 
+	           }, 500); 
+	        },
+	        done: function (e, data) {
+	            
+	            clearInterval(time);  
+        		$('#progress .progress-bar').css('width', '100%');
+        		//console.log(data);
+        		$('<p/>').text(data.result.fileName + ', ' + data.result.fileSize).appendTo('#files');
 	            setTimeout(function() {
 	            	uploadExcelFileDialog.close();
 	            	window.open(openTextFileNewWindow, '_blank');
 
-				}, 1500);
+				}, 2000);
 	            
-	            
-	        },
-	        progressall: function (e, data) {
-	        	
-	            var progress = parseInt(data.loaded / data.total * 100, 10);
-	            $('#progress .progress-bar').css('width', progress + '%');
 	            
 	        },
 	        //dropZone: $('#drop-zone'),
@@ -85,6 +101,7 @@ $(document).ready(function() {
   color: #222;
   border-color: #222;
 }
+
 </style>
 
 <div>
