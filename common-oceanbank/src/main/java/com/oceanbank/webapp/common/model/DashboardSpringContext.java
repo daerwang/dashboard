@@ -18,6 +18,7 @@ public class DashboardSpringContext {
 	
 	/** The aml batch transaction type. */
 	private List<String> amlBatchTransactionType;
+	private List<String> banks;
 
 	/**
 	 * Gets the aml batch transaction type.
@@ -35,6 +36,14 @@ public class DashboardSpringContext {
 	 */
 	public void setAmlBatchTransactionType(List<String> amlBatchTransactionType) {
 		this.amlBatchTransactionType = amlBatchTransactionType;
+	}
+
+	public List<String> getBanks() {
+		return banks;
+	}
+
+	public void setBanks(List<String> banks) {
+		this.banks = banks;
 	}
 
 

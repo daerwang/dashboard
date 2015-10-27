@@ -31,6 +31,7 @@ public class AmlBatchRequestConverter implements DashboardConverter<AmlBatchRequ
 		req.setRequestId(requestId);
 		req.setTransactionType(transactionType);
 		req.setStatus(response.getStatus());
+		req.setBankSchema(response.getBankSchema());
 		
 		req.setCreatedby(response.getCreatedby());
 		req.setModifiedby(response.getModifiedby());
@@ -54,6 +55,7 @@ public class AmlBatchRequestConverter implements DashboardConverter<AmlBatchRequ
 		response.setRequestId(entity.getRequestId());
 		response.setTransactionType(entity.getTransactionType());
 		response.setStatus(entity.getStatus());
+		response.setBankSchema(entity.getBankSchema());
 		
 		response.setCreatedby(entity.getCreatedby());
 		response.setCreatedOn(entity.getCreatedon());

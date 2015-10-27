@@ -35,6 +35,7 @@ public class AmlBatchRequestResponse {
     /** The transaction type. */
     private String transactionType;
     private String status;
+    private String bankSchema;
     
     /** The createdby. */
     private String createdby;
@@ -50,6 +51,7 @@ public class AmlBatchRequestResponse {
     private Date modifiedOn;
     
     private String[] selectableTypes;
+    private String[] bankSchemas;
     
     
     /**
@@ -207,6 +209,22 @@ public class AmlBatchRequestResponse {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String[] getBankSchemas() {
+		return bankSchemas;
+	}
+
+	public void setBankSchemas(String[] bankSchemas) {
+		this.bankSchemas = bankSchemas;
+	}
+
+	public String getBankSchema() {
+		return bankSchema;
+	}
+
+	public void setBankSchema(String bankSchema) {
+		this.bankSchema = bankSchema;
 	}
     
     

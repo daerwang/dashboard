@@ -22,7 +22,7 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>  
 			/WEB-INF/mvc-servlet.xml,  
-			classpath*:springcontext/mysql-jdbc-security-spring.xml,
+			classpath*:springcontext/as400-jdbc-security-spring.xml,
 			classpath*:springcontext/datajpa-spring.xml
         </param-value>
 	</context-param>

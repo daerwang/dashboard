@@ -221,6 +221,9 @@ select option{color: #555;}
 		if ($("#selectedType").val() != "") {
 			$('#selectedType').attr('disabled', true);
 		}
+		if ($("#bankSchema").val() != "") {
+			$('#bankSchema').attr('disabled', true);
+		}
 		
 		$('#historyLink').on('click', function(e) {
 			
@@ -488,8 +491,6 @@ select option{color: #555;}
 			}, 600);
 		};
 
-
-		progressBarModal();
 		
 		$('#executeButton').on('click', function(e) {
 			
@@ -526,60 +527,56 @@ select option{color: #555;}
 			}else{
 				// initialize loading effects
 				e.preventDefault();
-				progressBarModal();
-				$bar.width(0);
-				// open modal with loading effects
+				
+				$('.progress-bar').css('width', '100%');
 				$('#myModal').modal({
 					  backdrop: 'static',
 					  keyboard: false
 				});
-				// allow 7 seconds for modal to appear
-				setTimeout(function() {
-					$('#myModal').modal('hide');
-					// execute approval request to server
-					$.ajax({
-						type: "GET",
-	       			  	url: serviceUrl,
-					    success: function(data) { 
-							
-					    	BootstrapDialog.show({
-								closable: false,
-					            title: 'Success',
-					            message: 'The AML Batch Request ' + area + ' execution is successful.',
-					            buttons: [{
-					                label: 'Ok',
-					                action: function(dialog){
-					                    dialog.close();
-					                    table = $('#amlBatchCifDatatable').DataTable();
-								    	table.ajax.reload();
-					                }
-					            }]
-					        });
-					    	
-					    	$('#batchStatus').val(data.status);
-					    },
-					    error: function(data) { 
-					    	var res = data.responseJSON.message;
-					    	var json = '[' + res + ']';
-					    	var errorMsg = '';
-					    	var code = '';
-					    	$.each(JSON.parse(json), function(idx, obj) {
-					    		code = obj.code;
-					    		errorMsg = obj.message;
-					    	});
-					    	
-					    	BootstrapDialog.alert({
-				            	title: 'WARNING',
-					            message: code + '</br>' + errorMsg,
-					            type: BootstrapDialog.TYPE_DANGER, 
-					            closable: true, 
-					            draggable: true, 
-					            buttonLabel: 'Ok'
-					        });	
-					    }
-					});
 
-				}, 7000);		
+				$.ajax({
+					type: "GET",
+       			  	url: serviceUrl,
+				    success: function(data) { 
+				    	
+				    	$('#myModal').modal('hide');
+				    	
+				    	BootstrapDialog.show({
+							closable: false,
+				            title: 'Success',
+				            message: 'The AML Batch Request ' + area + ' execution is successful.',
+				            buttons: [{
+				                label: 'Ok',
+				                action: function(dialog){
+				                    dialog.close();
+				                    table = $('#amlBatchCifDatatable').DataTable();
+							    	table.ajax.reload();
+				                }
+				            }]
+				        });
+				    	
+				    	$('#batchStatus').val(data.status);
+				    },
+				    error: function(data) { 
+				    	var res = data.responseJSON.message;
+				    	var json = '[' + res + ']';
+				    	var errorMsg = '';
+				    	var code = '';
+				    	$.each(JSON.parse(json), function(idx, obj) {
+				    		code = obj.code;
+				    		errorMsg = obj.message;
+				    	});
+				    	
+				    	BootstrapDialog.alert({
+			            	title: 'WARNING',
+				            message: code + '</br>' + errorMsg,
+				            type: BootstrapDialog.TYPE_DANGER, 
+				            closable: true, 
+				            draggable: true, 
+				            buttonLabel: 'Ok'
+				        });	
+				    }
+				});
 			}
 			
 		});
@@ -711,10 +708,18 @@ select option{color: #555;}
 		                message: 'The Transaction Type must have value',
 		                validators: {
 		                    notEmpty: {
-		                        message: 'The The Transaction Type is required and cannot be empty'
+		                        message: 'The Transaction Type is required and cannot be empty'
 		                    }
 		                }
-		            }
+		            },
+		        bankSchema: {
+		                message: 'The Bank must have value',
+		                validators: {
+		                    notEmpty: {
+		                        message: 'The Bank is required and cannot be empty'
+		                    }
+		                }
+		            }    
 	        }
 	    }); // bootstrap validator
 		
@@ -803,6 +808,16 @@ select option{color: #555;}
 			<select class="form-control placeholder" name="transactionType" id="selectedType">
 			    <c:forEach items="${amlBatchRequest.selectableTypes}" var="type">
 			        <option value="${type}" ${type == amlBatchRequest.transactionType or type == '' ? 'selected' : ''}>${type == '' ? 'Select Transaction Type' : type}</option>
+			    </c:forEach>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="control-label col-md-1">Bank</label> 
+		<div class="col-md-3">
+			<select class="form-control placeholder" name="bankSchema" id="bankSchema">
+			    <c:forEach items="${amlBatchRequest.bankSchemas}" var="type">
+			        <option value="${type}" ${type == amlBatchRequest.bankSchema or type == '' ? 'selected' : ''}>${type == '' ? 'Select Bank Schema' : type}</option>
 			    </c:forEach>
 			</select>
 		</div>
@@ -913,12 +928,12 @@ select option{color: #555;}
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Loading</h4>
+        <h4 class="modal-title" id="myModalLabel">Processing</h4>
       </div>
       <div class="modal-body">
 
 	    <div class="progress">
-		  <div class="progress-bar progress-bar-success progress-bar-striped">
+		  <div class="progress-bar progress-bar-success progress-bar-striped active">
 		  </div>
 		</div>
       </div>
@@ -929,6 +944,7 @@ select option{color: #555;}
     </div>
   </div>
 </div>
+
     
 
 

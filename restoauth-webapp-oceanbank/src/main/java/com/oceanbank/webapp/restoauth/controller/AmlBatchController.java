@@ -109,6 +109,15 @@ public class AmlBatchController {
 		// 1. execute SP
 		result = dashboardservice.executeAmlBatchRequestApproval(requestId, storedProcedure).trim();
 		//result = "complete";
+		
+		/*
+		try {
+			Thread.sleep(10000L);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		*/
+		
 		// 2. check SP output if OK or exception
 		if(!result.equalsIgnoreCase("OK")){
 			
@@ -140,6 +149,7 @@ public class AmlBatchController {
 			insertLogForAudit(DashboardConstant.AML_MESSAGE_6, forUpdate.getId(), forUpdate.getCreatedby());
 			bean = amlBatchRequestConverter.convertFromEntity(forUpdate);
 		}
+		
 		
 		return bean;
 	}
@@ -392,6 +402,7 @@ public class AmlBatchController {
 		updated.setName(response.getName());
 		updated.setDescription(response.getDescription());
 		updated.setTransactionType(response.getTransactionType());
+		updated.setBankSchema(response.getBankSchema());
 		updated.setModifiedby(response.getModifiedby());
 		
 		updated = updateAmlBatchRequestStatus(response.getRequestId(), updated);

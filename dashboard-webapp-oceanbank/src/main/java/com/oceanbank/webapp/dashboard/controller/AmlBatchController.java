@@ -529,11 +529,18 @@ public class AmlBatchController {
 		
 		response = amlBatchService.createAmlBatchRequest(response);
 		
-		final List<String> list = dashboardSpringContext.getAmlBatchTransactionType();
+		final List<String> list = dashboardSpringContext.getAmlBatchTransactionType();		
+		
 		String[] selectable = new String[list.size()];
-		selectable = list.toArray(selectable);
+		selectable = list.toArray(selectable);		
 		response.setSelectableTypes(selectable);
 		response.setTransactionType("");
+		
+		final List<String> bankList = dashboardSpringContext.getBanks();
+		String[] bankArr = new String[bankList.size()]; 
+		bankArr = bankList.toArray(bankArr);
+		response.setBankSchemas(bankArr);
+		response.setBankSchema("");
 		
 		final String requestId = response.getRequestId();
 		
@@ -564,6 +571,11 @@ public class AmlBatchController {
 		String[] selectable = new String[list.size()];
 		selectable = list.toArray(selectable);
 		response.setSelectableTypes(selectable);
+		
+		final List<String> bankList = dashboardSpringContext.getBanks();
+		String[] bankArr = new String[bankList.size()]; 
+		bankArr = bankList.toArray(bankArr);
+		response.setBankSchemas(bankArr);
 		
 		model.addAttribute("amlBatchRequest", response);
 		
@@ -632,6 +644,11 @@ public class AmlBatchController {
 		String[] selectable = new String[list.size()];
 		selectable = list.toArray(selectable);
 		response.setSelectableTypes(selectable);
+		
+		final List<String> bankList = dashboardSpringContext.getBanks();
+		String[] bankArr = new String[bankList.size()]; 
+		bankArr = bankList.toArray(bankArr);
+		response.setBankSchemas(bankArr);
 		
 		model.addAttribute("amlBatchRequest", response);
 		

@@ -2,6 +2,7 @@
 ALTER TABLE IBMOB700.AmlBatchCif ADD iseriesname VARCHAR(45);
 ALTER TABLE IBMOB700.AmlBatchReversal ADD iseriesname VARCHAR(45);
 ALTER TABLE IBMOB700.DashboardUser ADD iseriesname VARCHAR(45);
+ALTER TABLE IBMOB700.AmlBatchRequest ADD bankSchema VARCHAR(45);
 
 DROP TABLE IBMOB700.AmlBatchRequest;
 DROP TABLE IBMOB700.AmlBatchCif;

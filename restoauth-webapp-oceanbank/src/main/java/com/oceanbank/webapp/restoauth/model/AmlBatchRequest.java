@@ -61,6 +61,7 @@ public class AmlBatchRequest extends AbstractAuditEntityTimestamp implements jav
     /** The transaction type. */
     private String transactionType;
     private String status;
+    private String bankSchema;
     
     /** The dashboardamlbatchcontainers. */
     private List<AmlBatchCif> dashboardamlbatchcontainers = new ArrayList<AmlBatchCif>();
@@ -288,5 +289,14 @@ public class AmlBatchRequest extends AbstractAuditEntityTimestamp implements jav
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	@Column(name="bankSchema", nullable=false, length=45)
+	public String getBankSchema() {
+		return bankSchema;
+	}
+
+	public void setBankSchema(String bankSchema) {
+		this.bankSchema = bankSchema;
 	}
 }
