@@ -894,11 +894,6 @@ public class AmlBatchController {
     	final List<AmlBatchCifResponse> cifList = amlBatchService.createAmlBatchCifFromExcel(requestId, mpf, createdBy);
     	String result = null;
     	
-//    	try {
-//			result = amlBatchService.createManyAmlBatchCif(cifList);
-//		} catch (Exception e) {
-//			throw new DashboardException(e.getMessage());
-//		}
     	Long cifListCount = new Long(cifList.size());
     	request.getSession().setAttribute("cifListCount", cifListCount);
     	Future<String> future = executor.submit(new Callable<String>() {
@@ -921,7 +916,7 @@ public class AmlBatchController {
     		}
     		request.getSession().setAttribute("currentCount", currentCount);
     		try {
-				Thread.sleep(1000L);
+				Thread.sleep(2500L);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
