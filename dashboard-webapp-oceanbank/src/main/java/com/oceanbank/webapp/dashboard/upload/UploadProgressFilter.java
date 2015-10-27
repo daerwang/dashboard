@@ -29,7 +29,12 @@ public class UploadProgressFilter extends OncePerRequestFilter{
         Object progress = request.getSession().getAttribute(attributeName);
         if (progress != null) {
             ProgressDescriptor descriptor = (ProgressDescriptor)progress; 
-            response.getOutputStream().write(descriptor.toString().getBytes() );
+            response.getOutputStream().write(descriptor.toString().getBytes());
+        }else{
+        	Long currentCount = (Long)request.getSession().getAttribute("currentCount");
+        	Long cifListCount = (Long)request.getSession().getAttribute("cifListCount");
+        	ProgressDescriptor descriptor = new ProgressDescriptor(currentCount, cifListCount);
+        	response.getOutputStream().write(descriptor.toString().getBytes());
         }
     }
 

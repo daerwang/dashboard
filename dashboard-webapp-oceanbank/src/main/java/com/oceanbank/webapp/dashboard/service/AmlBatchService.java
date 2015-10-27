@@ -68,6 +68,7 @@ public interface AmlBatchService {
 	 */
 	List<AmlBatchRequestResponse> getAmlBatchDataTable(DataTablesRequest datatableRequest);
 	List<AmlBatchCifResponse> getAmlBatchCifDataTable(DataTablesRequest datatableRequest);
+	List<AmlBatchCifResponse> getAmlBatchCifByRequestId(String requestId);
 	
 	/**
 	 * Delete aml batch request by request id.

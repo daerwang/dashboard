@@ -31,7 +31,7 @@ $(document).ready(function() {
 	                    $('.progress-bar').text(progress + "%");
 	    	            $('#progress .progress-bar').css('width', progress + '%');
 	                }); 
-	           }, 500); 
+	           }, 1000); 
 	        },
 	        done: function (e, data) {
 	            

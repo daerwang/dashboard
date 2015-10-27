@@ -670,4 +670,16 @@ public class AmlBatchServiceImpl extends OauthTokenBean implements AmlBatchServi
 		return bean.getBody();
 	}
 
+
+	@Override
+	public List<AmlBatchCifResponse> getAmlBatchCifByRequestId(String requestId) {
+		final HttpEntity<String> entity = CommonUtil.createHttpEntity(getAccessToken());
+		final ResponseEntity<AmlBatchCifResponse[]> response = restTemplate.exchange(getRestApi() + "/amlbatchcif/{requestId}", HttpMethod.POST, entity, AmlBatchCifResponse[].class, requestId);
+		
+		List<AmlBatchCifResponse> list = new ArrayList<AmlBatchCifResponse>();
+		list = Arrays.asList(response.getBody());
+		
+		return list;
+	}
+
 }

@@ -296,6 +296,19 @@ public class AmlBatchController {
 		return resultList;
 	}
 	
+	@RequestMapping(value = "/amlbatchcif/{requestId}", method = RequestMethod.POST)
+	public List<AmlBatchCifResponse> getAmlBatchCifByRequestId(@PathVariable("requestId") String requestId){
+
+		final List<AmlBatchCif> cifList = dashboardservice.findAmlBatchCifByRequestId(requestId);
+		final List<AmlBatchCifResponse> resultList = new ArrayList<AmlBatchCifResponse>();
+		for (AmlBatchCif entity : cifList) {
+			final AmlBatchCifResponse response = amlBatchCifConverter.convertFromEntity(entity);
+			resultList.add(response);
+		}
+		
+		return resultList;
+	}
+	
 	@RequestMapping(value = RestWebServiceUrl.GET_AML_BATCH_REQUEST_UPLOAD_DATATABLE, method = RequestMethod.POST)
 	public List<DashboardUploadResponse> getDashboardUploadDatatables(@RequestBody DataTablesRequest datatableRequest){
 		List<DashboardUpload> uploadList = new ArrayList<DashboardUpload>();

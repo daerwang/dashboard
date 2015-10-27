@@ -19,6 +19,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -858,6 +863,8 @@ public class AmlBatchController {
 		return DashboardConstant.SHOW_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL;
 	}
 	
+	private ExecutorService executor = Executors.newFixedThreadPool(5);
+	
 	@RequestMapping(value = DashboardConstant.EXECUTE_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL, method = RequestMethod.POST)
 	public @ResponseBody ExcelFileMeta executeUploadExcelAmlBatchCif(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException {
 		
@@ -884,14 +891,53 @@ public class AmlBatchController {
     	
     	String createdBy = CommonUtil.getAuthenticatedUserDetails().getUsername();
     	
-    	List<AmlBatchCifResponse> cifList = amlBatchService.createAmlBatchCifFromExcel(requestId, mpf, createdBy);
+    	final List<AmlBatchCifResponse> cifList = amlBatchService.createAmlBatchCifFromExcel(requestId, mpf, createdBy);
     	String result = null;
     	
+//    	try {
+//			result = amlBatchService.createManyAmlBatchCif(cifList);
+//		} catch (Exception e) {
+//			throw new DashboardException(e.getMessage());
+//		}
+    	Long cifListCount = new Long(cifList.size());
+    	request.getSession().setAttribute("cifListCount", cifListCount);
+    	Future<String> future = executor.submit(new Callable<String>() {
+
+			@Override
+            public String call() throws Exception {
+            	String message = null;
+
+            	message = amlBatchService.createManyAmlBatchCif(cifList);
+
+            	return message;
+            }
+        });
+    	
+    	while(!future.isDone()){
+    		List<AmlBatchCifResponse> list = amlBatchService.getAmlBatchCifByRequestId(requestId);
+    		Long currentCount = 1L;
+    		if(!list.isEmpty()){
+    			currentCount = new Long(list.size());
+    		}
+    		request.getSession().setAttribute("currentCount", currentCount);
+    		try {
+				Thread.sleep(1000L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+    	}
+    	
     	try {
-			result = amlBatchService.createManyAmlBatchCif(cifList);
-		} catch (Exception e) {
-			throw new DashboardException(e.getMessage());
-		}
+
+        	result =  future.get();
+
+        } catch (InterruptedException e) {
+            result = "Exception caused by InterruptedException";
+        } catch (ExecutionException e) {
+        	result = "Exception caused by ExecutionException";
+        } catch(Exception e){
+        	result = "Exception caused by General Exception";
+        }
     	
         fileMeta = new ExcelFileMeta();
         fileMeta.setFileName(mpf.getOriginalFilename());
