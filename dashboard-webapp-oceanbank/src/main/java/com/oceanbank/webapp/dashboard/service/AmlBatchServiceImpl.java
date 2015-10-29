@@ -682,4 +682,14 @@ public class AmlBatchServiceImpl extends OauthTokenBean implements AmlBatchServi
 		return list;
 	}
 
+
+	@Override
+	public AmlBatchRequestResponse executeAmlApprovalOrDisapproval(AmlBatchRequestResponse amlBatchRequest) {
+		final HttpEntity<AmlBatchRequestResponse> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), amlBatchRequest);
+		final ResponseEntity<AmlBatchRequestResponse> response = restTemplate.exchange(getRestApi() + "/api/amlbatchrequest/approveOrDisapprove", HttpMethod.PUT, entity, AmlBatchRequestResponse.class);
+		final AmlBatchRequestResponse result = response.getBody();
+		
+		return result;
+	}
+
 }

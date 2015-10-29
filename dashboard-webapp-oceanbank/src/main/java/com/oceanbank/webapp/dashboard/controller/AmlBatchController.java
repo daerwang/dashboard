@@ -64,6 +64,7 @@ import com.oceanbank.webapp.common.model.DashboardUploadResponse;
 import com.oceanbank.webapp.common.model.DataTablesRequest;
 import com.oceanbank.webapp.common.model.DataTablesResponse;
 import com.oceanbank.webapp.common.model.ExcelFileMeta;
+import com.oceanbank.webapp.common.model.RestOauthAccessToken;
 import com.oceanbank.webapp.common.util.CommonUtil;
 import com.oceanbank.webapp.dashboard.service.AmlBatchServiceImpl;
 
@@ -87,6 +88,13 @@ public class AmlBatchController {
 	/** The dashboard spring context. */
 	@Autowired
 	private DashboardSpringContext dashboardSpringContext;
+	
+	@Autowired
+	private RestOauthAccessToken restOauthAccessToken;
+	
+	private ExecutorService executor = Executors.newFixedThreadPool(5);
+	
+	private static final String ENVIRONMENT = "production";
 
 	/** The message source. */
 	@Autowired
@@ -532,6 +540,11 @@ public class AmlBatchController {
 		AmlBatchRequestResponse response = new AmlBatchRequestResponse();
 		response.setCreatedby(CommonUtil.getAuthenticatedUserDetails().getUsername());
 		
+		String environment = restOauthAccessToken.getEnvironment();
+		if(environment.equalsIgnoreCase(ENVIRONMENT)){
+			response.setBankSchema("100");
+		}
+		
 		response = amlBatchService.createAmlBatchRequest(response);
 		
 		final List<String> list = dashboardSpringContext.getAmlBatchTransactionType();		
@@ -727,6 +740,31 @@ public class AmlBatchController {
 		return DashboardConstant.SHOW_CREATE_AML_BATCH_CIF_MODAL;
 	}
 	
+	@RequestMapping(value = "/amlbatchrequest/{requestId}/approveOrDisapprove", method = RequestMethod.GET)
+	public @ResponseBody AmlBatchRequestResponse executeAmlApprovalOrDisapproval(@PathVariable("requestId") String requestId) throws DashboardException {
+		
+		AmlBatchRequestResponse bean = amlBatchService.getAmlBatchRequestByRequestId(requestId);
+		String transactionType = bean.getTransactionType();
+		String environment = restOauthAccessToken.getEnvironment();
+		String bankSchema = bean.getBankSchema();
+		
+		if(transactionType == null || bankSchema == null){
+			throw new DashboardException("Transaction type or Bank Schema is required", null);
+		}
+		
+		if(environment.equalsIgnoreCase(ENVIRONMENT)){
+			bean.setBankSchema("100");
+		}
+		
+		try {
+			bean = amlBatchService.executeAmlApprovalOrDisapproval(bean);
+		} catch (RestClientException e) {
+			throw new DashboardException(e.getMessage(), e.getCause());
+		}
+		
+		return bean;
+	}
+	
 	@RequestMapping(value = DashboardConstant.EXECUTE_AML_BATCH_APPROVAL_BY_REQUEST_ID, method = RequestMethod.GET)
 	public @ResponseBody AmlBatchRequestResponse executeAmlBatchRequestApproval(@PathVariable("requestId") String requestId) throws DashboardException {
 		
@@ -862,8 +900,6 @@ public class AmlBatchController {
 		
 		return DashboardConstant.SHOW_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL;
 	}
-	
-	private ExecutorService executor = Executors.newFixedThreadPool(5);
 	
 	@RequestMapping(value = DashboardConstant.EXECUTE_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL, method = RequestMethod.POST)
 	public @ResponseBody ExcelFileMeta executeUploadExcelAmlBatchCif(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException {

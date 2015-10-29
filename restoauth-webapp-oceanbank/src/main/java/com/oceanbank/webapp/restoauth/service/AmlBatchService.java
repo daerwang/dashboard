@@ -6,6 +6,7 @@ package com.oceanbank.webapp.restoauth.service;
 
 import java.util.List;
 
+import com.oceanbank.webapp.common.model.AmlBatchRequestResponse;
 import com.oceanbank.webapp.restoauth.model.AmlBatchCif;
 import com.oceanbank.webapp.restoauth.model.AmlBatchRequest;
 import com.oceanbank.webapp.restoauth.model.DashboardComment;
@@ -134,5 +135,6 @@ public interface AmlBatchService {
 	String executeAmlBatchRequestApproval(String requestId, String storedProcedure);
 	String executeAmlBatchRequestReversal(String requestId, String storedProcedure);
 	String executeAmlBatchRequestDisapproval(String requestId, String storedProcedure);
-	
+	String findStoredProcedureByBank(String transactionType, String bankSchema);
+	String executeStoredProcedure(String requestId, String storedProcedureCommand);
 }

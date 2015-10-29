@@ -247,6 +247,21 @@ public class AmlBatchServiceImpl implements AmlBatchService{
 	}
 	
 	@Override
+	public String executeStoredProcedure(String requestId, String storedProcedureCommand) {
+
+		StoredProcedureQuery proc = em.createStoredProcedureQuery(storedProcedureCommand);
+		proc.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		proc.registerStoredProcedureParameter(2, String.class, ParameterMode.OUT);
+
+		proc.setParameter(1, requestId);
+		proc.execute();
+		
+		final String result = (String) proc.getOutputParameterValue(2);
+			
+		return result;
+	}
+	
+	@Override
 	public String executeAmlBatchRequestReversal(String requestId, String storedProcedure) {
 	
 		StoredProcedureQuery proc = em.createStoredProcedureQuery(storedProcedure);
@@ -388,6 +403,52 @@ public class AmlBatchServiceImpl implements AmlBatchService{
 	public String deleteDashboardComment(DashboardComment entity) {
 		dashboardComment.delete(entity);
 		return "OK";
+	}
+
+	@Override
+	public String findStoredProcedureByBank(String transactionType, String bankSchema) {
+		String storedProcedure = null;
+		
+		if(transactionType.equalsIgnoreCase("approval")){
+			if(bankSchema.equalsIgnoreCase("100")){
+				storedProcedure = "IBMOB700.execute_aml_approval_103";
+			}
+			if(bankSchema.equalsIgnoreCase("16")){
+				storedProcedure = "IBMOB700.execute_aml_approval_16";
+			}
+			if(bankSchema.equalsIgnoreCase("117")){
+				storedProcedure = "IBMOB700.execute_aml_approval_117";
+			}
+			if(bankSchema.equalsIgnoreCase("118")){
+				storedProcedure = "IBMOB700.execute_aml_approval_118";
+			}
+			if(bankSchema.equalsIgnoreCase("700")){
+				storedProcedure = "IBMOB700.execute_aml_approval_700";
+			}
+			
+			//outcome = executeAmlBatchRequestApproval(requestId, storedProcedure);
+		}
+		if(transactionType.equalsIgnoreCase("disapproval")){
+			if(bankSchema.equalsIgnoreCase("100")){
+				storedProcedure = "IBMOB700.execute_aml_disapproval_103";
+			}
+			if(bankSchema.equalsIgnoreCase("16")){
+				storedProcedure = "IBMOB700.execute_aml_disapproval_16";
+			}
+			if(bankSchema.equalsIgnoreCase("117")){
+				storedProcedure = "IBMOB700.execute_aml_disapproval_117";
+			}
+			if(bankSchema.equalsIgnoreCase("118")){
+				storedProcedure = "IBMOB700.execute_aml_disapproval_118";
+			}
+			if(bankSchema.equalsIgnoreCase("700")){
+				storedProcedure = "IBMOB700.execute_aml_disapproval_700";
+			}
+			
+			//outcome = executeAmlBatchRequestDisapproval(requestId, storedProcedure);
+		}
+		
+		return storedProcedure;
 	}
 
 }
