@@ -171,6 +171,7 @@ public class AmlBatchController {
 	    
 		String storedProcedureCommand = dashboardservice.findStoredProcedureByBank(transactionType, bankSchema);
 		String storedProcedureOutput = dashboardservice.executeStoredProcedure(requestId, storedProcedureCommand);
+		//String storedProcedureOutput = "OK"; // - can be used for testing
 		AmlBatchRequestResponse finalBean = finalizeAmlApprovalOrDisapproval(storedProcedureOutput, requestId);
 		
 		return finalBean;
@@ -178,7 +179,7 @@ public class AmlBatchController {
 	
 	private AmlBatchRequestResponse finalizeAmlApprovalOrDisapproval(String storedProcedureOutput, String requestId) throws DashboardException{
 		
-		String result = storedProcedureOutput;
+		String result = storedProcedureOutput.trim();
 		AmlBatchRequestResponse bean = null;
 		AmlBatchRequest forUpdate = dashboardservice.findByRequestId(requestId);
 		
@@ -212,7 +213,12 @@ public class AmlBatchController {
 			
 		}else{
 			
-			updateAmlBatchRequestStatus(requestId, forUpdate);
+			//updateAmlBatchRequestStatus(requestId, forUpdate);
+			
+			String status = dashboardservice.determineAmlBatchRequestStatus(requestId);
+			forUpdate.setStatus(status);
+			forUpdate = dashboardservice.updateAmlBatchRequest(forUpdate);
+			
 			insertLogForAudit(DashboardConstant.AML_MESSAGE_6, forUpdate.getId(), forUpdate.getCreatedby());
 			bean = amlBatchRequestConverter.convertFromEntity(forUpdate);
 		}
