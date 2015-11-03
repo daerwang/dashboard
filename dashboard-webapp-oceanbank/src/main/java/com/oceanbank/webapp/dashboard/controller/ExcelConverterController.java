@@ -116,7 +116,7 @@ public class ExcelConverterController {
 		        
 		        response.setContentType("text/plain; charset=UTF-8");
 		        response.setContentLength(byteArr.length);
-		        response.setHeader("Content-Disposition","attachment;filename=\"advisorConverted_"+ randInt(1, 99) + ".txt\"");
+		        response.setHeader("Content-Disposition","attachment;filename=\"advisorConverted.txt\"");
 		        
 		        os = response.getOutputStream();
 		        os.write(byteArr);

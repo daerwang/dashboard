@@ -500,52 +500,58 @@ public class AmlBatchServiceImpl extends OauthTokenBean implements AmlBatchServi
 	        while (rowIterator.hasNext()) {
 	        	
 	        	Row row = rowIterator.next();
-                Iterator<Cell> cellIterator = row.cellIterator();
-                while (cellIterator.hasNext())
-                {
-                    Cell cell = cellIterator.next();
-                    if(cell.getColumnIndex() == 2 && row.getRowNum() != 0){
-                    	// do nothing
-                    }else{
-                    	cell.setCellType(Cell.CELL_TYPE_STRING);
-                    }
-                    switch (cell.getCellType())
-                    {
-                        case Cell.CELL_TYPE_NUMERIC:
-                        	String value1 = null;
-                            if(cell.getColumnIndex() == 2 && row.getRowNum() != 0){
-                        		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-                        		try {
-                        			Date dateValue = cell.getDateCellValue();  
-                        			value1 = df.format(dateValue);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-                            }
+	        	
+	        	if(row.getRowNum() > 0){
+	        		
+	        		Iterator<Cell> cellIterator = row.cellIterator();
+	                while (cellIterator.hasNext())
+	                {
+	                    Cell cell = cellIterator.next();
+	                    if(cell.getColumnIndex() == 2 && row.getRowNum() != 0){
+	                    	// do nothing
+	                    }else{
+	                    	cell.setCellType(Cell.CELL_TYPE_STRING);
+	                    }
+	                    switch (cell.getCellType())
+	                    {
+	                        case Cell.CELL_TYPE_NUMERIC:
+	                        	String value1 = null;
+	                            if(cell.getColumnIndex() == 2 && row.getRowNum() != 0){
+	                        		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+	                        		try {
+	                        			Date dateValue = cell.getDateCellValue();  
+	                        			value1 = df.format(dateValue);
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+	                            }
 
-                            writer.write(value1 + "|");
-                            escape = true;
-                            break;
-                        case Cell.CELL_TYPE_STRING:
-                        	String value = cell.getStringCellValue();
-                        	if(value.trim().length() < 1){
-                        		escape = false;
-                        		continue;
-                            }
-                        	if(cell.getColumnIndex() == 3 && row.getRowNum() != 0){
-                        		//DecimalFormat df = new DecimalFormat("#.00"); 
-                        		double number = Double.parseDouble(value);
-                        		value = String.format( "%.2f", number );
-                            }
-                        	
-                            writer.write(value + "|");
-                            escape = true;
-                            break;
-                    }
-                }
-                if(escape){
-                	writer.write(System.lineSeparator());
-                }
+	                            writer.write(value1 + "|");
+	                            escape = true;
+	                            break;
+	                        case Cell.CELL_TYPE_STRING:
+	                        	String value = cell.getStringCellValue();
+	                        	if(value.trim().length() < 1){
+	                        		escape = false;
+	                        		continue;
+	                            }
+	                        	if(cell.getColumnIndex() == 3 && row.getRowNum() != 0){
+	                        		//DecimalFormat df = new DecimalFormat("#.00"); 
+	                        		double number = Double.parseDouble(value);
+	                        		value = String.format( "%.2f", number );
+	                            }
+	                        	
+	                            writer.write(value + "|");
+	                            escape = true;
+	                            break;
+	                    }
+	                }
+	                if(escape){
+	                	writer.write(System.lineSeparator());
+	                }
+	        		
+	        	}
+                
 	        }
 		}catch (FileNotFoundException e) {
             throw new DashboardException("FileNotFoundException occured", e);

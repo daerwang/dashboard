@@ -8,6 +8,32 @@ $(document).ready(function() {
 	var executeUploadExcel = "<c:url value="${executeUploadExcel}"/>";
 	var openTextFileNewWindow = "<c:url value="${openTextFileNewWindow}"/>";
 	
+	function detectIE() {
+	    var ua = window.navigator.userAgent;
+
+	    var msie = ua.indexOf('MSIE ');
+	    if (msie > 0) {
+	        // IE 10 or older => return version number
+	        return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+	    }
+
+	    var trident = ua.indexOf('Trident/');
+	    if (trident > 0) {
+	        // IE 11 => return version number
+	        var rv = ua.indexOf('rv:');
+	        return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+	    }
+
+	    var edge = ua.indexOf('Edge/');
+	    if (edge > 0) {
+	       // IE 12 => return version number
+	       return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+	    }
+
+	    // other browser
+	    return false;
+	}
+	
 	$(function () {
 		var time;
 	    $('#fileupload').fileupload({
@@ -17,20 +43,34 @@ $(document).ready(function() {
 	        add: function (e, data) {
 	            data.submit();
 	            
-	            time = setInterval(function() {
-	                $.get(executeUploadExcel + "/.progress", function(data) {
-	                    if(!data){
-	                    	console.log('no data');
-	                    	return;
-	                    }
-	                    
-	                    data = data.split("/");
+	            var IEversion = detectIE();
+	            
+	            if (IEversion !== false){
+	            	$('#progress .progress-bar').css('width', '100%');
+	            	setTimeout(function() {
+		            	uploadExcelFileDialog.close();
+		            	window.open(openTextFileNewWindow, '_blank');
 
-	                    var progress = Math.round(data[0] / data[1] * 100);
-	                    $('.progress-bar').text(progress + "%");
-	    	            $('#progress .progress-bar').css('width', progress + '%');
-	                }); 
-	           }, 500); 
+					}, 2000);
+	            	
+	            }else{
+	            	time = setInterval(function() {
+		                $.get(executeUploadExcel + "/.progress", function(data) {
+		                    if(!data){
+		                    	console.log('no data');
+		                    	return;
+		                    }
+		                    
+		                    data = data.split("/");
+
+		                    var progress = Math.round(data[0] / data[1] * 100);
+		                    $('.progress-bar').text(progress + "%");
+		    	            $('#progress .progress-bar').css('width', progress + '%');
+		                }); 
+		           }, 500); 
+	            }
+	            
+	            
 	        },
 	        done: function (e, data) {
 	            
