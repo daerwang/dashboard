@@ -54,12 +54,9 @@
 
 <p></p>
 <h3>Step 1: Upload an Excel file</h3>
-<p>Upload an excel file here. There is no need to go to Step 2 if you are using <strong>IE 10 and above, Chrome or Firefox browsers.</strong>.</p>
+<p>Upload an excel file here.</p>
 <button type="button" class="btn btn-default btn-sm" id="uploadButton">Upload Excel</button>
 	
 
-<p></p>
-<h3>Step 2: Download Text File</h3>
-<p>For <strong>IE 9 and below</strong>, please click below button for the converted text file.</p>
-<button type="button" class="btn btn-default btn-sm" id="openButton">Open Text File</button>
+
 
