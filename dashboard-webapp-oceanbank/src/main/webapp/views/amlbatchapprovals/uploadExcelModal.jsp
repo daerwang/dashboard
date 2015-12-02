@@ -13,7 +13,7 @@ $(document).ready(function() {
 	    $('#fileupload').fileupload({
 	        url: executeUploadExcel,
 	        forceIframeTransport: true,
-	        dataType: 'json',
+	        //dataType: 'json',
 	        formData: {requestId: requestId},
 	        add: function (e, data) {
 	            data.submit();
@@ -38,7 +38,7 @@ $(document).ready(function() {
 	            clearInterval(time);  
         		$('#progress .progress-bar').css('width', '100%');
         		//console.log(data);
-        		$('<p/>').text(data.result.fileName + ', ' + data.result.fileSize).appendTo('#files');
+        		//$('<p/>').text(data.result.fileName + ', ' + data.result.fileSize).appendTo('#files');
 	            setTimeout(function() {
 	            	table.ajax.reload();
 	            	uploadExcelFileDialog.close();
