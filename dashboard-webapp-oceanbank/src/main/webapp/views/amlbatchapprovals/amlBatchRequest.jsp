@@ -536,7 +536,7 @@ select option{color: #555;}
 
 				$.ajax({
 					type: "GET",
-       			  	url: serviceUrl,
+       			  	url: '../../amlbatchrequest/' + amlBatchCifRequestId + '/approveOrDisapprove',
 				    success: function(data) { 
 				    	
 				    	$('#myModal').modal('hide');

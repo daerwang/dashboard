@@ -162,6 +162,70 @@ public class AmlBatchController {
 		return entity;
 	}
 	
+	@RequestMapping(value = "/api/amlbatchrequest/approveOrDisapprove", method = RequestMethod.PUT)
+	public AmlBatchRequestResponse executeAmlApprovalOrDisapproval(@RequestBody AmlBatchRequestResponse amlBatchRequest) throws DashboardException{
+
+		String transactionType = amlBatchRequest.getTransactionType();
+		String bankSchema = amlBatchRequest.getBankSchema();
+	    String requestId = amlBatchRequest.getRequestId();
+
+		String storedProcedureCommand = dashboardservice.findStoredProcedureByBank(transactionType, bankSchema);
+		String storedProcedureOutput = dashboardservice.executeStoredProcedure(requestId, storedProcedureCommand);
+		//String storedProcedureOutput = "OK"; // - can be used for testing
+		AmlBatchRequestResponse finalBean = finalizeAmlApprovalOrDisapproval(storedProcedureOutput, requestId);
+
+		return finalBean;
+	}
+
+	private AmlBatchRequestResponse finalizeAmlApprovalOrDisapproval(String storedProcedureOutput, String requestId) throws DashboardException{
+
+		String result = storedProcedureOutput.trim();
+		AmlBatchRequestResponse bean = null;
+		AmlBatchRequest forUpdate = dashboardservice.findByRequestId(requestId);
+
+		if(!result.equalsIgnoreCase("OK")){
+
+			if(result.equalsIgnoreCase(DashboardConstant.AML_BATCH_STATUS_COMPLETE)){
+				updateAmlBatchRequestStatus(requestId, forUpdate);
+				insertLogForAudit(DashboardConstant.AML_MESSAGE_7 + "There is no request to process since all CIF are Reversed.", forUpdate.getId(), forUpdate.getCreatedby());
+				throw new DashboardException(DashboardConstant.AML_MESSAGE_EXCEPTION_1);
+
+			}else if(result.equalsIgnoreCase(DashboardConstant.AML_BATCH_STATUS_NO_CIF_TO_PROCESS)){
+				updateAmlBatchRequestStatus(requestId, forUpdate);
+				insertLogForAudit(DashboardConstant.AML_MESSAGE_7 + DashboardConstant.AML_MESSAGE_EXCEPTION_2, forUpdate.getId(), forUpdate.getCreatedby());
+				throw new DashboardException(DashboardConstant.AML_MESSAGE_EXCEPTION_2);
+
+			}else if(result.equalsIgnoreCase(DashboardConstant.AML_BATCH_STATUS_ONE_OR_MORE_CIF_NOT_FOUND)){
+				updateAmlBatchRequestStatus(requestId, forUpdate);
+				insertLogForAudit(DashboardConstant.AML_MESSAGE_7 + DashboardConstant.AML_MESSAGE_EXCEPTION_4, forUpdate.getId(), forUpdate.getCreatedby());
+				throw new DashboardException(DashboardConstant.AML_MESSAGE_EXCEPTION_4);
+
+			}else if(result.equalsIgnoreCase(DashboardConstant.AML_BATCH_STATUS_REVERSAL_RECORD_NOT_FOUND)){
+				updateAmlBatchRequestStatus(requestId, forUpdate);
+				insertLogForAudit(DashboardConstant.AML_MESSAGE_7 + DashboardConstant.AML_MESSAGE_EXCEPTION_5, forUpdate.getId(), forUpdate.getCreatedby());
+				throw new DashboardException(DashboardConstant.AML_MESSAGE_EXCEPTION_4);
+
+			}else{
+				updateAmlBatchRequestStatus(requestId, forUpdate);
+				insertLogForAudit(DashboardConstant.AML_MESSAGE_7 + DashboardConstant.AML_MESSAGE_EXCEPTION_3, forUpdate.getId(), forUpdate.getCreatedby());
+				throw new DashboardException(DashboardConstant.AML_MESSAGE_EXCEPTION_3);
+			}
+
+		}else{
+
+			//updateAmlBatchRequestStatus(requestId, forUpdate);
+
+			String status = dashboardservice.determineAmlBatchRequestStatus(requestId);
+			forUpdate.setStatus(status);
+			forUpdate = dashboardservice.updateAmlBatchRequest(forUpdate);
+
+			insertLogForAudit(DashboardConstant.AML_MESSAGE_6, forUpdate.getId(), forUpdate.getCreatedby());
+			bean = amlBatchRequestConverter.convertFromEntity(forUpdate);
+		}
+
+		return bean;
+	}
+
 	@RequestMapping(value = RestWebServiceUrl.EXECUTE_BATCH_REVERSAL_REQUEST_BY_REQUEST_ID, method = RequestMethod.GET)
 	public AmlBatchRequestResponse executeAmlBatchRequestReversal(@PathVariable("requestId") String requestId) throws DashboardException{
 				
@@ -296,6 +360,19 @@ public class AmlBatchController {
 		return resultList;
 	}
 	
+	@RequestMapping(value = "/amlbatchcif/{requestId}", method = RequestMethod.POST)
+	public List<AmlBatchCifResponse> getAmlBatchCifByRequestId(@PathVariable("requestId") String requestId){
+
+		final List<AmlBatchCif> cifList = dashboardservice.findAmlBatchCifByRequestId(requestId);
+		final List<AmlBatchCifResponse> resultList = new ArrayList<AmlBatchCifResponse>();
+		for (AmlBatchCif entity : cifList) {
+			final AmlBatchCifResponse response = amlBatchCifConverter.convertFromEntity(entity);
+			resultList.add(response);
+		}
+
+		return resultList;
+	}
+
 	@RequestMapping(value = RestWebServiceUrl.GET_AML_BATCH_REQUEST_UPLOAD_DATATABLE, method = RequestMethod.POST)
 	public List<DashboardUploadResponse> getDashboardUploadDatatables(@RequestBody DataTablesRequest datatableRequest){
 		List<DashboardUpload> uploadList = new ArrayList<DashboardUpload>();

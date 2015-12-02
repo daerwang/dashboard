@@ -68,7 +68,8 @@ public interface AmlBatchService {
 	 */
 	List<AmlBatchRequestResponse> getAmlBatchDataTable(DataTablesRequest datatableRequest);
 	List<AmlBatchCifResponse> getAmlBatchCifDataTable(DataTablesRequest datatableRequest);
-	
+	List<AmlBatchCifResponse> getAmlBatchCifByRequestId(String requestId);
+
 	/**
 	 * Delete aml batch request by request id.
 	 *
@@ -79,6 +80,7 @@ public interface AmlBatchService {
 	AmlBatchRequestResponse executeAmlBatchRequestApproval(String requestId);
 	AmlBatchRequestResponse executeAmlBatchRequestReversal(String requestId);
 	AmlBatchRequestResponse executeAmlBatchRequestDisapproval(String requestId);
+	AmlBatchRequestResponse executeAmlApprovalOrDisapproval(AmlBatchRequestResponse amlBatchRequest);
 	List<AmlBatchCifResponse> createAmlBatchCifFromExcel(String requestId, MultipartFile mpf, String createdBy) throws DashboardException;
 	String createManyAmlBatchCif(List<AmlBatchCifResponse> list);
 	List<DashboardLogResponse> getDashboardLogDataTable(DataTablesRequest datatableRequest);

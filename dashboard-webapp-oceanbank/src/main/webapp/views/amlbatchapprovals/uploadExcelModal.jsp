@@ -31,7 +31,7 @@ $(document).ready(function() {
 	                    $('.progress-bar').text(progress + "%");
 	    	            $('#progress .progress-bar').css('width', progress + '%');
 	                }); 
-	           }, 500); 
+	           }, 1500);
 	        },
 	        done: function (e, data) {
 	            
@@ -122,7 +122,7 @@ $(document).ready(function() {
  	-->
     <!-- The global progress bar -->
     <div id="progress" class="progress">
-        <div class="progress-bar progress-bar-success"></div>
+        <div class="progress-bar progress-bar-success progress-bar-striped active"></div>
     </div>
  
  	<!-- The container for the uploaded files -->

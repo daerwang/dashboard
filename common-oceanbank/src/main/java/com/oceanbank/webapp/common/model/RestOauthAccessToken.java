@@ -26,6 +26,8 @@ public class RestOauthAccessToken {
 	/** The ob dashboard roles list. */
 	private List<ObDashboardRoles> obDashboardRolesList; 
 	
+	private String environment;
+
 	/**
 	 * Gets the ob dashboard roles list.
 	 *
@@ -96,6 +98,14 @@ public class RestOauthAccessToken {
 	 */
 	public void setRestApi(String restApi) {
 		this.restApi = restApi;
+	}
+
+	public String getEnvironment() {
+		return environment;
+	}
+
+	public void setEnvironment(String environment) {
+		this.environment = environment;
 	}
 
 }

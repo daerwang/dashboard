@@ -64,7 +64,7 @@ public class ExcelConverterController {
 	}
 	
 	@RequestMapping(value = DashboardConstant.EXECUTE_UPLOAD_EXCEL_CONVERTER_MODAL, method = RequestMethod.POST)
-	public void executeExcelConverterUpload(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
+	public @ResponseBody ExcelFileMeta executeExcelConverterUpload(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
 
         Iterator<String> itr =  request.getFileNames();
         MultipartFile mpf = null;
@@ -94,7 +94,7 @@ public class ExcelConverterController {
         fileMeta.setFileSize(mpf.getSize()/1024+" Kb - OK");
         fileMeta.setFileType(mpf.getContentType());
 
-		//return fileMeta;
+		return fileMeta;
 	}
 	
 	@RequestMapping(value = DashboardConstant.OPEN_ADVISOR_TEXT_FILE_NEW_WINDOW, method = RequestMethod.GET)
@@ -116,7 +116,7 @@ public class ExcelConverterController {
 		        
 		        response.setContentType("text/plain; charset=UTF-8");
 		        response.setContentLength(byteArr.length);
-		        response.setHeader("Content-Disposition","attachment;filename=\"advisorConverted_"+ randInt(1, 99) + ".txt\"");
+		        response.setHeader("Content-Disposition","attachment;filename=\"advisorConverted.txt\"");
 		        
 		        os = response.getOutputStream();
 		        os.write(byteArr);

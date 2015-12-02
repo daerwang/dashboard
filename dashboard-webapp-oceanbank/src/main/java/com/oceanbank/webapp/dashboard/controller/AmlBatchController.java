@@ -19,6 +19,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -59,6 +64,7 @@ import com.oceanbank.webapp.common.model.DashboardUploadResponse;
 import com.oceanbank.webapp.common.model.DataTablesRequest;
 import com.oceanbank.webapp.common.model.DataTablesResponse;
 import com.oceanbank.webapp.common.model.ExcelFileMeta;
+import com.oceanbank.webapp.common.model.RestOauthAccessToken;
 import com.oceanbank.webapp.common.util.CommonUtil;
 import com.oceanbank.webapp.dashboard.service.AmlBatchServiceImpl;
 
@@ -82,6 +88,13 @@ public class AmlBatchController {
 	/** The dashboard spring context. */
 	@Autowired
 	private DashboardSpringContext dashboardSpringContext;
+
+	@Autowired
+	private RestOauthAccessToken restOauthAccessToken;
+
+	private ExecutorService executor = Executors.newFixedThreadPool(5);
+
+	private static final String ENVIRONMENT = "production";
 
 	/** The message source. */
 	@Autowired
@@ -527,6 +540,11 @@ public class AmlBatchController {
 		AmlBatchRequestResponse response = new AmlBatchRequestResponse();
 		response.setCreatedby(CommonUtil.getAuthenticatedUserDetails().getUsername());
 		
+		String environment = restOauthAccessToken.getEnvironment();
+		if(environment.equalsIgnoreCase(ENVIRONMENT)){
+			response.setBankSchema("100");
+		}
+
 		response = amlBatchService.createAmlBatchRequest(response);
 		
 		final List<String> list = dashboardSpringContext.getAmlBatchTransactionType();		
@@ -722,6 +740,31 @@ public class AmlBatchController {
 		return DashboardConstant.SHOW_CREATE_AML_BATCH_CIF_MODAL;
 	}
 	
+	@RequestMapping(value = "/amlbatchrequest/{requestId}/approveOrDisapprove", method = RequestMethod.GET)
+	public @ResponseBody AmlBatchRequestResponse executeAmlApprovalOrDisapproval(@PathVariable("requestId") String requestId) throws DashboardException {
+
+		AmlBatchRequestResponse bean = amlBatchService.getAmlBatchRequestByRequestId(requestId);
+		String transactionType = bean.getTransactionType();
+		String environment = restOauthAccessToken.getEnvironment();
+		String bankSchema = bean.getBankSchema();
+
+		if(transactionType == null || bankSchema == null){
+			throw new DashboardException("Transaction type or Bank Schema is required", null);
+		}
+
+		if(environment.equalsIgnoreCase(ENVIRONMENT)){
+			bean.setBankSchema("100");
+		}
+
+		try {
+			bean = amlBatchService.executeAmlApprovalOrDisapproval(bean);
+		} catch (RestClientException e) {
+			throw new DashboardException(e.getMessage(), e.getCause());
+		}
+
+		return bean;
+	}
+
 	@RequestMapping(value = DashboardConstant.EXECUTE_AML_BATCH_APPROVAL_BY_REQUEST_ID, method = RequestMethod.GET)
 	public @ResponseBody AmlBatchRequestResponse executeAmlBatchRequestApproval(@PathVariable("requestId") String requestId) throws DashboardException {
 		
@@ -884,14 +927,48 @@ public class AmlBatchController {
     	
     	String createdBy = CommonUtil.getAuthenticatedUserDetails().getUsername();
     	
-    	List<AmlBatchCifResponse> cifList = amlBatchService.createAmlBatchCifFromExcel(requestId, mpf, createdBy);
+    	final List<AmlBatchCifResponse> cifList = amlBatchService.createAmlBatchCifFromExcel(requestId, mpf, createdBy);
     	String result = null;
     	
+    	Long cifListCount = new Long(cifList.size());
+    	request.getSession().setAttribute("cifListCount", cifListCount);
+    	Future<String> future = executor.submit(new Callable<String>() {
+
+			@Override
+            public String call() throws Exception {
+            	String message = null;
+
+            	message = amlBatchService.createManyAmlBatchCif(cifList);
+
+            	return message;
+            }
+        });
+
+    	while(!future.isDone()){
+    		List<AmlBatchCifResponse> list = amlBatchService.getAmlBatchCifByRequestId(requestId);
+    		Long currentCount = 1L;
+    		if(!list.isEmpty()){
+    			currentCount = new Long(list.size());
+    		}
+    		request.getSession().setAttribute("currentCount", currentCount);
+    		try {
+				Thread.sleep(2500L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+    	}
+
     	try {
-			result = amlBatchService.createManyAmlBatchCif(cifList);
-		} catch (Exception e) {
-			throw new DashboardException(e.getMessage());
-		}
+
+        	result =  future.get();
+
+        } catch (InterruptedException e) {
+            result = "Exception caused by InterruptedException";
+        } catch (ExecutionException e) {
+        	result = "Exception caused by ExecutionException";
+        } catch(Exception e){
+        	result = "Exception caused by General Exception";
+        }
     	
         fileMeta = new ExcelFileMeta();
         fileMeta.setFileName(mpf.getOriginalFilename());
