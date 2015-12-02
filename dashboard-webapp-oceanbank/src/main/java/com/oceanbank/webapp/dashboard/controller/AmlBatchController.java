@@ -902,7 +902,7 @@ public class AmlBatchController {
 	}
 	
 	@RequestMapping(value = DashboardConstant.EXECUTE_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL, method = RequestMethod.POST)
-	public @ResponseBody ExcelFileMeta executeUploadExcelAmlBatchCif(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException {
+	public void executeUploadExcelAmlBatchCif(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException {
 		
 		final String requestId = CommonUtil.determineValue(allRequestParams, "requestId");
 
@@ -976,7 +976,7 @@ public class AmlBatchController {
         fileMeta.setFileType(mpf.getContentType());
     
         
-		return fileMeta;
+		//return fileMeta;
 	}
 	
 	@RequestMapping(value = DashboardConstant.SHOW_AML_BATCH_REQUEST_UPLOAD_BY_REQUEST_ID, method = RequestMethod.GET)

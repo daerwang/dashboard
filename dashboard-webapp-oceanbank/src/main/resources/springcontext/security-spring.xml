@@ -97,8 +97,8 @@
 
 	<bean id="oauthAccessToken"
 		class="com.oceanbank.webapp.common.model.RestOauthAccessToken">
-		<property name="accessToken" value="${oauth.accesstoken.test}"></property>
-		<property name="restApi" value="${oauth.restApi.test}"></property>
+		<property name="accessToken" value="${oauth.accesstoken.local}"></property>
+		<property name="restApi" value="${oauth.restApi.dev}"></property>
 		<property name="environment" value="test"></property>
 		<property name="obDashboardRolesList">
 			<list>
