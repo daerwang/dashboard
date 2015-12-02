@@ -64,8 +64,8 @@ public class ExcelConverterController {
 	}
 	
 	@RequestMapping(value = DashboardConstant.EXECUTE_UPLOAD_EXCEL_CONVERTER_MODAL, method = RequestMethod.POST)
-	public @ResponseBody ExcelFileMeta executeExcelConverterUpload(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
-
+	public void executeExcelConverterUpload(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
+		// @ResponseBody ExcelFileMeta
         Iterator<String> itr =  request.getFileNames();
         MultipartFile mpf = null;
         ExcelFileMeta fileMeta = null;
@@ -94,7 +94,7 @@ public class ExcelConverterController {
         fileMeta.setFileSize(mpf.getSize()/1024+" Kb - OK");
         fileMeta.setFileType(mpf.getContentType());
 
-		return fileMeta;
+		//return fileMeta;
 	}
 	
 	@RequestMapping(value = DashboardConstant.OPEN_ADVISOR_TEXT_FILE_NEW_WINDOW, method = RequestMethod.GET)
