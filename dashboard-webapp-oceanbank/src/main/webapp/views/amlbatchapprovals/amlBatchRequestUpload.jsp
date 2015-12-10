@@ -8,26 +8,29 @@ $(document).ready(function() {
 	var table = $('#dashboardUploadDatatable').DataTable();
 	var requestId = "${requestId}";
 	
+	
 	$(function () {
 		
 	    $('#fileupload').fileupload({
 	        url: executeAmlBatchRequestUpload,
 	        dataType: 'json',
 	        formData: {requestId: requestId},
-	        done: function (e, data) {
-	            $('<p/>').text(data.result.fileName + ', ' + data.result.fileSize).appendTo('#files');
-
-	            setTimeout(function() {
-	            	table.ajax.reload();
-	            	uploadExcelFileDialog.close();
-
-				}, 2500);
-	        },
-	        progressall: function (e, data) {
-	        	
-	            var progress = parseInt(data.loaded / data.total * 100, 10);
-	            $('#progress .progress-bar').css('width', progress + '%');
+	        add: function (e, data) {
+	            data.submit();
 	            
+	            $('#progress .progress-bar').css('width', '100%');
+            	setTimeout(function() {
+            		table.ajax.reload();
+            		uploadAmlBatchRequestDialog.close();
+
+				}, 2000);
+
+	        },
+	        done: function (e, data) {
+	            
+        		//console.log(data);
+        		//$('<p/>').text(data.result.fileName + ', ' + data.result.fileSize).appendTo('#files');
+
 	        },
 	        //dropZone: $('#drop-zone'),
 	        fail: function(e, data){

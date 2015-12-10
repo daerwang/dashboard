@@ -990,9 +990,8 @@ public class AmlBatchController {
 	}
 	
 	@RequestMapping(value = DashboardConstant.EXECUTE_AML_BATCH_REQUEST_UPLOAD, method = RequestMethod.POST)
-	@ResponseBody
-	public ExcelFileMeta executeDashboardUpload(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
-
+	public void executeDashboardUpload(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
+		//@ResponseBody ExcelFileMeta
 		final String requestId = CommonUtil.determineValue(allRequestParams, "requestId");
 		
         Iterator<String> itr =  request.getFileNames();
@@ -1015,7 +1014,7 @@ public class AmlBatchController {
         fileMeta.setFileSize(mpf.getSize()/1024+" Kb - OK");
         fileMeta.setFileType(mpf.getContentType());
 
-		return fileMeta;
+		//return fileMeta;
 	}
 	
 	@RequestMapping(value = DashboardConstant.OPEN_AML_BATCH_REQUEST_UPLOAD, method = RequestMethod.GET)
