@@ -8,6 +8,32 @@ $(document).ready(function() {
 	var table = $('#amlBatchCifDatatable').DataTable();
 	var requestId = "${requestId}";
 	
+	function detectIE() {
+	    var ua = window.navigator.userAgent;
+
+	    var msie = ua.indexOf('MSIE ');
+	    if (msie > 0) {
+	        // IE 10 or older => return version number
+	        return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+	    }
+
+	    var trident = ua.indexOf('Trident/');
+	    if (trident > 0) {
+	        // IE 11 => return version number
+	        var rv = ua.indexOf('rv:');
+	        return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+	    }
+
+	    var edge = ua.indexOf('Edge/');
+	    if (edge > 0) {
+	       // IE 12 => return version number
+	       return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+	    }
+
+	    // other browser
+	    return false;
+	}
+	
 	$(function () {
 		
 	    $('#fileupload').fileupload({
@@ -19,7 +45,7 @@ $(document).ready(function() {
 	            data.submit();
 	            
 	            time = setInterval(function() {
-	                $.get(executeUploadExcel + "/.progress", function(data) {
+            		$.get(executeUploadExcel + "/.progress", function(data) {
 	                    if(!data){
 	                    	console.log('no data');
 	                    	return;
@@ -32,13 +58,14 @@ $(document).ready(function() {
 	    	            $('#progress .progress-bar').css('width', progress + '%');
 	                }); 
 	           }, 1500);
+	            
+	            
 	        },
 	        done: function (e, data) {
-	            
+
 	            clearInterval(time);  
         		$('#progress .progress-bar').css('width', '100%');
-        		//console.log(data);
-        		//$('<p/>').text(data.result.fileName + ', ' + data.result.fileSize).appendTo('#files');
+
 	            setTimeout(function() {
 	            	table.ajax.reload();
 	            	uploadExcelFileDialog.close();

@@ -304,8 +304,9 @@ public class AmlBatchServiceImpl extends OauthTokenBean implements AmlBatchServi
                 {
                     Cell cell = cellIterator.next();
                     // throw Exception when more than 2 column index found
-                    if(cell.getColumnIndex() == 2){
-                    	throw new DashboardException("The Excel file is not in proper format. There should be 2 rows only.");
+                    if(cell.getColumnIndex() > 1){
+                    	//throw new DashboardException("The Excel file is not in proper format. There should be 2 rows only.");
+                    	break;
                     }
                     
                     //Check the cell type and format accordingly
