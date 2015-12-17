@@ -926,13 +926,9 @@ public class AmlBatchController {
     	}
     	
     	String createdBy = CommonUtil.getAuthenticatedUserDetails().getUsername();
-    	List<AmlBatchCifResponse> cifList2 = new ArrayList<AmlBatchCifResponse>();
-    	synchronized (this) {
-    		cifList2 = amlBatchService.createAmlBatchCifFromExcel(requestId, mpf, createdBy);
-    		amlBatchService.saveAmlBatchRequestUploadFileToDisk(mpf, createdBy, requestId);
-		}
     	
-    	final List<AmlBatchCifResponse> cifList = cifList2;
+    	final List<AmlBatchCifResponse> cifList = amlBatchService.createAmlBatchCifFromExcel(requestId, mpf, createdBy);
+    	
     	String result = null;
     	
     	Long cifListCount = new Long(cifList.size());
@@ -980,7 +976,7 @@ public class AmlBatchController {
         fileMeta.setFileSize(mpf.getSize()/1024+" Kb - " + result);
         fileMeta.setFileType(mpf.getContentType());
     
-        
+        amlBatchService.saveAmlBatchRequestUploadFileToDisk(mpf, createdBy, requestId);
 		//return fileMeta;
 	}
 	
