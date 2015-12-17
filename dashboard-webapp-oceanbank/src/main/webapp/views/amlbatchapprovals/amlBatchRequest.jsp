@@ -491,7 +491,6 @@ select option{color: #555;}
 			}, 600);
 		};
 
-		var executeButtonDialog;
 		$('#executeButton').on('click', function(e) {
 			
 			var selected = $("#selectedType").val();
@@ -542,7 +541,7 @@ select option{color: #555;}
 				    	$('#myModal').modal('hide');
 				    	
 				    	
-				    	executeButtonDialog = new BootstrapDialog({
+				    	BootstrapDialog.show({
 							closable: false,
 				            title: 'Success',
 				            message: 'The AML Batch Request ' + area + ' execution is successful.',
@@ -556,8 +555,6 @@ select option{color: #555;}
 				            }]
 				        });
 				    	
-				    	executeButtonDialog.open();
-				    	
 				    	$('#batchStatus').val(data.status);
 				    },
 				    error: function(data) { 
@@ -570,24 +567,17 @@ select option{color: #555;}
 				    		errorMsg = obj.message;
 				    	});
 				    	
-				    	BootstrapDialog.alert({
-			            	title: 'WARNING',
-				            message: code + '</br>' + errorMsg,
-				            type: BootstrapDialog.TYPE_DANGER, 
-				            closable: true, 
-				            draggable: true, 
-				            buttonLabel: 'Ok'
-				        });
-				    	
 				    	BootstrapDialog.show({
 							closable: false,
 				            title: 'WARNING',
+				            draggable: true, 
 				            message: code + '</br>' + errorMsg,
+				            type: BootstrapDialog.TYPE_DANGER, 
 				            buttons: [{
 				                label: 'Ok',
 				                action: function(dialog){
 				                    dialog.close();
-				                    executeButtonDialog.close();
+				                    $('#myModal').modal('hide');
 				                    table = $('#amlBatchCifDatatable').DataTable();
 							    	table.ajax.reload();
 				                }
