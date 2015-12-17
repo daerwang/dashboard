@@ -6,6 +6,7 @@ $(document).ready(function() {
 	
 	var executeUploadExcel = "<c:url value="${executeUploadExcel}"/>";
 	var table = $('#amlBatchCifDatatable').DataTable();
+	var table2 = $('#dashboardUploadDatatable').DataTable();
 	var requestId = "${requestId}";
 	
 	function detectIE() {
@@ -68,6 +69,7 @@ $(document).ready(function() {
 
 	            setTimeout(function() {
 	            	table.ajax.reload();
+	            	table2.ajax.reload();
 	            	uploadExcelFileDialog.close();
 
 				}, 2000);
@@ -135,7 +137,7 @@ $(document).ready(function() {
     <!-- The fileinput-button span is used to style the file input field as button -->
     <span class="btn btn-success fileinput-button">
         <i class="glyphicon glyphicon-plus"></i>
-        <span>Upload Excel file</span>
+        <span>Transfer Data</span>
         <!-- The file input field used as target for the file upload widget -->
         <input id="fileupload" type="file" name="files">
     </span>

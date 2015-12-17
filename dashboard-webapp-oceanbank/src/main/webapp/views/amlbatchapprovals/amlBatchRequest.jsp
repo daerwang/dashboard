@@ -354,7 +354,7 @@ select option{color: #555;}
 			e.preventDefault();
 			
 			uploadExcelFileDialog = new BootstrapDialog({
-				title : 'Upload Excel File',
+				title : 'Transfer Data From Excel',
 				draggable: true, 
 				message : function(dialog) {
 					var $message = $('<div></div>');
@@ -390,7 +390,7 @@ select option{color: #555;}
 			e.preventDefault();
 			
 			uploadAmlBatchRequestDialog = new BootstrapDialog({
-				title : 'Upload File',
+				title : 'Attachment',
 				draggable: true, 
 				message : function(dialog) {
 					var $message = $('<div></div>');
@@ -840,7 +840,7 @@ select option{color: #555;}
 				<button type="button" class="btn btn-default btn-sm" id="newButton">New</button>
 				<button type="button" class="btn btn-default btn-sm" id="editButton">Edit</button>
 				<button type="button" class="btn btn-default btn-sm" id="deleteButton">Delete</button>
-				<button type="button" class="btn btn-default btn-sm" id="uploadButton">Upload Excel</button>
+				<button type="button" class="btn btn-default btn-sm" id="uploadButton">Transfer Data From Excel</button>
 			</p>
 			
 			<table id="amlBatchCifDatatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -861,13 +861,13 @@ select option{color: #555;}
 		<label class="control-label col-md-1"></label> 
 		<div class="col-md-11">
 	
-			<h4>File Upload</h4>
-			<p>Upload your file here for reference.</p>
+			<h4>Attachments</h4>
+			<p>Please attach your Excel file here.</p>
 			<hr>
 			<p>
 				<button type="button" class="btn btn-default btn-sm" id="openUploadButton">Open</button>
 				<button type="button" class="btn btn-default btn-sm" id="deleteUploadButton">Delete</button>
-				<button type="button" class="btn btn-default btn-sm" id="newUploadButton">Upload File</button>
+				<button type="button" class="btn btn-default btn-sm" id="newUploadButton">Upload Attachment</button>
 			</p>
 			
 			<table id="dashboardUploadDatatable" class="table table-striped table-bordered" cellspacing="0" width="100%">

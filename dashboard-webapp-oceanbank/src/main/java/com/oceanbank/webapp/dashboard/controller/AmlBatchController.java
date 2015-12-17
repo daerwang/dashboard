@@ -902,7 +902,7 @@ public class AmlBatchController {
 	}
 	
 	@RequestMapping(value = DashboardConstant.EXECUTE_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL, method = RequestMethod.POST)
-	public void executeUploadExcelAmlBatchCif(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException {
+	public void executeUploadExcelAmlBatchCif(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
 		
 		final String requestId = CommonUtil.determineValue(allRequestParams, "requestId");
 
@@ -926,8 +926,13 @@ public class AmlBatchController {
     	}
     	
     	String createdBy = CommonUtil.getAuthenticatedUserDetails().getUsername();
+    	List<AmlBatchCifResponse> cifList2 = new ArrayList<AmlBatchCifResponse>();
+    	synchronized (this) {
+    		cifList2 = amlBatchService.createAmlBatchCifFromExcel(requestId, mpf, createdBy);
+    		amlBatchService.saveAmlBatchRequestUploadFileToDisk(mpf, createdBy, requestId);
+		}
     	
-    	final List<AmlBatchCifResponse> cifList = amlBatchService.createAmlBatchCifFromExcel(requestId, mpf, createdBy);
+    	final List<AmlBatchCifResponse> cifList = cifList2;
     	String result = null;
     	
     	Long cifListCount = new Long(cifList.size());
