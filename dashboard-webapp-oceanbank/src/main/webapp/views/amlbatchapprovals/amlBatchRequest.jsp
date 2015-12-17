@@ -491,7 +491,7 @@ select option{color: #555;}
 			}, 600);
 		};
 
-		
+		var executeButtonDialog;
 		$('#executeButton').on('click', function(e) {
 			
 			var selected = $("#selectedType").val();
@@ -541,7 +541,8 @@ select option{color: #555;}
 				    	
 				    	$('#myModal').modal('hide');
 				    	
-				    	BootstrapDialog.show({
+				    	
+				    	executeButtonDialog = new BootstrapDialog({
 							closable: false,
 				            title: 'Success',
 				            message: 'The AML Batch Request ' + area + ' execution is successful.',
@@ -554,6 +555,8 @@ select option{color: #555;}
 				                }
 				            }]
 				        });
+				    	
+				    	executeButtonDialog.open();
 				    	
 				    	$('#batchStatus').val(data.status);
 				    },
@@ -574,7 +577,22 @@ select option{color: #555;}
 				            closable: true, 
 				            draggable: true, 
 				            buttonLabel: 'Ok'
-				        });	
+				        });
+				    	
+				    	BootstrapDialog.show({
+							closable: false,
+				            title: 'WARNING',
+				            message: code + '</br>' + errorMsg,
+				            buttons: [{
+				                label: 'Ok',
+				                action: function(dialog){
+				                    dialog.close();
+				                    executeButtonDialog.close();
+				                    table = $('#amlBatchCifDatatable').DataTable();
+							    	table.ajax.reload();
+				                }
+				            }]
+				        });
 				    }
 				});
 			}
