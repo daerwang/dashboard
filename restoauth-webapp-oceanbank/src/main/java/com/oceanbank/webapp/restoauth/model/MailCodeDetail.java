@@ -18,7 +18,7 @@ import javax.persistence.Table;
  * @since 03.10.2015
  */
 @Entity
-@Table(name="CIS7349F2", schema="FALLIB")
+@Table(name="CIS7349F2")
 public class MailCodeDetail {
 	
 	/**

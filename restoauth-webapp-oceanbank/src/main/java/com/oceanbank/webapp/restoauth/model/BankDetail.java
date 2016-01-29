@@ -17,7 +17,7 @@ import javax.persistence.Table;
  * @since 03.10.2015
  */
 @Entity
-@Table(name="TNPARG", schema="FALLIB")
+@Table(name="TNPARG")
 public class BankDetail implements java.io.Serializable{
 	
 	/**

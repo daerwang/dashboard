@@ -20,7 +20,7 @@ import org.hibernate.annotations.NamedQuery;
  * @since 03.10.2015
  */
 @Entity
-@Table(name="CIS7349F1", schema="FALLIB")
+@Table(name="CIS7349F1")
 @NamedQueries({
 	  @NamedQuery(name="IrsFormCustomer.findByCustomerPk",
 	              query = "from IrsFormCustomer where irsFormId.fld_14acd_1 = :name and irsFormId.fld_19 = :account and irsFormId.fld_12a = :tin and irsFormId.fld_2 = :gross"),

@@ -4,6 +4,7 @@
  */
 package com.oceanbank.webapp.common.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -189,5 +190,17 @@ public class CommonUtil {
 		LOGGER.info("heapSize " + heapSize/1000);
 		LOGGER.info("heapMaxSize " + heapMaxSize/1000);
 		LOGGER.info("heapFreeSize " + heapFreeSize/1000);
+	}
+	
+	public static void openFile(String fullFilePath){
+		Process p;
+		try {
+			p = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + fullFilePath);
+			p.waitFor();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }
