@@ -145,7 +145,8 @@ public class LoginController extends OauthTokenBean{
 		model.addAttribute("kycBatchApprovalUrl", DashboardConstant.SHOW_AML_BATCH_PAGE);
 		model.addAttribute("irs1042sFormUrl", DashboardConstant.SHOW_IRS_FORM_PAGE);
 		model.addAttribute("excelConverterUrl", DashboardConstant.SHOW_EXCEL_CONVERTER_PAGE);
-		
+		model.addAttribute("w8BeneFormUrl", "/w8beneform");
+
 		return DashboardConstant.TILES_HOME_TEMPLATE;	
 	}
 	
