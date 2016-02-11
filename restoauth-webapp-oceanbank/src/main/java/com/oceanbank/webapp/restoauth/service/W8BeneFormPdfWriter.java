@@ -1,0 +1,297 @@
+package com.oceanbank.webapp.restoauth.service;
+
+import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.io.RandomAccessFile;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.util.PDFMergerUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.oceanbank.webapp.restoauth.model.IrsFormCoordinate;
+import com.oceanbank.webapp.restoauth.model.W8BeneForm;
+import com.oceanbank.webapp.restoauth.model.W8BeneFormAddress;
+
+public class W8BeneFormPdfWriter implements PdfFormWriter {
+	
+	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+	private W8BeneFormService w8BeneFormService;
+	
+	public W8BeneFormPdfWriter(){
+		this.w8BeneFormService = new W8BeneFormService();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void writeToTemplate(String templateFilePath, String individualDirectory, List<W8BeneForm> forms) {
+		
+		PDDocument document = null;
+		String individualFilePath = null;
+		PDFont font = PDType1Font.HELVETICA_BOLD;
+		File pdfFile = w8BeneFormService.getFile(templateFilePath);
+		w8BeneFormService.clearDirectory(individualDirectory);
+		
+		
+		for(W8BeneForm f : forms){
+			individualFilePath = individualDirectory + "//W8BeneForm_" + f.getId() + ".pdf";
+			List<IrsFormCoordinate> coordinates = setupFormCoordinates(f);
+			try {
+				document = PDDocument.load(pdfFile);
+				List<PDPage> pages = document.getDocumentCatalog().getAllPages();
+				int i = 0;
+				for(PDPage p : pages){
+					PDPageContentStream contentStream = new PDPageContentStream(document, p, true, true);
+					
+					draw(contentStream, coordinates, font, ++i);
+					contentStream.close();
+				}
+
+				document.save(individualFilePath);
+				document.close();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (COSVisitorException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+
+	@Override
+	public void writeToClearPaper(String templateFilePath, String individualDirectory, List<W8BeneForm> forms) {
+		PDDocument document = null;
+		String individualFilePath = null;
+		PDFont font = PDType1Font.HELVETICA_BOLD;
+		//File pdfFile = w8BeneFormService.getFile(templateFilePath);
+		w8BeneFormService.clearDirectory(individualDirectory);
+		
+		
+		
+		for(W8BeneForm f : forms){
+			individualFilePath = individualDirectory + "//W8BeneForm_" + f.getId() + ".pdf";
+			List<IrsFormCoordinate> coordinates = setupFormCoordinates(f);
+			try {
+				document = new PDDocument();
+				//List<PDPage> pages = document.getDocumentCatalog().getAllPages();
+				for(int i = 1; i <= 10; i++){
+					PDRectangle rec = new PDRectangle(615, 790);
+					PDPage clearPage = new PDPage(rec);
+					document.addPage(clearPage);
+					
+					PDPageContentStream contentStream = new PDPageContentStream(document, clearPage, true, true);
+					
+					draw(contentStream, coordinates, font, i);
+					contentStream.close();
+				}
+
+				document.save(individualFilePath);
+				document.close();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (COSVisitorException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public List<IrsFormCoordinate> setupFormCoordinates(W8BeneForm entity) {
+
+		List<IrsFormCoordinate> coordinates = new ArrayList<IrsFormCoordinate>();
+		
+		// for Page 1
+		IrsFormCoordinate cif = new IrsFormCoordinate("cif", 495, 748, 10, entity.getCif(), 1);
+		IrsFormCoordinate name = new IrsFormCoordinate("name", 32, 555, 10, entity.getName(), 1);
+		IrsFormCoordinate physicalAddress = new IrsFormCoordinate("physicalAddress", 34, 146, 10, entity.getPhysicalAddress(), 1);
+		IrsFormCoordinate physicalCity = new IrsFormCoordinate("physicalCity", 34, 122, 10, entity.getPhysicalCity(), 1);
+		IrsFormCoordinate physicalCountryInc = new IrsFormCoordinate("physicalCountryInc", 440, 122, 10, entity.getPhysicalCountryInc(), 1);
+		int a = 48;
+		IrsFormCoordinate altAddress = new IrsFormCoordinate("altAddress", 34, 146 - a, 10, entity.getAltAddress(), 1);
+		IrsFormCoordinate altCity = new IrsFormCoordinate("altCity", 34, 122 - a, 10, entity.getAltCity(), 1);
+		IrsFormCoordinate altCountry = new IrsFormCoordinate("altCountry", 440, 122 - a, 10, entity.getAltCountry(), 1);
+		IrsFormCoordinate account = new IrsFormCoordinate("account", 426, 122 - a - 25, 10, entity.getAccount(), 1);
+		
+		// for Page 10
+		int left = 105;
+		IrsFormCoordinate labelName = new IrsFormCoordinate("labelName", left, 640, 8, entity.getLabelName(), 10);
+		IrsFormCoordinate officer = new IrsFormCoordinate("officer", 350, 640, 8, entity.getOfficer() + "    " + entity.getBranch(), 10);
+		W8BeneFormAddress trimAddress = trimAddress(entity.getAltAddressLabel());
+		IrsFormCoordinate altAddressLabel = new IrsFormCoordinate("altAddressLabel", left, 630, 8, trimAddress.getFirstLine(), 10);
+		IrsFormCoordinate altAddressLabel2 = new IrsFormCoordinate();
+		if(trimAddress.getSecondLine().trim().length() > 0){
+			altAddressLabel2 = new IrsFormCoordinate("altAddressLabel2", left, 620, 8, trimAddress.getSecondLine(), 10);
+		}
+		IrsFormCoordinate altCityLabel = new IrsFormCoordinate("altCityLabel", left, 608, 8, entity.getAltCityLabel(), 10);
+		IrsFormCoordinate altCountryLabel = new IrsFormCoordinate("altCountryLabel", left, 598, 8, entity.getAltCountryLabel(), 10);
+		
+		
+		coordinates.add(cif);
+		coordinates.add(name);
+		coordinates.add(physicalCountryInc);
+		coordinates.add(physicalAddress);
+		coordinates.add(physicalCity);
+		coordinates.add(altAddress);
+		coordinates.add(altCity);
+		coordinates.add(altCountry);
+		coordinates.add(account);
+		coordinates.add(labelName);
+		coordinates.add(officer);
+		coordinates.add(altAddressLabel);
+		coordinates.add(altAddressLabel2);
+		coordinates.add(altCityLabel);
+		coordinates.add(altCountryLabel);
+		
+		return coordinates;
+	}
+
+	@Override
+	public void mergePdf(String individualDirectory, String mergeDirectory, String tempDirectory, String mergeFileName) {
+		int maxPdf = 100000;
+		String mergeFilePath = mergeDirectory + "//" + mergeFileName;
+		
+		final File file = new File(individualDirectory);
+		if (file.isDirectory()) {
+
+			// proceed to crawl thru the folder and merge the pdf according to last mod date
+			final File[] pdfs = file.listFiles();
+			int cnt = pdfs.length;
+
+			if (cnt > 0) {
+				// sort the pdfs by last mod date in desc order
+				Arrays.sort(pdfs, new Comparator<File>() {
+
+					@Override
+					public int compare(File f1, File f2) {
+						return Long.compare(f2.lastModified(),
+								f1.lastModified());
+					}
+				});
+
+				if (maxPdf != 0 && maxPdf < cnt) {
+					cnt = maxPdf;
+				}
+
+				// create a temp file for temp pdf stream storage
+				final String tempFileName = (new Date()).getTime() + "_temp";
+				final File tempFile = new File(tempDirectory + "//" + tempFileName);
+
+				// proceed to merge
+				PDDocument desPDDoc = null;
+				final PDFMergerUtility pdfMerger = new PDFMergerUtility();
+				try {
+					// traverse the files
+					boolean hasCloneFirstDoc = false;
+					for (int i = 0; i < cnt; i++) {
+						final File pdfFile = pdfs[i];
+						PDDocument doc = null;
+						try {
+							if (hasCloneFirstDoc) {
+								doc = PDDocument.load(pdfFile);
+								pdfMerger.appendDocument(desPDDoc, doc);
+							} else {
+								desPDDoc = PDDocument.load(pdfFile, new RandomAccessFile(tempFile, "rw"));
+								hasCloneFirstDoc = true;
+							}
+						} catch (IOException ioe) {
+							LOGGER.error("Invalid PDF detected: " + pdfFile.getName());
+							ioe.printStackTrace();
+						} finally {
+							if (doc != null) {
+								doc.close();
+							}
+						}
+					}
+
+					
+					desPDDoc.save(mergeFilePath);
+
+
+				} catch (IOException | COSVisitorException e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						if (desPDDoc != null) {
+							desPDDoc.close();
+						}
+					} catch (IOException ioe) {
+						ioe.printStackTrace();
+					}
+					try {
+						tempFile.delete();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+					
+				}
+			} else {
+				LOGGER.error("Target directory is empty.");
+			}
+		} else {
+			LOGGER.error("Target is not a directory (" + mergeDirectory+ ").");
+		}
+		
+	}
+
+	@Override
+	public void draw(PDPageContentStream contentStream, List<IrsFormCoordinate> coordinates, PDFont font, Integer pageNumber) throws IOException {
+		final Integer moveX = 0;
+		final Integer moveYForm1 = 0;
+
+		// 1st Form
+		for (IrsFormCoordinate p : coordinates) {
+			if(p.getPageNumber() == pageNumber){
+				contentStream.beginText();
+				contentStream.setFont(font, Float.floatToRawIntBits(p.getFontSize()) != 0 ? p.getFontSize() : 7);
+				if(pageNumber == 10){
+					contentStream.setNonStrokingColor(Color.BLACK);
+				}else{
+					contentStream.setNonStrokingColor(Color.BLUE);
+				}
+				contentStream.moveTextPositionByAmount(p.getX() + moveX, p.getY() - moveYForm1);
+				contentStream.drawString(p.getText() != null ? p.getText() : "");
+				contentStream.endText();
+			}
+			
+		}
+
+	}
+	
+	private W8BeneFormAddress trimAddress(String address){
+		W8BeneFormAddress add = new W8BeneFormAddress();
+		
+		int limit = 48;
+		String[] arr = address.split(" ");
+		StringBuilder line1 = new StringBuilder();
+		StringBuilder line2 = new StringBuilder();
+		Boolean isSecondNow = false;
+		for(int i = 0; i < arr.length; i++){
+			String next = line1.toString() + " " + arr[i]; 
+			if(next.length() <= limit && !isSecondNow){
+				line1.append(arr[i] + " ");
+			}else{
+				line2.append(arr[i] + " ");
+				isSecondNow = true;
+			}
+		}
+		add.setFirstLine(line1.toString().trim());
+		add.setSecondLine(line2.toString().trim());
+		return add;
+		
+	}
+
+}
