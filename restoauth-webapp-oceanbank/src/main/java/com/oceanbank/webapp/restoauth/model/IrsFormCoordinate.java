@@ -32,6 +32,8 @@ public class IrsFormCoordinate {
 	/** The text. */
 	private String text = "";
 	
+	private Integer pageNumber;
+	
 	
 	/**
 	 * Instantiates a new irs form coordinate.
@@ -55,6 +57,15 @@ public class IrsFormCoordinate {
 		this.text = text;
 		this.fontSize = fontSize;
 		this.name = name;
+	}
+	
+	public IrsFormCoordinate(String name, float x, float y, float fontSize, String text, Integer pageNumber){
+		this.x = x;
+		this.y = y;
+		this.text = text;
+		this.fontSize = fontSize;
+		this.name = name;
+		this.pageNumber = pageNumber;
 	}
 	
 	/**
@@ -176,6 +187,14 @@ public class IrsFormCoordinate {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getPageNumber() {
+		return pageNumber;
+	}
+
+	public void setPageNumber(Integer pageNumber) {
+		this.pageNumber = pageNumber;
 	}
 	
 }
