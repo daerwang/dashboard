@@ -67,7 +67,11 @@
 	    <put-attribute name="pageContainer"	value="/views/excelconverter/excelConverter.jsp" />
 	</definition>
 	
-	
+	<!-- W8Bene Form page -->
+	<definition name="tiles_w8BeneForm" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/w8beneforms/w8BeneFormDatatable.jsp" />
+	</definition>
 	
 	
 	

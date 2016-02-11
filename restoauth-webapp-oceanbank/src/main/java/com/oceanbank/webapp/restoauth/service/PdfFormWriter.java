@@ -12,8 +12,8 @@ import com.oceanbank.webapp.restoauth.model.W8BeneForm;
 public interface PdfFormWriter {
 	
 	public void writeToTemplate(String templateFilePath, String individualDirectory, List<W8BeneForm> forms);
-	public void writeToClearPaper();
+	public void writeToClearPaper(String templateFilePath, String individualDirectory, List<W8BeneForm> forms);
 	public void mergePdf(String individualDirectory, String mergeDirectory, String tempDirectory, String mergeFileName);
-	public void draw(PDPageContentStream contentStream, List<IrsFormCoordinate> coordinates, PDFont font) throws IOException;
+	public void draw(PDPageContentStream contentStream, List<IrsFormCoordinate> coordinates, PDFont font, Integer pageNumber) throws IOException;
 	public List<IrsFormCoordinate> setupFormCoordinates(W8BeneForm entity);
 }

@@ -38,6 +38,9 @@ body {
 			<sec:authorize access="hasAnyRole('Administrator','Excel_Converter')">
 				<li><a href="<c:url value="${excelConverterUrl}"/>" id="excelConverter">Advisor File Converter</a></li>
 			</sec:authorize>
+			<sec:authorize access="hasAnyRole('Administrator','1042S_Form')">
+				<li><a href="<c:url value="${w8BeneFormUrl}"/>" id="w8BeneForm">W-8BEN-E Forms for 2014</a></li>
+			</sec:authorize>
 		</ul>
 	</div>
 </div>

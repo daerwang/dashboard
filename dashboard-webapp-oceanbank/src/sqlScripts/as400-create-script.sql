@@ -176,6 +176,28 @@ CREATE TABLE IBMOB700.DashboardUpload (
 CREATE INDEX "id_index_dashboardupload" ON IBMOB700.DashboardUpload (id);
 CREATE INDEX "id_tableid_tablename_dashboardupload" ON IBMOB700.DashboardUpload (id, table_id, table_name);
 
+
+CREATE TABLE IBMOB700.w8beneform (
+  id INT GENERATED ALWAYS AS IDENTITY,
+  cif varchar(45),
+  name varchar(500),
+  physicalCountryInc varchar(45),
+  physicalAddress varchar(500),
+  physicalCity varchar(45),
+  physicalCountry varchar(45),
+  altAddress varchar(500),
+  altCity varchar(45),
+  altCountry varchar(45),
+  account varchar(45),
+  labelName varchar(200),
+  officer varchar(45),
+  branch varchar(45),
+  altAddressLabel varchar(500),
+  altCityLabel varchar(45),
+  altCountryLabel varchar(45),
+  PRIMARY KEY (id)
+);
+
 CREATE TABLE IBMOB700.DashboardComment (
   id INT GENERATED ALWAYS AS IDENTITY,
   table_id INT NOT NULL,

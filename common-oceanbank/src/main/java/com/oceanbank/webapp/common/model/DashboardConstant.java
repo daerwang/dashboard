@@ -34,7 +34,7 @@ public class DashboardConstant {
 	public static final String PDF_MERGING_FILE_LOCATION = "C://dashboard//merged.pdf";
 	public static final String PDF_MERGING_INDIVIDUAL_FILE_LOCATION = "C://dashboard//individual";
 	public static final String PDF_FILE_LOCATION = "C://dashboard";
-	public static final String PDF_TESTING_TEMPLATE_FILE = "C://dashboard//template//template2.pdf";
+	public static final String PDF_TESTING_TEMPLATE_FILE = "C://dashboard//template//template4.pdf";
 
 	
 	// Dashboard Paths for IRS 1042-S

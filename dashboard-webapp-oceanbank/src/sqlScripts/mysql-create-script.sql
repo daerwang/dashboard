@@ -173,3 +173,26 @@ CREATE TABLE IF NOT EXISTS `test-oceanbank-db`.`DashboardLog` (
   INDEX `id_index` (`id` ASC),
   INDEX `id_table_name_index` (`id` ASC, `table_id` ASC, `table_name` ASC))
 ENGINE = InnoDB
+
+
+CREATE TABLE `w8beneform` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cif` varchar(45) DEFAULT NULL,
+  `name` varchar(500) DEFAULT NULL,
+  `physicalCountryInc` varchar(45) DEFAULT NULL,
+  `physicalAddress` varchar(500) DEFAULT NULL,
+  `physicalCity` varchar(45) DEFAULT NULL,
+  `physicalCountry` varchar(45) DEFAULT NULL,
+  `altAddress` varchar(500) DEFAULT NULL,
+  `altCity` varchar(45) DEFAULT NULL,
+  `altCountry` varchar(45) DEFAULT NULL,
+  `account` varchar(45) DEFAULT NULL,
+  `labelName` varchar(200) DEFAULT NULL,
+  `officer` varchar(45) DEFAULT NULL,
+  `branch` varchar(45) DEFAULT NULL,
+  `altAddressLabel` varchar(500) DEFAULT NULL,
+  `altCityLabel` varchar(45) DEFAULT NULL,
+  `altCountryLabel` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8;
+

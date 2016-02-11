@@ -13,6 +13,7 @@ import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.io.RandomAccessFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.oceanbank.webapp.restoauth.model.IrsFormCoordinate;
 import com.oceanbank.webapp.restoauth.model.W8BeneForm;
+import com.oceanbank.webapp.restoauth.model.W8BeneFormAddress;
 
 public class W8BeneFormPdfWriter implements PdfFormWriter {
 	
@@ -32,31 +34,31 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 		this.w8BeneFormService = new W8BeneFormService();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void writeToTemplate(String templateFilePath, String individualDirectory, List<W8BeneForm> forms) {
 		
 		PDDocument document = null;
-		PDPage page = null;
 		String individualFilePath = null;
+		PDFont font = PDType1Font.HELVETICA_BOLD;
 		File pdfFile = w8BeneFormService.getFile(templateFilePath);
 		w8BeneFormService.clearDirectory(individualDirectory);
 		
+		
 		for(W8BeneForm f : forms){
 			individualFilePath = individualDirectory + "//W8BeneForm_" + f.getId() + ".pdf";
-			
+			List<IrsFormCoordinate> coordinates = setupFormCoordinates(f);
 			try {
-				
 				document = PDDocument.load(pdfFile);
-				page = (PDPage) document.getDocumentCatalog().getAllPages().get(0);
-				
-				PDFont font = PDType1Font.HELVETICA_BOLD;
-				PDPageContentStream contentStream = new PDPageContentStream(document, page, true, true);
-				page.getContents().getStream();
+				List<PDPage> pages = document.getDocumentCatalog().getAllPages();
+				int i = 0;
+				for(PDPage p : pages){
+					PDPageContentStream contentStream = new PDPageContentStream(document, p, true, true);
+					
+					draw(contentStream, coordinates, font, ++i);
+					contentStream.close();
+				}
 
-				List<IrsFormCoordinate> coordinates = setupFormCoordinates(f);
-				draw(contentStream, coordinates, font);
-
-				contentStream.close();
 				document.save(individualFilePath);
 				document.close();
 				
@@ -70,8 +72,41 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 	}
 
 	@Override
-	public void writeToClearPaper() {
+	public void writeToClearPaper(String templateFilePath, String individualDirectory, List<W8BeneForm> forms) {
+		PDDocument document = null;
+		String individualFilePath = null;
+		PDFont font = PDType1Font.HELVETICA_BOLD;
+		//File pdfFile = w8BeneFormService.getFile(templateFilePath);
+		w8BeneFormService.clearDirectory(individualDirectory);
+		
+		
+		
+		for(W8BeneForm f : forms){
+			individualFilePath = individualDirectory + "//W8BeneForm_" + f.getId() + ".pdf";
+			List<IrsFormCoordinate> coordinates = setupFormCoordinates(f);
+			try {
+				document = new PDDocument();
+				//List<PDPage> pages = document.getDocumentCatalog().getAllPages();
+				for(int i = 1; i <= 10; i++){
+					PDRectangle rec = new PDRectangle(615, 790);
+					PDPage clearPage = new PDPage(rec);
+					document.addPage(clearPage);
+					
+					PDPageContentStream contentStream = new PDPageContentStream(document, clearPage, true, true);
+					
+					draw(contentStream, coordinates, font, i);
+					contentStream.close();
+				}
 
+				document.save(individualFilePath);
+				document.close();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (COSVisitorException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -79,12 +114,47 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 
 		List<IrsFormCoordinate> coordinates = new ArrayList<IrsFormCoordinate>();
 		
-		IrsFormCoordinate cif = new IrsFormCoordinate("cif", 495, 748, 10, entity.getCif());
-		IrsFormCoordinate name = new IrsFormCoordinate("name", 32, 555, 10, entity.getName());
+		// for Page 1
+		IrsFormCoordinate cif = new IrsFormCoordinate("cif", 495, 748, 10, entity.getCif(), 1);
+		IrsFormCoordinate name = new IrsFormCoordinate("name", 32, 555, 10, entity.getName(), 1);
+		IrsFormCoordinate physicalAddress = new IrsFormCoordinate("physicalAddress", 34, 146, 10, entity.getPhysicalAddress(), 1);
+		IrsFormCoordinate physicalCity = new IrsFormCoordinate("physicalCity", 34, 122, 10, entity.getPhysicalCity(), 1);
+		IrsFormCoordinate physicalCountryInc = new IrsFormCoordinate("physicalCountryInc", 440, 122, 10, entity.getPhysicalCountryInc(), 1);
+		int a = 48;
+		IrsFormCoordinate altAddress = new IrsFormCoordinate("altAddress", 34, 146 - a, 10, entity.getAltAddress(), 1);
+		IrsFormCoordinate altCity = new IrsFormCoordinate("altCity", 34, 122 - a, 10, entity.getAltCity(), 1);
+		IrsFormCoordinate altCountry = new IrsFormCoordinate("altCountry", 440, 122 - a, 10, entity.getAltCountry(), 1);
+		IrsFormCoordinate account = new IrsFormCoordinate("account", 426, 122 - a - 25, 10, entity.getAccount(), 1);
+		
+		// for Page 10
+		int left = 105;
+		IrsFormCoordinate labelName = new IrsFormCoordinate("labelName", left, 640, 8, entity.getLabelName(), 10);
+		IrsFormCoordinate officer = new IrsFormCoordinate("officer", 350, 640, 8, entity.getOfficer() + "    " + entity.getBranch(), 10);
+		W8BeneFormAddress trimAddress = trimAddress(entity.getAltAddressLabel());
+		IrsFormCoordinate altAddressLabel = new IrsFormCoordinate("altAddressLabel", left, 630, 8, trimAddress.getFirstLine(), 10);
+		IrsFormCoordinate altAddressLabel2 = new IrsFormCoordinate();
+		if(trimAddress.getSecondLine().trim().length() > 0){
+			altAddressLabel2 = new IrsFormCoordinate("altAddressLabel2", left, 620, 8, trimAddress.getSecondLine(), 10);
+		}
+		IrsFormCoordinate altCityLabel = new IrsFormCoordinate("altCityLabel", left, 608, 8, entity.getAltCityLabel(), 10);
+		IrsFormCoordinate altCountryLabel = new IrsFormCoordinate("altCountryLabel", left, 598, 8, entity.getAltCountryLabel(), 10);
 		
 		
 		coordinates.add(cif);
 		coordinates.add(name);
+		coordinates.add(physicalCountryInc);
+		coordinates.add(physicalAddress);
+		coordinates.add(physicalCity);
+		coordinates.add(altAddress);
+		coordinates.add(altCity);
+		coordinates.add(altCountry);
+		coordinates.add(account);
+		coordinates.add(labelName);
+		coordinates.add(officer);
+		coordinates.add(altAddressLabel);
+		coordinates.add(altAddressLabel2);
+		coordinates.add(altCityLabel);
+		coordinates.add(altCountryLabel);
 		
 		return coordinates;
 	}
@@ -178,53 +248,50 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 	}
 
 	@Override
-	public void draw(PDPageContentStream contentStream, List<IrsFormCoordinate> coordinates, PDFont font) throws IOException {
+	public void draw(PDPageContentStream contentStream, List<IrsFormCoordinate> coordinates, PDFont font, Integer pageNumber) throws IOException {
 		final Integer moveX = 0;
 		final Integer moveYForm1 = 0;
-		final Integer moveYForm2 = 243 + 1;
-		final Integer moveYForm3 = 486 + 1;
 
 		// 1st Form
 		for (IrsFormCoordinate p : coordinates) {
-			contentStream.beginText();
-			contentStream.setFont(font, Float.floatToRawIntBits(p.getFontSize()) != 0 ? p.getFontSize() : 7);
-			contentStream.setNonStrokingColor(Color.BLUE);
-			contentStream.moveTextPositionByAmount(p.getX() + moveX, p.getY() - moveYForm1);
-			contentStream.drawString(p.getText() != null ? p.getText() : "");
-			contentStream.endText();
+			if(p.getPageNumber() == pageNumber){
+				contentStream.beginText();
+				contentStream.setFont(font, Float.floatToRawIntBits(p.getFontSize()) != 0 ? p.getFontSize() : 7);
+				if(pageNumber == 10){
+					contentStream.setNonStrokingColor(Color.BLACK);
+				}else{
+					contentStream.setNonStrokingColor(Color.BLUE);
+				}
+				contentStream.moveTextPositionByAmount(p.getX() + moveX, p.getY() - moveYForm1);
+				contentStream.drawString(p.getText() != null ? p.getText() : "");
+				contentStream.endText();
+			}
+			
 		}
 
-//		// 2nd Form
-//		for (IrsFormCoordinate p : coordinates) {
-//
-//			if (p.getName() != null
-//					&& p.getName().equalsIgnoreCase("thirdForm"))
-//				continue;
-//
-//			contentStream.beginText();
-//			contentStream.setFont(font, Float.floatToRawIntBits(p.getFontSize()) != 0 ? p.getFontSize()
-//					: 7);
-////			contentStream.setNonStrokingColor(Color.BLUE);
-//			contentStream.moveTextPositionByAmount(p.getX() + moveX, p.getY()
-//					- moveYForm2);
-//			contentStream.drawString(p.getText() != null ? p.getText() : "");
-//			contentStream.endText();
-//		}
-//
-//		// 3rd Form
-//		for (IrsFormCoordinate p : coordinates) {
-//			if (p.getName() != null && p.getName().equalsIgnoreCase("header")) {
-//				p.setY(p.getY() + 3);
-//			}
-//			contentStream.beginText();
-//			contentStream.setFont(font, Float.floatToRawIntBits(p.getFontSize()) != 0 ? p.getFontSize()
-//					: 7);
-////			contentStream.setNonStrokingColor(Color.BLUE);
-//			contentStream.moveTextPositionByAmount(p.getX() + moveX, p.getY()
-//					- moveYForm3);
-//			contentStream.drawString(p.getText() != null ? p.getText() : "");
-//			contentStream.endText();
-//		}
+	}
+	
+	private W8BeneFormAddress trimAddress(String address){
+		W8BeneFormAddress add = new W8BeneFormAddress();
+		
+		int limit = 48;
+		String[] arr = address.split(" ");
+		StringBuilder line1 = new StringBuilder();
+		StringBuilder line2 = new StringBuilder();
+		Boolean isSecondNow = false;
+		for(int i = 0; i < arr.length; i++){
+			String next = line1.toString() + " " + arr[i]; 
+			if(next.length() <= limit && !isSecondNow){
+				line1.append(arr[i] + " ");
+			}else{
+				line2.append(arr[i] + " ");
+				isSecondNow = true;
+			}
+		}
+		add.setFirstLine(line1.toString().trim());
+		add.setSecondLine(line2.toString().trim());
+		return add;
+		
 	}
 
 }
