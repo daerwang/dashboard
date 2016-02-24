@@ -23,6 +23,12 @@ public class W8BeneFormTest {
 	private static String W8BENEFORM_TEMP_DIRECTORY = "C://dashboard//w8beneform//temp";
 	private static String MERGE_PDF_NAME = "W8BeneForm_merged.pdf";
 	
+	public void test_template_repo(){
+		LOGGER.info("start testing here...");
+		
+		// use dashboardupload table to monitor saved files on disk
+	}
+	
 	@Test
 	public void test_longer_address(){
 		//String address = "CALLE CARIBBEAN C/C AV ANDRES ELOY BLANCO CC GRAVINA";

@@ -11,7 +11,7 @@ import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 
 @Entity
-@Table(name="w8beneform", schema="IBMOB700")
+@Table(name="w8beneform")
 @NamedQueries({
 	  @NamedQuery(name="W8BeneForm.findByDatatableSearch",
 	              query = "from W8BeneForm where cif LIKE :search OR name LIKE :search OR physicalCountryInc LIKE :search"),

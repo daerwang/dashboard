@@ -41,7 +41,8 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 		PDDocument document = null;
 		String individualFilePath = null;
 		PDFont font = PDType1Font.HELVETICA_BOLD;
-		File pdfFile = w8BeneFormService.getFile(templateFilePath);
+		//File pdfFile = w8BeneFormService.getFile(templateFilePath);
+		File pdfFile = new File(templateFilePath);
 		w8BeneFormService.clearDirectory(individualDirectory);
 		
 		

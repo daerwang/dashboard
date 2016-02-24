@@ -13,6 +13,9 @@ public interface DashboardUploadRepository extends JpaRepository<DashboardUpload
 
 	List<DashboardUpload> findByTableIdAndTableName(Integer tableId, String tableName);
 	
+	List<DashboardUpload> findByTableName(String tableName);
+	
 	DashboardUpload findAmlBatchUploadById(@Param("id") Integer id);
 
+	List<DashboardUpload> findByTableNameAndDescription(String tableName, String description);
 }

@@ -24,9 +24,11 @@
     <link href="<c:url value="/font-awesome/css/font-awesome.min.css" />" rel="stylesheet">
     
     <!-- Datatables Version 3 -->
-	<link href="<c:url value="/datatables/integration/bootstrap/3/dataTables.bootstrap.css" />" rel="stylesheet">
+	<link href="<c:url value="/datatables/integration/bootstrap/3/dataTables.bootstrap.min.css" />" rel="stylesheet">
 	<script src="<c:url value="/datatables/media/js/jquery.dataTables.min.js" />"></script>
 	<script src="<c:url value="/datatables/integration/bootstrap/3/dataTables.bootstrap.js" />"></script>
+	<link href="<c:url value="/bootstrap/3.3.2/css/select.bootstrap.min.css" />" rel="stylesheet">
+	<script src="<c:url value="/datatables/media/js/dataTables.select.min.js" />"></script>
 	
 	<!-- Dialog 3 -->
 	<link href="<c:url value="/bootstrap/dialog3/css/bootstrap-dialog.min.css" />" rel="stylesheet">

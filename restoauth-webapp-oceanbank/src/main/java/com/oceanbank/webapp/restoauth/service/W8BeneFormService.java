@@ -35,9 +35,10 @@ public class W8BeneFormService {
 	private static String W8BENEFORM_TEMP_DIRECTORY = "C://dashboard//w8beneform//temp";
 	private static String MERGE_PDF_NAME = "W8BeneForm_merged.pdf";
 	
-	public void createPdfToDisk(List<W8BeneForm> forms){
+	public void createPdfToDisk(List<W8BeneForm> forms, String templateFilePath){
 		PdfFormWriter pdfFormWriter = new W8BeneFormPdfWriter();
-		pdfFormWriter.writeToTemplate(W8BENEFORM_CLASSPATH, W8BENEFORM_INDIVIDUAL_DIRECTORY, forms);
+		//pdfFormWriter.writeToTemplate(W8BENEFORM_CLASSPATH, W8BENEFORM_INDIVIDUAL_DIRECTORY, forms);
+		pdfFormWriter.writeToTemplate(templateFilePath, W8BENEFORM_INDIVIDUAL_DIRECTORY, forms);
 		//pdfFormWriter.writeToClearPaper(W8BENEFORM_CLASSPATH, W8BENEFORM_INDIVIDUAL_DIRECTORY, forms);
 		pdfFormWriter.mergePdf(W8BENEFORM_INDIVIDUAL_DIRECTORY, W8BENEFORM_MERGE_DIRECTORY, W8BENEFORM_TEMP_DIRECTORY, MERGE_PDF_NAME);
 	}

@@ -340,7 +340,7 @@ public class AmlBatchServiceImpl extends OauthTokenBean implements AmlBatchServi
 		return list;
 	}
 	
-	private void createLocationDirectory(String fileDirectory, Boolean isSingleDirectory) throws DashboardException, IOException{
+	public void createLocationDirectory(String fileDirectory, Boolean isSingleDirectory) throws DashboardException, IOException{
 		final File file = new File(fileDirectory);
 		
 		if(isSingleDirectory){
@@ -699,4 +699,33 @@ public class AmlBatchServiceImpl extends OauthTokenBean implements AmlBatchServi
 		return result;
 	}
 
+	public boolean removeDirectory(File directory) {
+		
+		  if (directory == null)
+		    return false;
+		  if (!directory.exists())
+		    return true;
+		  if (!directory.isDirectory())
+		    return false;
+
+		  String[] list = directory.list();
+		  if (list != null) {
+		    for (int i = 0; i < list.length; i++) {
+		      File entry = new File(directory, list[i]);
+		      if (entry.isDirectory()){
+		    	  
+		        if (!removeDirectory(entry))
+		          return false;
+		        
+		      }else{
+		    	  
+		        if (!entry.delete())
+		          return false;
+		        
+		      }
+		    }
+		  }
+
+		  return directory.delete();
+	}
 }

@@ -1054,45 +1054,17 @@ public class AmlBatchController {
         	
 	}
 	
-	private boolean removeDirectory(File directory) {
-		
-		  if (directory == null)
-		    return false;
-		  if (!directory.exists())
-		    return true;
-		  if (!directory.isDirectory())
-		    return false;
-
-		  String[] list = directory.list();
-		  if (list != null) {
-		    for (int i = 0; i < list.length; i++) {
-		      File entry = new File(directory, list[i]);
-		      if (entry.isDirectory()){
-		    	  
-		        if (!removeDirectory(entry))
-		          return false;
-		        
-		      }else{
-		    	  
-		        if (!entry.delete())
-		          return false;
-		        
-		      }
-		    }
-		  }
-
-		  return directory.delete();
-	}
+	
 	
 	@RequestMapping(value = DashboardConstant.DELETE_DASHBOARDUPLOAD_BY_ID, method = RequestMethod.DELETE)
-	public @ResponseBody String deleteDashboardUpload(@PathVariable("id") Long id)throws DashboardException{
+	public @ResponseBody String deleteDashboardUpload(@PathVariable("id") Long id){
 		String result = null;
 		
 		// 1. delete in the file system
 		String fullLocation = amlBatchService.getUploadPermanentFileLocation() + id;
 		File file = new File(fullLocation);
 		
-		boolean isSuccess = removeDirectory(file);
+		boolean isSuccess = amlBatchService.removeDirectory(file);
 		
 		// 2. delete in the database
 		if(isSuccess)

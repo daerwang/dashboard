@@ -72,6 +72,7 @@ public class AmlBatchServiceImpl implements AmlBatchService{
 	 */
 	public AmlBatchServiceImpl(){}
 
+
 	/* (non-Javadoc)
 	 * @see com.oceanbank.webapp.restoauth.service.AmlBatchService#generateDashboardAmlBatchRequestId(java.lang.Integer)
 	 */
@@ -360,6 +361,22 @@ public class AmlBatchServiceImpl implements AmlBatchService{
 		return list;
 	}
 	
+    public List<DashboardUpload> findDashboardUploadByTableName(String tableName) {
+		
+		List<DashboardUpload> list = new ArrayList<DashboardUpload>();
+		try {
+			list = dashboardUpload.findByTableName(tableName);
+		} catch (NullPointerException e) {
+			// do nothing
+		}
+		
+		return list;
+	}
+	
+    public List<DashboardUpload> findDashboardUploadByTableNameAndDescription(String tableName, String description){
+		return dashboardUpload.findByTableNameAndDescription(tableName, description);
+	}
+   
 	@Override
 	public DashboardUpload findDashboardUploadById(Long id){
 		return dashboardUpload.findAmlBatchUploadById(id.intValue());
