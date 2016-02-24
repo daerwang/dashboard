@@ -393,7 +393,7 @@ $(document).ready(function() {
 </script>
 
 <div class="page-header">
-	<h1>W-8BEN-E Form for 2014</h1>
+	<h1>W-8BEN-E Form</h1>
 	<p class="lead">Select and download W-8BEN-E PDF copy for selected CIF.</p>
 </div>
 
