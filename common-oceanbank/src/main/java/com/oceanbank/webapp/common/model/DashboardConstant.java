@@ -169,4 +169,7 @@ public class DashboardConstant {
 	public static final String TILES_AML_BATCH_LOG_PAGE_REQUEST_TEMPLATE = "tiles_amlBatchRequestLog";
 	public static final String TILES_EXCEL_CONVERTER_TEMPLATE = "tiles_excelConverter";
 	
+
+	public static String W8BENEFORM_TEMPLATE_DIRECTORY = "C://dashboard//w8beneform//template";
+	public static String W8BENEFORM_TEMPLATE_UPLOAD_DIRECTORY = W8BENEFORM_TEMPLATE_DIRECTORY + "//upload_";
 }
