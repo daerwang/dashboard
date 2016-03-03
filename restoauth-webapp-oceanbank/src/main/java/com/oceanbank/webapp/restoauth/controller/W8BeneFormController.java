@@ -24,7 +24,6 @@ import com.oceanbank.webapp.common.model.W8BeneFormResponse;
 import com.oceanbank.webapp.restoauth.converter.DashboardConverter;
 import com.oceanbank.webapp.restoauth.converter.DashboardUploadConverter;
 import com.oceanbank.webapp.restoauth.dao.DashboardUploadRepository;
-import com.oceanbank.webapp.restoauth.dao.W8BeneFormDao;
 import com.oceanbank.webapp.restoauth.model.DashboardUpload;
 import com.oceanbank.webapp.restoauth.model.W8BeneForm;
 import com.oceanbank.webapp.restoauth.service.AmlBatchServiceImpl;
@@ -129,5 +128,29 @@ public class W8BeneFormController {
 
 
 		return result;
+	}
+
+	@RequestMapping(value = "/insertW8BeneForms", method = RequestMethod.POST)
+	public String insertW8BeneForms(@RequestBody List<W8BeneFormResponse> entities){
+
+		w8BeneFormService.insertW8BeneForms(entities);
+
+		return "insertW8BeneForms successful";
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public String delete(@PathVariable("id") Integer id){
+
+		w8BeneFormService.delete(id);
+
+		return "OK!";
+	}
+
+	@RequestMapping(value = "/deleteAll", method = RequestMethod.DELETE)
+	public String deleteAll(){
+
+		w8BeneFormService.deleteAll();
+
+		return "OK!";
 	}
 }
