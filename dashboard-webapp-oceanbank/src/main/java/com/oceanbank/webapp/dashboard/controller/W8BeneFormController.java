@@ -214,6 +214,14 @@ public class W8BeneFormController {
 		}
         	
 	}
+
+	@RequestMapping(value = "/uploadExcelData", method = RequestMethod.POST)
+	public void uploadExcelData(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
+		
+		List<W8BeneFormResponse> list = new ArrayList<W8BeneFormResponse>();
+		list = w8BenFormService.createW8BeneFormFromExcel(request);
+		w8BenFormService.insertW8BeneForms(list);
+	}
 	
 	
 	@RequestMapping(value = "/uploadPdfTemplate", method = RequestMethod.POST)
@@ -340,6 +348,14 @@ public class W8BeneFormController {
 		return "/w8beneforms/w8BeneFormUpload";
 	}
 	
+	@RequestMapping(value = "/showUploadExcelPage", method = RequestMethod.GET)
+	public String showUploadExcelPage(Model model) {
+		
+		model.addAttribute("title1", "Upload PDF File");
+
+		return "/w8beneforms/w8BeneFormDataUpload";
+	}
+	
 	@RequestMapping(value = "/{id}/deletePdfUpload", method = RequestMethod.DELETE)
 	public @ResponseBody String deleteDashboardUpload(@PathVariable("id") Long id)throws DashboardException{
 		String result = null;
@@ -401,5 +417,20 @@ public class W8BeneFormController {
 		return result;
 	}
 	
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public @ResponseBody String delete(@PathVariable("id") Integer id){
+		
+		String result = w8BenFormService.delete(id);
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/deleteAll", method = RequestMethod.DELETE)
+	public @ResponseBody String deleteAll(){
+		
+		String result = w8BenFormService.deleteAll();
+		
+		return result;
+	}
 	
 }

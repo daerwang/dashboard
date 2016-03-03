@@ -30,9 +30,9 @@ $(document).ready(function() {
 		var highlight = 'active'; 
 		var isHighlight = false;
 		var row_idUpload;
-		
-		
-		var types = [BootstrapDialog.TYPE_DEFAULT, 
+
+
+		var types = [BootstrapDialog.TYPE_DEFAULT,
                      BootstrapDialog.TYPE_INFO, 
                      BootstrapDialog.TYPE_PRIMARY, 
                      BootstrapDialog.TYPE_SUCCESS, 
@@ -41,7 +41,7 @@ $(document).ready(function() {
 		var selected = [];
 		var selectedPdf = '';
 		
-		$('#w8BeneFormDatatable').dataTable({
+		var table = $('#w8BeneFormDatatable').DataTable({
 			"processing" : true,
 			"serverSide" : true,
 			"ajax" : {
@@ -82,12 +82,30 @@ $(document).ready(function() {
 		        return;
 		    });
 		
+// 		$('#w8BeneFormDatatable tbody').on('click', 'tr', function () {
+			
+// 			row_id = this.id;
+			
+// 	        if ( $(this).hasClass(highlight) ) {
+//                 $(this).removeClass(highlight);
+//                 isHighlight = false;
+//             }
+//             else {
+//             	// remove all highlighted rows first
+//             	table.$('tr.' + highlight).removeClass(highlight);
+//             	// apply highlight to new row
+//                 $(this).addClass(highlight);
+                
+//                 isHighlight = true;
+//             }
+            
+// 	    });
 		
-		
-		
+
 		$('#w8BeneFormDatatable tbody').on('click', 'tr', function(){
 			
 			var id = this.id;
+			row_id = this.id;
 	        var index = $.inArray(id, selected);
 	 
 	        if ( index === -1 ) {
@@ -144,7 +162,7 @@ $(document).ready(function() {
 					        window.open("w8beneform/openPdf", '_blank');
 					        
 				    },
-				    error:function(data, status, er) { 
+				    error:function(data, status, er) {
 				    	var res = data.responseJSON.message;
 				    	var json = '[' + res + ']';
 				    	var errorMsg = '';
@@ -153,15 +171,15 @@ $(document).ready(function() {
 				    		code = obj.code;
 				    		errorMsg = obj.message;
 				    	});
-				    	
+
 				    	BootstrapDialog.alert({
 			            	title: 'WARNING',
 				            message: code + '</br>' + errorMsg,
-				            type: BootstrapDialog.TYPE_DANGER, 
-				            closable: true, 
-				            draggable: true, 
+				            type: BootstrapDialog.TYPE_DANGER,
+				            closable: true,
+				            draggable: true,
 				            buttonLabel: 'Ok'
-				        });	
+				        });
 				    }
 				});
 			}
@@ -169,7 +187,7 @@ $(document).ready(function() {
 	 	
 	 	
 		// ----------- for upload -----------
-		
+
 	 	var table2 = $('#dashboardUploadDatatable').DataTable({
 			"processing" : true,
 			"serverSide" : true,
@@ -181,33 +199,33 @@ $(document).ready(function() {
 	                       { className: "centerclass", "targets": [ 0 ] },
 	                       { "visible": true, "targets": 1 },
 	                       { "visible": true, "targets": 2 },
-	                       { 
+	                       {
 	                    	   "visible": true,
-	                    	   "targets": 3, 
+	                    	   "targets": 3,
 	                    	   "orderable": false,
 	                           "searchable": false,
 	                           "className": 'centerclass',
 	                           "render": function(data, type, full, meta) {
 	                        	   if(data){
-	                        		
+
 	                        		   return '<input type="checkbox" checked>';
 	                        	   }else{
-	                        		
+
 	                        		   return '<input type="checkbox">';
 	                        	   }
 	                           }
 	                       }
-	                     ],		
+	                     ],
 	       "select": {
 	    	   style : 'os',
 	    	   selector : 'td:first-child'
 	       }
-			 
+
 		});
-		
+
 	 	var highlight = 'active';
 	 	var isHighlightUpload = false;
-	 	
+
 	    $('#dashboardUploadDatatable tbody').on('change', 'input[type="checkbox"]', function(){
 	        var $table = table2.table().container();
 	        var $chkbox_checked = $('tbody input[type="checkbox"]:checked', $table);
@@ -215,23 +233,23 @@ $(document).ready(function() {
 	        var d = table2.row(checkboxRow).data();
 	        var url = 'w8beneform/updateCheckbox';
 	        var desc = null;
-	        
+
 	        if($chkbox_checked.length > 1){
 	        	$(this).attr('checked', false);
 	        	$(this).closest('tr').removeClass(highlight);
 	        	BootstrapDialog.alert({
 	            	title: 'WARNING',
 		            message: 'Only 1 PDF template is allowed to be enabled.',
-		            type: BootstrapDialog.TYPE_DANGER, 
-		            closable: true, 
-		            draggable: true, 
+		            type: BootstrapDialog.TYPE_DANGER,
+		            closable: true,
+		            draggable: true,
 		            buttonLabel: 'Ok'
-		        });	
+		        });
 	        	var req = new Object();
 	        	req.id = d.DT_RowId;
-	        	req.description = desc; 
+	        	req.description = desc;
 	           	var reqData = JSON.stringify(req);
-	           	
+
 	        	updateCheckbox(url, reqData);
 	        }else{
 	        	$(this).closest('tr').addClass(highlight);
@@ -240,28 +258,28 @@ $(document).ready(function() {
 		        }
 	           	var myObject = new Object();
 	           	myObject.id = d.DT_RowId;
-	           	myObject.description = desc; 
+	           	myObject.description = desc;
 	           	var data = JSON.stringify(myObject);
-	           	
+
 	           	updateCheckbox(url, data);
 	        }
-	        
+
 			//table2.draw();
-	        
+
 	     });
 
-	    
+
 	    function updateCheckbox(url, param){
 	    	$.ajax({
 		    	type: "PUT",
 			  	url: url,
-			  	dataType: 'json', 
-			    data: param, 
+			  	dataType: 'json',
+			    data: param,
 			    contentType: 'application/json',
 			    mimeType: 'application/json',
-			    success: function(data) {  	
+			    success: function(data) {
 			    },
-			    error: function(data) { 
+			    error: function(data) {
 			    	var res = data.responseJSON.message;
 			    	var json = '[' + res + ']';
 			    	var errorMsg = '';
@@ -270,23 +288,23 @@ $(document).ready(function() {
 			    		code = obj.code;
 			    		errorMsg = obj.message;
 			    	});
-			    	
+
 			    	BootstrapDialog.alert({
 		            	title: 'WARNING',
 			            message: code + '</br>' + errorMsg,
-			            type: BootstrapDialog.TYPE_DANGER, 
-			            closable: true, 
-			            draggable: true, 
+			            type: BootstrapDialog.TYPE_DANGER,
+			            closable: true,
+			            draggable: true,
 			            buttonLabel: 'Ok'
-			        });	
+			        });
 			    }
 			});
 	    }
-	    
+
 		$('#dashboardUploadDatatable tbody').on('click', 'tr', function () {
-			
+
 			row_idUpload = this.id;
-			
+
 	        if ( $(this).hasClass(highlight) ) {
                 $(this).removeClass(highlight);
                 isHighlightUpload = false;
@@ -296,20 +314,20 @@ $(document).ready(function() {
             	table2.$('tr.' + highlight).removeClass(highlight);
             	// apply highlight to new row
                 $(this).addClass(highlight);
-                
+
                 isHighlightUpload = true;
             }
-            
+
 	    });
-		
-		
-		
+
+
+
 		$('#newUploadButton').on('click', function(e) {
 			e.preventDefault();
-			
+
 			dialog1 = new BootstrapDialog({
 				title : 'Attachment',
-				draggable: true, 
+				draggable: true,
 				message : function(dialog) {
 					var $message = $('<div></div>');
 					var pageToLoad = dialog.getData('pageToLoad');
@@ -320,14 +338,112 @@ $(document).ready(function() {
 					'pageToLoad' : 'w8beneform/showUploadPage'
 				}
 			 });
-			
+
+			dialog1.open();
+		});
+
+		$('#deleteUploadButton').on('click', function(e) {
+			e.preventDefault();
+
+			if(!isHighlightUpload){
+				noSelectionDialog.open();
+			}else{
+
+				BootstrapDialog.show({
+					type : BootstrapDialog.TYPE_DANGER,
+		            title: 'Information',
+		            draggable: true,
+		            message: 'Do you really want to delete?',
+		            buttons: [{
+		            	label: 'Delete',
+		            	action: function(dialog){
+		            		dialog.close();
+		            		$.ajax({
+		        		    	type: "DELETE",
+		        			  	url: 'w8beneform/' + row_idUpload + '/deletePdfUpload',
+		        			    success: function(data) {
+		        			    	   table = $('#dashboardUploadDatatable').DataTable();
+		        			    	   table.ajax.reload();
+		        					   isHighlight = false;
+		        			    },
+		        			    error:function(data) {
+		        			        isHighlight = false;
+
+		        			        var res = data.responseJSON.message;
+							    	BootstrapDialog.alert({
+		        		            	title: 'WARNING',
+		        			            message: res,
+		        			            type: BootstrapDialog.TYPE_DANGER,
+		        			            closable: true,
+		        			            draggable: true,
+		        			            buttonLabel: 'Ok'
+		        			        });
+		        			    }
+		        			});
+		            	}
+		            },{
+		                label: 'Close',
+		                action: function(dialog){
+		                    dialog.close();
+		                }
+		            }]
+		        });
+
+			}
+
+
+		});
+
+		$('#openUploadButton').on('click', function(e) {
+			e.preventDefault();
+			var openUploadUrl = 'w8beneform/' + row_idUpload + '/openPdfTemplate';
+			if(!isHighlightUpload){
+				noSelectionDialog.open();
+			}else{
+
+				window.open(openUploadUrl, '_blank');
+
+			}
+
+		});
+		
+		$('#openUploadExcelButton').on('click', function(e) {
+			e.preventDefault();
+
+			dialog1 = new BootstrapDialog({
+				title : 'Upload Excel',
+				draggable: true,
+				message : function(dialog) {
+					var $message = $('<div></div>');
+					var pageToLoad = dialog.getData('pageToLoad');
+					$message.load(pageToLoad);
+					return $message;
+				},
+				data : {
+					'pageToLoad' : 'w8beneform/showUploadExcelPage'
+				}
+			 });
+
 			dialog1.open();
 		});
 		
-		$('#deleteUploadButton').on('click', function(e) {
+		var noSelectionDialog = new BootstrapDialog({
+			type : BootstrapDialog.TYPE_DANGER,
+            title: 'Error',
+            message: 'There is no selection made.',
+            buttons: [{
+                label: 'Close',
+                cssClass: 'btn btn-danger',
+                action: function(dialog){
+                    dialog.close();
+                }
+            }]
+        });
+		
+		$('#deleteButton').on('click', function(e) {
 			e.preventDefault();
 			
-			if(!isHighlightUpload){
+			if(!isHighlight){
 				noSelectionDialog.open();
 			}else{
 
@@ -342,9 +458,9 @@ $(document).ready(function() {
 		            		dialog.close();
 		            		$.ajax({
 		        		    	type: "DELETE",
-		        			  	url: 'w8beneform/' + row_idUpload + '/deletePdfUpload',
+		        			  	url: 'w8beneform/' + row_id,
 		        			    success: function(data) { 
-		        			    	   table = $('#dashboardUploadDatatable').DataTable();
+		        			    	   var table = $('#w8BeneFormDatatable').DataTable();
 		        			    	   table.ajax.reload();
 		        					   isHighlight = false;
 		        			    },
@@ -374,26 +490,60 @@ $(document).ready(function() {
 			}
 			
 			
-		});
+		}); // Delete Button
 		
-		$('#openUploadButton').on('click', function(e) {
+		
+		$('#deleteAllButton').on('click', function(e) {
 			e.preventDefault();
-			var openUploadUrl = 'w8beneform/' + row_idUpload + '/openPdfTemplate';
-			if(!isHighlightUpload){
-				noSelectionDialog.open();
-			}else{
-				
-				window.open(openUploadUrl, '_blank');
-
-			}
 			
-		}); 
+			BootstrapDialog.show({
+				type : BootstrapDialog.TYPE_DANGER,
+	            title: 'Information',
+	            draggable: true, 
+	            message: 'This will delete all records. Do you really want to delete all?',
+	            buttons: [{
+	            	label: 'Delete',
+	            	action: function(dialog){
+	            		dialog.close();
+	            		$.ajax({
+	        		    	type: "DELETE",
+	        			  	url: 'w8beneform/deleteAll',
+	        			    success: function(data) { 
+	        			    	   var table = $('#w8BeneFormDatatable').DataTable();
+	        			    	   table.ajax.reload();
+	        					   isHighlight = false;
+	        			    },
+	        			    error:function(data) { 
+	        			        isHighlight = false;
+	        			        
+	        			        var res = data.responseJSON.message;
+						    	BootstrapDialog.alert({
+	        		            	title: 'WARNING',
+	        			            message: res,
+	        			            type: BootstrapDialog.TYPE_DANGER, 
+	        			            closable: true, 
+	        			            draggable: true, 
+	        			            buttonLabel: 'Ok'
+	        			        });	
+	        			    }
+	        			});
+	            	}
+	            },{
+	                label: 'Close',
+	                action: function(dialog){
+	                    dialog.close();
+	                }
+	            }]
+	        });
+			
+			
+		}); // Delete All Button
 		
 	});
 </script>
 
 <div class="page-header">
-	<h1>W-8BEN-E Form for 2014</h1>
+	<h1>W-8BEN-E Form</h1>
 	<p class="lead">Select and download W-8BEN-E PDF copy for selected CIF.</p>
 </div>
 
@@ -401,6 +551,9 @@ $(document).ready(function() {
 
 <p>
 	<button class="btn btn-default btn-sm" id="openButton">Open PDF</button>
+	<button class="btn btn-default btn-sm" id="deleteButton">Delete</button>
+	<button class="btn btn-default btn-sm" id="deleteAllButton">Delete All</button>
+	<button class="btn btn-default btn-sm" id="openUploadExcelButton">Upload Excel</button>
 </p>
 
 <table id="w8BeneFormDatatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -417,7 +570,7 @@ $(document).ready(function() {
 
 
 <div style="margin-top: 100px;">
-	
+
 <h4>W-8BEN-E Form Template</h4>
 <p>Please attach your pdf template file here.</p>
 <hr>
@@ -439,7 +592,7 @@ $(document).ready(function() {
 </table>
 </div>
 
-	
+
 <div class="modal fade modal-cif" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

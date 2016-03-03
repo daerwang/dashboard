@@ -4,12 +4,22 @@
  */
 package com.oceanbank.webapp.dashboard.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -18,11 +28,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.oceanbank.webapp.common.exception.DashboardException;
 import com.oceanbank.webapp.common.model.DashboardConstant;
 import com.oceanbank.webapp.common.model.DashboardUploadResponse;
 import com.oceanbank.webapp.common.model.DataTablesRequest;
+import com.oceanbank.webapp.common.model.ExcelFileMeta;
 import com.oceanbank.webapp.common.model.IrsFormSelected;
 import com.oceanbank.webapp.common.model.OauthTokenBean;
 import com.oceanbank.webapp.common.model.W8BeneFormResponse;
@@ -109,6 +121,160 @@ public class W8BenFormService extends OauthTokenBean {
 		
 		final HttpEntity<DashboardUploadResponse> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), response);
 		final ResponseEntity<DashboardUploadResponse> request = restTemplate.exchange(getRestApi() + "/api/w8beneform/updateCheckbox", HttpMethod.PUT, entity, DashboardUploadResponse.class);
+
+		return request.getBody();
+	}
+	
+	public List<W8BeneFormResponse> createW8BeneFormFromExcel(MultipartHttpServletRequest request) throws DashboardException{
+		
+		Iterator<String> itr =  request.getFileNames();
+        MultipartFile mpf = null;
+        ExcelFileMeta fileMeta = null;
+        
+        String fileName1 = itr.next();
+    	mpf = request.getFile(fileName1);
+    	if(mpf.getSize()/1024 > 5000){
+        	throw new DashboardException("The upload should be less than 5MB in size.");
+        }
+    	String ext = FilenameUtils.getExtension(mpf.getOriginalFilename());
+    	if(!(ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx"))){
+    		throw new DashboardException("The upload should be an Excel file.");
+    	}
+
+		List<W8BeneFormResponse> list = new ArrayList<W8BeneFormResponse>();
+		
+		try {
+			InputStream input = new ByteArrayInputStream(mpf.getBytes());
+			
+			String fileName = mpf.getOriginalFilename();
+			Workbook workbook = null;
+			if(fileName.toLowerCase().endsWith("xlsx")){
+                workbook = new XSSFWorkbook(input);
+            }else if(fileName.toLowerCase().endsWith("xls")){
+            	try {
+            		workbook = new HSSFWorkbook(input);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+                
+            }
+			
+			Sheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            
+
+            while (rowIterator.hasNext()) {
+            	W8BeneFormResponse bean = new W8BeneFormResponse();
+                Row row = rowIterator.next();
+                
+                if(row.getRowNum() == 0){
+                	continue;
+                }
+                
+                Iterator<Cell> cellIterator = row.cellIterator();
+                while (cellIterator.hasNext())
+                {
+                    Cell cell = cellIterator.next();
+                    
+                    if(cell.getColumnIndex() == 50 && row.getRowNum() != 0){
+                    	// do nothing
+                    }else{
+                    	cell.setCellType(Cell.CELL_TYPE_STRING);
+                    }
+                    //System.out.println("starting cell " + cell.getColumnIndex() + " at row " + row.getRowNum());
+                    switch (cell.getCellType())
+                    {
+                        case Cell.CELL_TYPE_NUMERIC:
+                        	if(cell.getColumnIndex() < 100){
+                            	throw new DashboardException("The Excel file cannot have numeric cell.");
+                            }
+                            break;
+                        case Cell.CELL_TYPE_STRING:
+                        	if(cell.getColumnIndex() == 0){
+                        		bean.setCif(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 1){
+                        		bean.setName(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 2){
+                        		bean.setPhysicalCountryInc(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 3){
+                        		bean.setPhysicalAddress(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 4){
+                        		bean.setPhysicalCity(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 5){
+                        		bean.setPhysicalCountry(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 6){
+                        		bean.setAltAddress(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 7){
+                        		bean.setAltCity(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 8){
+                        		bean.setAltCountry(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 9){
+                        		bean.setAccount(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 10){
+                        		bean.setLabelName(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 11){
+                        		bean.setOfficer(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 12){
+                        		bean.setBranch(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 13){
+                        		bean.setAltAddressLabel(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 14){
+                        		bean.setAltCityLabel(cell.getStringCellValue());
+                        	}
+                        	if(cell.getColumnIndex() == 15){
+                        		bean.setAltCountryLabel(cell.getStringCellValue());
+                        	}
+                        	
+                            break;
+                    }
+                }
+                
+                list.add(bean);
+            }
+            
+            input.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	public String insertW8BeneForms(List<W8BeneFormResponse> w8BeneForms) {
+		
+		final HttpEntity<List<W8BeneFormResponse>> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), w8BeneForms);
+		final ResponseEntity<String> request = restTemplate.exchange(getRestApi() + "/api/w8beneform/insertW8BeneForms", HttpMethod.POST, entity, String.class);
+
+		return request.getBody();
+	}
+	
+	public String delete(Integer id) {
+		
+		final HttpEntity<String> entity = CommonUtil.createHttpEntity(getAccessToken());
+		final ResponseEntity<String> request = restTemplate.exchange(getRestApi() + "/api/w8beneform/" + id, HttpMethod.DELETE, entity, String.class);
+
+		return request.getBody();
+	}
+	
+	public String deleteAll() {
+		
+		final HttpEntity<String> entity = CommonUtil.createHttpEntity(getAccessToken());
+		final ResponseEntity<String> request = restTemplate.exchange(getRestApi() + "/api/w8beneform/deleteAll", HttpMethod.DELETE, entity, String.class);
 
 		return request.getBody();
 	}

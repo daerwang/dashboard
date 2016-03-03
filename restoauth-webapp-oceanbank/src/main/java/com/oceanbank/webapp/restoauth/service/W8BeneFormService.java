@@ -29,7 +29,7 @@ public class W8BeneFormService {
 	
 	private DashboardConverter<W8BeneForm, W8BeneFormResponse> converter = new W8BeneFormConverter();
 	
-	private static String W8BENEFORM_CLASSPATH = "pdf/W8BeneForm_Empty.pdf";
+	//private static String W8BENEFORM_CLASSPATH = "pdf/W8BeneForm_Empty.pdf";
 	private static String W8BENEFORM_INDIVIDUAL_DIRECTORY = "C://dashboard//w8beneform//individual";
 	private static String W8BENEFORM_MERGE_DIRECTORY = "C://dashboard//w8beneform//merge";
 	private static String W8BENEFORM_TEMP_DIRECTORY = "C://dashboard//w8beneform//temp";
@@ -106,5 +106,21 @@ public class W8BeneFormService {
 		
 	}
 	
+	public void insertW8BeneForms(List<W8BeneFormResponse> responseList){
+		List<W8BeneForm> entityList = new ArrayList<W8BeneForm>();
+		for (W8BeneFormResponse response : responseList) {			
+			W8BeneForm entity = converter.convertFromBean(response);
+			entityList.add(entity);
+		}
+		w8BeneFormDao.save(entityList);
+
+	}
 	
+	public void delete(Integer id){
+		w8BeneFormDao.delete(id);
+	}
+	
+	public void deleteAll(){
+		w8BeneFormDao.deleteAll();
+	}
 }
