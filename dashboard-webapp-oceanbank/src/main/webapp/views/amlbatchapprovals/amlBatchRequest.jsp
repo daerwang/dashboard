@@ -59,9 +59,9 @@ select option{color: #555;}
 		var isOwner = "${isOwner}";
 		
 		
-		var highlight = 'active'; 
-		var highlightUpload = 'active';
-		var highlightComment = 'active';
+		var highlight = 'success'; 
+		var highlightUpload = 'success';
+		var highlightComment = 'success';
 		
 		var isHighlight = false;
 		var isHighlightUpload = false;
@@ -125,17 +125,17 @@ select option{color: #555;}
 		$('#dashboardUploadDatatable tbody').on('click', 'tr', function () {
 			
 			row_idUpload = this.id;
-			
 	        if ( $(this).hasClass(highlight) ) {
                 $(this).removeClass(highlight);
                 isHighlightUpload = false;
+                console.log('1. ' + highlight);
             }
             else {
             	// remove all highlighted rows first
             	table2.$('tr.' + highlight).removeClass(highlight);
             	// apply highlight to new row
                 $(this).addClass(highlight);
-                
+                console.log('2. ' + highlight);
                 isHighlightUpload = true;
             }
             
