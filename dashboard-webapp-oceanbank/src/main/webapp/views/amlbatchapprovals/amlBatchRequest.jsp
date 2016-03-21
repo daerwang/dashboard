@@ -213,9 +213,10 @@ select option{color: #555;}
 			console.log('false');	
 			$('#amlBatchRequestForm input').attr('readonly', 'readonly');
 			$("button[type=button]").attr("disabled", "disabled");
-			$("button[type=button]").attr("disabled", "disabled");
 			$('button').prop('disabled', true);
-			$('button').prop('disabled', true);
+			
+			$('#openUploadButton').prop('disabled', false);
+			
 		}
 		
 		if ($("#selectedType").val() != "") {
