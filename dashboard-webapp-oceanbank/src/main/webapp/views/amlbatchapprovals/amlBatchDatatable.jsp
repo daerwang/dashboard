@@ -18,7 +18,7 @@
 		
 		var table;
 		var row_id;
-		var highlight = 'active'; 
+		var highlight = 'success'; 
 		var isHighlight = false;
 		var amlBatchRequestPageUrlFinal = '';
 		var types = [BootstrapDialog.TYPE_DEFAULT, 
