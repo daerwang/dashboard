@@ -86,13 +86,19 @@
 	<bean id="obAuthenticationHandler"
 		class="com.oceanbank.webapp.dashboard.security.ObAuthenticationHandler" />
 
-	<sec:authentication-manager alias="authenticationManager">
-		<sec:authentication-provider
-			user-service-ref="obAuthenticationProvider" />
-	</sec:authentication-manager>
 
-	<bean id="obAuthenticationProvider"
-		class="com.oceanbank.webapp.dashboard.security.ObAuthenticationProvider" />
+	<sec:authentication-manager alias="authenticationManager">
+		<sec:authentication-provider ref="authProvider" />
+	</sec:authentication-manager> 
+
+	<bean id="userDetailsServiceImpl" class="com.oceanbank.webapp.dashboard.security.ObAuthenticationProvider" />
+	
+	<bean id="authProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<property name="userDetailsService" ref="userDetailsServiceImpl" />
+		<property name="passwordEncoder" ref="encoder" />
+	</bean>
+
+    <bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
 
 	<bean id="oauthAccessToken"

@@ -82,67 +82,16 @@
 		
 	 
 	 	$('#editButton').on('click', function(event) {
-	 	
-	 		var userUpdateDialog = new BootstrapDialog({
-					title : 'Update User',
-					message : function(dialog) {
-						var $message = $('<div></div>');
-						var pageToLoad = dialog.getData('pageToLoad');
-						
-						$message.load(pageToLoad);
-	
-						return $message;
-					},
-					data : {
-						'pageToLoad' : updateModalPage + row_id
-					},
-		            buttons: [{
-		                id: 'btn-1',
-		                label: 'Cancel',
-		                action: function(dialog) {
-		                    dialog.close();
-		                }
-		            }]
-				 });
-
-			if(!isHighlight){
+	 		if(!isHighlight){
 				noSelectionDialog.open();
-			}else{
-				userUpdateDialog.open();
-			}
-			
-			
-			
+				return;
+	 		}
+	 		$(location).attr('href', 'users/editUserForm/' + row_id)
 		});   
 		
 		
 		$('#newButton').on('click', function(event) {
-	 		newUserDialog = new BootstrapDialog({
-					title : 'New User',
-					message : function(dialog) {
-						var $message = $('<div></div>');
-						
-						//dialog.setSize(BootstrapDialog.SIZE_WIDE);
-						var pageToLoad = dialog.getData('pageToLoad');
-						
-						$message.load(pageToLoad);
-	
-						return $message;
-					},
-					data : {
-						'pageToLoad' : newModalPage
-					},
-		            buttons: [{
-		                id: 'btn-1',
-		                label: 'Cancel',
-		                action: function(dialog) {
-		                    dialog.close();
-		                }
-		            }]
-				 });
-				 
-	 		newUserDialog.open();
-			
+			$(location).attr('href', 'users/createUserForm')
 		});   
 
 		
@@ -182,6 +131,12 @@
 	});
 	    
 </script>
+
+<div class="page-header">
+	<h3>Administration</h3>
+	<p>Admin page to manage Users and Roles like resetting password or
+		adding new Users.</p>
+</div>
 
 <p>
 	<button type="button" class="btn btn-default btn-sm" id="newButton">New</button>

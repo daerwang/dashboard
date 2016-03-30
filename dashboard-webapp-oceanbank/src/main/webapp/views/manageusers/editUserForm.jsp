@@ -49,23 +49,23 @@ $(document).ready(function() {
         submitHandler: function(validator, form, submitButton){
 
 		    $.ajax({
-		    	type: "POST",
-			  	url: url2,
+		    	type: "PUT",
+		    	url : '../../administration/user/update',
 			  	dataType: 'json', 
 			    data: JSON.stringify(form.serializeObject()), 
 			    contentType: 'application/json',
 			    mimeType: 'application/json',
 			    success: function(data) { 
 				        BootstrapDialog.show({
+				        type : BootstrapDialog.TYPE_SUCCESS,
 			            title: 'Success',
-			            message: 'The User is Updated successfully.',
-			            cssClass: 'user-success-dialog',
+			            message: 'The User is updated successfully.',
 			            buttons: [{
 			                label: 'Ok',
-			                cssClass: 'btn-primary',
+			                cssClass: 'btn-success',
 			                action: function(dialog){
 			                    dialog.close();
-			                    table.ajax.reload();
+			                    //table.ajax.reload();
 			                }
 			            }]
 			        });		
@@ -110,15 +110,11 @@ $(document).ready(function() {
                         regexp: /^[a-zA-Z0-9]+$/,
                         message: 'The username can only consist of alphabetical and number'
                     },
-                    different: {
-                        field: 'password',
-                        message: 'The username and password cannot be the same as each other'
-                    },
-                    remote: {
-                    	message: 'The username already exist',
-                    	url: url1 + username, 
-                    	type: 'POST'
-                    }
+					remote : {
+						message : 'The username already exist',
+						url : '../../administration/user/validator/' + username,
+						type : 'POST'
+					}
                 }
             },
             email: {
@@ -128,21 +124,6 @@ $(document).ready(function() {
                     },
                     emailAddress: {
                         message: 'The email address is not a valid'
-                    }
-                }
-            },
-            password: {
-                validators: {
-                    notEmpty: {
-                        message: 'The password is required and cannot be empty'
-                    },
-                    different: {
-                        field: 'username',
-                        message: 'The password cannot be the same as username'
-                    },
-                    stringLength: {
-                        min: 6,
-                        message: 'The password must have at least 6 characters'
                     }
                 }
             },
@@ -157,7 +138,11 @@ $(document).ready(function() {
                 validators: {
                     notEmpty: {
                         message: 'Please specify your iSeries username.'
-                    }
+                    },
+					stringLength : {
+						min : 8,
+						message : 'The AS400 username must be at least 8 characters.'
+					}
                 }
             }
         }
@@ -167,75 +152,102 @@ $(document).ready(function() {
 </script>
 
 
-
-<form id="userForm" class="form-horizontal">
-	<input type="hidden" name="userId" value="<c:out value="${user.userId}" /> ">
-
-	<div class="form-group">
-		<label class="control-label col-md-3">${firstname1}</label> 
-		<div class="col-md-8">
-			<input class="form-control" name="firstname" placeholder="Enter First Name" value="<c:out value="${user.firstname}" />">
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="control-label col-md-3">${lastname1}</label> 
-		<div class="col-md-8">
-			<input class="form-control" name="lastname" placeholder="Enter Last Name" value="<c:out value="${user.lastname}" />">
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="control-label col-md-3">${username1}</label> 
-		<div class="col-md-8">
-			<input class="form-control" name="username" placeholder="Enter Username" value="<c:out value="${user.username}" />">
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="control-label col-md-3">${password1}</label> 
-		<div class="col-md-8">
-			<input type="password" class="form-control" name="password" placeholder="Enter Password" value="<c:out value="${user.password}" />">
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="control-label col-md-3">${email1}</label> 
-		<div class="col-md-8">
-			<input class="form-control" name="email" placeholder="Enter email" value="<c:out value="${user.email}" />"/>
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="control-label col-md-3">iSeries Name</label> 
-		<div class="col-md-8">
-			<input class="form-control" name="iseriesname" placeholder="Enter iSeries username" value="<c:out value="${user.iseriesname}" />"/>
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="control-label col-md-3">${role1}</label> 
-		<div class="col-md-8">
-		<c:forEach var="roleName" items="${obRoles.roleNames}">
-			
-				<div class="checkbox">
-					<label><input type="checkbox" name="roleNames" value="<c:out value="${roleName}" />" 
-						<c:forEach var="currentRole" items="${user.roleNames}">
-							<c:if test="${roleName == currentRole}">checked="checked"</c:if>
-						</c:forEach>
-						 >${roleName}
-						
-						
-					</label>
+<div class="container">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-3">
+			<form id="userForm" role="form">
+				<input type="hidden" name="userId" value="<c:out value="${user.userId}" /> ">
+				<input type="hidden" name="password" value="<c:out value="${user.password}" /> ">
+				<h2>
+					Edit User
+				</h2>
+				<hr class="colorgraph">
+				<div class="row">
+					<div class="col-xs-12 col-sm-6">
+						<div class="form-group">
+							<input type="text" name="firstname" class="form-control input-lg"
+								placeholder="First Name" tabindex="1"
+								value="<c:out value="${user.firstname}" />">
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-6">
+						<div class="form-group">
+							<input type="text" name="lastname" class="form-control input-lg"
+								placeholder="Last Name" tabindex="2"
+								value="<c:out value="${user.lastname}" />">
+						</div>
+					</div>
 				</div>
-			
-		</c:forEach>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<input type="text" name="username" class="form-control input-lg"
+								placeholder="Username" tabindex="3"
+								value="<c:out value="${user.username}" />">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-12">
+						<div class="form-group">
+							<input type="text" name="email" class="form-control input-lg"
+								placeholder="Email" tabindex="4"
+								value="<c:out value="${user.email}" />">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<input type="text" name="iseriesname" class="form-control input-lg" 
+								placeholder="AS400 Username" tabindex="5"
+								value="<c:out value="${user.iseriesname}" />">
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+
+					<div class="col-xs-12 col-sm-12">
+						<p></p>
+						<p class="lead">Assign Roles</p>
+					</div>
+				</div>
+				<div class="row">
+
+					<c:forEach var="roleName" items="${obRoles.roleNames}">
+						<div class="col-sm-4">
+
+
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" name="roleNames" value="<c:out value="${roleName}" />"
+									<c:forEach var="currentRole" items="${user.roleNames}">
+										<c:if test="${roleName == currentRole}">checked="checked"</c:if>
+									</c:forEach>>${roleName}
+								</label>
+							</div>
+
+						</div>
+					</c:forEach>
+				</div>
+
+				<hr class="colorgraph">
+				<div class="row">
+					<div class="col-xs-12 col-md-6">
+						<button class="btn btn-primary btn-block btn-lg" id="submitUserForm" 
+							type="submit" tabindex="8">Update</button>
+					</div>
+					<div class="col-xs-12 col-md-6">
+						<a class="btn btn-success btn-block btn-lg" href="../../administration" role="button" tabindex="9">Back</a>
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
-	
-	
-	<div class="form-group">
-		<label class="control-label col-md-3"></label> 
-		<div class="col-md-8">
-			<button class="btn btn-info" id="submitUserForm" type="submit">Save</button>
-		</div>
-	</div>
-	
-</form>
+</div>
+
+
 
 
 

@@ -17,10 +17,17 @@
 	</definition>
 	
 	<!-- Administration page -->
-	<definition name="tiles_administration" extends="page_template_3">
- 		<put-attribute name="topMenuBar"	value="/views/templates/topMenuBar.jsp" />
-	    <put-attribute name="pageHeader"	value="/views/manageusers/pageHeader/userHeader.jsp" />
-	    <put-attribute name="pageDataTable"	value="/views/manageusers/pageDataTable/userDataTableServerSide.jsp" />
+	<definition name="tiles_administration" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/manageusers/userDataTableServerSide.jsp" />
+	</definition>
+	<definition name="tiles_createUserForm" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/manageusers/createUserForm.jsp" />
+	</definition>
+	<definition name="tiles_editUserForm" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/manageusers/editUserForm.jsp" />
 	</definition>
 
 	<!-- Change Password page -->

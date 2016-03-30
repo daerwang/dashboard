@@ -4,16 +4,16 @@
  */
 package com.oceanbank.webapp.dashboard.service;
 
-import com.oceanbank.webapp.common.model.DashboardConstant;
-import com.oceanbank.webapp.common.model.RestWebServiceUrl;
-
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,33 +23,25 @@ import com.oceanbank.webapp.common.model.ChangePassword;
 import com.oceanbank.webapp.common.model.DataTablesRequest;
 import com.oceanbank.webapp.common.model.OauthTokenBean;
 import com.oceanbank.webapp.common.model.ObDashboardRoles;
+import com.oceanbank.webapp.common.model.RestWebServiceUrl;
 import com.oceanbank.webapp.common.model.UserResponse;
 import com.oceanbank.webapp.common.util.CommonUtil;
 
 
 
-/**
- * The Class UserServiceImpl.
- * 
- * @author Marinell Medina
- * @since 03.10.2015
- */
 @Service
 public class UserServiceImpl extends OauthTokenBean implements UserService {
 
-	/** The rest template. */
+	
 	@Autowired
 	private RestTemplate restTemplate;
 
-	/**
-	 * Instantiates a new user service impl.
-	 */
+	@Autowired
+    private PasswordEncoder passwordEncoder;
+	
 	public UserServiceImpl(){}
 	
 	
-	/* (non-Javadoc)
-	 * @see com.oceanbank.webapp.dashboard.service.UserService#findUserByUsername(java.lang.String)
-	 */
 	@Override
 	public UserResponse findUserByUsername(String username) {
 
@@ -72,13 +64,12 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 		return result;
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.oceanbank.webapp.dashboard.service.UserService#createUser(com.oceanbank.webapp.common.model.UserResponse)
-	 */
 	@Override
 	public UserResponse createUser(UserResponse request) {
 		final HttpEntity<UserResponse> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), request);
-
+		
+		request.setPassword((passwordEncoder.encode(request.getPassword())));
+		
 		final ResponseEntity<UserResponse> response = restTemplate.exchange(getRestApi()
 				+ RestWebServiceUrl.CREATE_USER, HttpMethod.POST, entity,
 				UserResponse.class);
@@ -88,9 +79,7 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.oceanbank.webapp.dashboard.service.UserService#findUserByUsernameWithBootstrapValidator(java.lang.String)
-	 */
+
 	@Override
 	public BootstrapValidatorResponse findUserByUsernameWithBootstrapValidator(String username) {
 
@@ -120,6 +109,16 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 		final BootstrapValidatorResponse result = response.getBody();
 
 		return result;
+	}
+	
+	public Boolean isPasswordCorrectFormat(String password){
+		String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{7,20})";
+		
+		Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+		Matcher matcher = pattern.matcher(password);
+		Boolean isCorrect =  matcher.matches();
+		
+		return isCorrect;
 	}
 	
 	/* (non-Javadoc)
@@ -154,12 +153,16 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.oceanbank.webapp.dashboard.service.UserService#updateUser(com.oceanbank.webapp.common.model.UserResponse)
-	 */
 	@Override
 	public UserResponse updateUser(UserResponse response) {
+		// check if old is different from new
+		UserResponse old = findUserByUserid(response.getUserId());
 		
+		if(response.getPassword() != null && response.getPassword().trim().length() > 0
+				&& !old.getPassword().trim().equals(response.getPassword().trim())){
+			response.setPassword((passwordEncoder.encode(response.getPassword())));
+		}
+
 		final HttpEntity<UserResponse> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), response);
 
 		final ResponseEntity<UserResponse> updatedResponse = restTemplate.exchange(getRestApi()

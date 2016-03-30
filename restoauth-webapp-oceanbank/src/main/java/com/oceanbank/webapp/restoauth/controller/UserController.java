@@ -187,8 +187,6 @@ public class UserController {
 	 */
 	@RequestMapping(value = RestWebServiceUrl.GET_USER_USERNAME, method = RequestMethod.GET)
 	public UserResponse getUserByUsername(@PathVariable("username") String username){
-	
-		LOGGER.info("Getting User with username = " + username);
 		
 		final DashboardUser user = userservice.findUserWithRoles(username);
 		

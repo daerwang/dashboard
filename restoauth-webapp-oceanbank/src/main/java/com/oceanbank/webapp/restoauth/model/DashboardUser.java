@@ -154,7 +154,7 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	 *
 	 * @return the username
 	 */
-	@Column(name = "USERNAME", length = 45)
+	@Column(name = "USERNAME")
 	public String getUsername() {
 		return this.username;
 	}
@@ -173,7 +173,7 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	 *
 	 * @return the password
 	 */
-	@Column(name = "PASSWORD", length = 45)
+	@Column(name = "PASSWORD")
 	public String getPassword() {
 		return this.password;
 	}
@@ -230,7 +230,7 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	 *
 	 * @return the firstname
 	 */
-	@Column(name = "FIRSTNAME", length = 45)
+	@Column(name = "FIRSTNAME")
 	public String getFirstname() {
 		return firstname;
 	}
@@ -249,7 +249,7 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	 *
 	 * @return the lastname
 	 */
-	@Column(name = "LASTNAME", length = 45)
+	@Column(name = "LASTNAME")
 	public String getLastname() {
 		return lastname;
 	}
@@ -268,7 +268,7 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	 *
 	 * @return the email
 	 */
-	@Column(name = "EMAIL", length = 45)
+	@Column(name = "EMAIL")
 	public String getEmail() {
 		return email;
 	}
@@ -320,7 +320,7 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 		this.modifiedby = modifiedby;
 	}
 
-	@Column(name = "ISERIESNAME", length = 45)
+	@Column(name = "ISERIESNAME")
 	public String getIseriesname() {
 		return iseriesname;
 	}
