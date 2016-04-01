@@ -152,6 +152,13 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 
 		return result;
 	}
+	
+	public UserResponse changePassword(Integer userId, String password){
+		UserResponse oldUser = findUserByUserid(userId);
+		oldUser.setPassword(password);
+		UserResponse newUser = updateUser(oldUser);
+		return newUser;
+	}
 
 	@Override
 	public UserResponse updateUser(UserResponse response) {

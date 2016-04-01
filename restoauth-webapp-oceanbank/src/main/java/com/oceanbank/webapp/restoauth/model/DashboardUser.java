@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.oceanbank.webapp.restoauth.listener.AbstractAuditEntityTimestamp;
 
@@ -36,42 +37,24 @@ import com.oceanbank.webapp.restoauth.listener.AbstractAuditEntityTimestamp;
 		@StoredProcedureParameter(mode = ParameterMode.OUT, name = "res", type = Integer.class) })
 public class DashboardUser extends AbstractAuditEntityTimestamp implements java.io.Serializable {
 
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 1L;
 	
-	/** The user id. */
+
 	private int userId;
-	
-	/** The username. */
 	private String username;
-	
-	/** The password. */
 	private String password;
-	
-	/** The firstname. */
 	private String firstname;
-	
-	/** The lastname. */
 	private String lastname;
-	
 	private String iseriesname;
-	
-	/** The email. */
 	private String email;
-	
-	/** The enabled. */
 	private int enabled;
-	
-	/** The roleses. */
 	private List<DashboardRole> roleses = new ArrayList<DashboardRole>();
-	
-	/** The createdby. */
 	private String createdby;
-	
-	/** The modifiedby. */
 	private String modifiedby;
 	
-	
+	@Transient
+	private String newPassword;
 
 	/**
 	 * Instantiates a new dashboard user.
@@ -327,6 +310,15 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 
 	public void setIseriesname(String iseriesname) {
 		this.iseriesname = iseriesname;
+	}
+
+	@Transient
+	public String getNewPassword() {
+		return newPassword;
+	}
+
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
 	}
 
 }

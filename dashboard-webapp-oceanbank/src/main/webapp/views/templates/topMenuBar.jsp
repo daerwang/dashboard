@@ -9,6 +9,24 @@ body {
 }
 </style>
 
+<script>
+
+$(document).ready(function(){
+	
+	function getContextPath() {
+		return window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
+	}	
+	
+	$('#resetPasswordLink').click(function(e){
+		e.preventDefault();
+		$(location).attr('href', getContextPath() + '/users/resetPassword');
+	});
+	
+	
+});
+
+
+</script>
 
 <!-- Navigation -->
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -28,15 +46,23 @@ body {
 			
 			
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="#">Welcome 
-						<sec:authorize access="isAuthenticated()">
-							<sec:authentication property="principal.user.firstname" />
-						</sec:authorize>
-						<sec:authorize access="! isAuthenticated()">
-							Visitor
-						</sec:authorize>
+				<sec:authorize access="isAuthenticated()">
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" 
+						aria-expanded="false">
+							Welcome <sec:authentication property="principal.user.firstname" /> <span class="caret"></span>
 					</a>
+					<ul class="dropdown-menu">
+			            <li><a href="/users/resetPassword" id="resetPasswordLink">Reset Password</a></li>
+			        </ul>
 				</li>
+				</sec:authorize>
+				<sec:authorize access="! isAuthenticated()">
+				<li>
+					<a href="#" >Welcome Visitor</a>
+				</li>
+				</sec:authorize>
+				
 				<sec:authorize access="! isAuthenticated()">
 					<li><a href="<c:url value="/login"/>">Login</a></li>
 				</sec:authorize>

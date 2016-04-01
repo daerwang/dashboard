@@ -24,14 +24,20 @@ public class UserTest {
 	@Test
 	public void test_encoder(){
 		int i = 0;
+		String password = "Tatiana@1";
 		while (i < 5) {
-			String password = "Tatiana@1";
+			
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 			String hashedPassword = passwordEncoder.encode(password);
-
+			// $2a$10$b7BcoO1motLDQxKiuEIvzekO4ATgTnuFXPZEvmKZd2tFEiElhozFS
+			
 			System.out.println(hashedPassword);
 			i++;
 		}
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		Boolean isCorrect = passwordEncoder.matches("Tatiana@2", "$2a$10$b7BcoO1motLDQxKiuEIvzekO4ATgTnuFXPZEvmKZd2tFEiElhozFS");
+		
+		System.out.println("final is " + isCorrect);
 	}
 	
 }

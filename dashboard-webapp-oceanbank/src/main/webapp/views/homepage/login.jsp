@@ -14,7 +14,7 @@
 </script>
 <div class="container">
 		<div class="row">
-			<div class="col-sm-6 col-md-4 col-md-offset-4">
+			<div class="col-xs-12 col-sm-6 col-md-4 col-md-offset-4">
 				<h1 class="text-center login-title">
 					Ocean Bank Dashboard
 				</h1>
@@ -30,7 +30,7 @@
 							<spring:message code="login.label.rememberMe"/>
 						</label> 
 						
-						<a href="<c:url value="${changePasswordUrl}"/>" class="pull-right new-account">${changePassword1}?</a><span class="clearfix"></span>
+						<a href="resetPassword" class="pull-right new-account">${changePassword1}?</a><span class="clearfix"></span>
 					</form>
 				</div>
 				

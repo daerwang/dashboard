@@ -86,15 +86,22 @@
 				noSelectionDialog.open();
 				return;
 	 		}
-	 		$(location).attr('href', 'users/editUserForm/' + row_id)
+	 		$(location).attr('href', 'users/editUserForm/' + row_id);
 		});   
 		
 		
 		$('#newButton').on('click', function(event) {
-			$(location).attr('href', 'users/createUserForm')
+			$(location).attr('href', 'users/createUserForm');
 		});   
 
-		
+		$('#changePasswordButton').on('click', function(event) {
+			if(!isHighlight){
+				noSelectionDialog.open();
+				return;
+	 		}
+			
+			$(location).attr('href', 'users/changePassword/' + row_id);
+		}); 
 
 		$('#deleteButton').on('click', function(event) {
 
@@ -142,6 +149,7 @@
 	<button type="button" class="btn btn-default btn-sm" id="newButton">New</button>
 	<button type="button" class="btn btn-default btn-sm" id="editButton">Edit</button>
 	<button type="button" class="btn btn-default btn-sm" id="deleteButton">Delete</button>
+	<button type="button" class="btn btn-default btn-sm" id="changePasswordButton">Change Password</button>
 </p>
 
 <table id="manageUserDatatable" class="table table-striped table-bordered" cellspacing="0" width="100%">

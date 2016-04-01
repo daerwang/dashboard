@@ -10,6 +10,7 @@ import com.oceanbank.webapp.common.model.DataTablesRequest;
 import com.oceanbank.webapp.common.model.DataTablesResponse;
 import com.oceanbank.webapp.common.model.ObDashboardRoles;
 import com.oceanbank.webapp.common.model.DashboardConstant;
+import com.oceanbank.webapp.common.model.RestOauthAccessToken;
 import com.oceanbank.webapp.common.model.UserDataTableResponse;
 import com.oceanbank.webapp.common.model.UserResponse;
 import com.oceanbank.webapp.common.util.CommonUtil;
@@ -57,6 +58,8 @@ public class AdministrationController {
 	@Autowired
 	private MessageSource messageSource;
 
+	@Autowired
+	private RestOauthAccessToken oauthAccessToken;
 	
 	
 	/**
@@ -158,15 +161,37 @@ public class AdministrationController {
 		
 		return result;
 	}
+	
+	@RequestMapping(value = "/users/getApiToken", method = RequestMethod.GET)
+	public @ResponseBody RestOauthAccessToken getApiToken() {
 
-	/**
-	 * Show user update modal page.
-	 *
-	 * @param model the model
-	 * @param locale the locale
-	 * @param rowId the row id
-	 * @return the string
-	 */
+		oauthAccessToken.setUserName(CommonUtil.getAuthenticatedUserDetails().getUsername());
+		
+		return oauthAccessToken;
+	}
+	
+	@RequestMapping(value = "/users/resetPassword", method = RequestMethod.GET)
+	public String showResetPassword(Model model) {
+		
+		model.addAttribute("title1", "Reset Password");	
+		
+		return "tiles_changeUserPasswordByUser";
+	}
+	
+	@RequestMapping(value = "/users/changePassword/{row_id}", method = RequestMethod.GET)
+	public String showChangePassword(Model model, Locale locale, @PathVariable("row_id") String rowId) {
+		
+		final String[] rowArr = rowId.split("_");
+		final Integer user_id = Integer.parseInt(rowArr[1]);
+		final UserResponse userResponse = userservice.findUserByUserid(user_id);
+		
+		
+		model.addAttribute("user",userResponse);
+		model.addAttribute("title1", "Change Password");	
+		
+		return "tiles_changeUserPassword";
+	}
+
 	@RequestMapping(value = "/users/editUserForm/{row_id}", method = RequestMethod.GET)
 	public String showUserUpdateModalPage(Model model, Locale locale, @PathVariable("row_id") String rowId) {
 

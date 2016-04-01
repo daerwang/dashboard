@@ -29,6 +29,14 @@
  		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
 	    <put-attribute name="pageContainer"	value="/views/manageusers/editUserForm.jsp" />
 	</definition>
+	<definition name="tiles_changeUserPassword" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/manageusers/changeUserPassword.jsp" />
+	</definition>
+	<definition name="tiles_changeUserPasswordByUser" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/manageusers/changeUserPasswordByUser.jsp" />
+	</definition>
 
 	<!-- Change Password page -->
 	<definition name="tiles_change_password" extends="page_template_3">

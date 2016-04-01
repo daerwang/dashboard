@@ -67,9 +67,7 @@
 															type : "POST",
 															url : '../administration/user/create',
 															dataType : 'json',
-															data : JSON
-																	.stringify(form
-																			.serializeObject()),
+															data : JSON.stringify(form.serializeObject()),
 															contentType : 'application/json',
 															mimeType : 'application/json',
 															success : function(data) {
@@ -158,7 +156,7 @@
 														},
 														regexp : {
 															regexp : /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]+$/,
-															message : 'The password must contain one digit 0-9, one lowercase letter, one uppercase letter, and one special symbols in the list "@#$%&"'
+															message : 'The password must contain one digit 0-9, one lowercase letter, one uppercase letter, and one special symbol in the list "@#$%&"'
 														}
 													}
 												},
