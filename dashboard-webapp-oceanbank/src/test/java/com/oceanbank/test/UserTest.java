@@ -1,14 +1,38 @@
 package com.oceanbank.test;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-//@Ignore
+
+@Ignore
 public class UserTest {
+	
+	@Test
+	public void test_content() throws JsonProcessingException, IOException{
+		String msg = "{\"message\":\"User Account is locked!\",\"cause\":\"class org.springframework.security.authentication.LockedException\",\"name\":\"org.springframework.security.authentication.LockedException\"}";
+		
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode mainNode = mapper.readTree(msg);
+		if(mainNode.has("name")){
+			String name = mainNode.path("name").asText();
+			String[] arr = name.split("\\.");
+			name = arr[arr.length - 1];
+			if(name.trim().contains("LockedExceptiosn")){
+				System.out.println("correct!");
+			}
+		}
+		
+		
+	}
 
 	@Test
 	public void test_regex(){

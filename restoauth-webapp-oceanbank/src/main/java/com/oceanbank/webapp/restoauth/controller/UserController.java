@@ -32,6 +32,7 @@ import com.oceanbank.webapp.restoauth.dao.UserRepository;
 import com.oceanbank.webapp.restoauth.model.DashboardRole;
 import com.oceanbank.webapp.restoauth.model.DashboardUser;
 import com.oceanbank.webapp.restoauth.service.RoleServiceImpl;
+import com.oceanbank.webapp.restoauth.service.UserAttemptService;
 import com.oceanbank.webapp.restoauth.service.UserServiceImpl;
 
 @CrossOrigin()
@@ -53,6 +54,9 @@ public class UserController {
 	/** The roleservice. */
 	@Autowired
 	private RoleServiceImpl roleservice;
+	
+	@Autowired
+	private UserAttemptService userAttemptService;
 	
 	/** The logger. */
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -321,6 +325,19 @@ public class UserController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/api/user/updateFailedAttempt/{username}", method = RequestMethod.POST)
+	public String updateFailedAttempt(@PathVariable("username") String username){
+		userAttemptService.updateFailedAttempt(username);
+		
+		return "ok";
+	}
+	
+	@RequestMapping(value = "/api/user/resetFailedAttempt/{username}", method = RequestMethod.POST)
+	public String resetFailedAttempt(@PathVariable("username") String username){
+		userAttemptService.resetFailedAttempt(username);
+		
+		return "ok";
+	}
 	
 	
 	public class ErrorDetail{
@@ -331,6 +348,7 @@ public class UserController {
 		
 		private String message;
 		private String cause;
+		private String name;
 		
 		public String getMessage() {
 			return message;
@@ -344,6 +362,12 @@ public class UserController {
 		public void setCause(String cause) {
 			this.cause = cause;
 		}
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
 	}
 	
 	
@@ -352,6 +376,7 @@ public class UserController {
 		ErrorDetail er = new ErrorDetail();
 		er.setMessage(ex.getMessage());
 		er.setCause(ex.getClass() + "");
+		er.setName(ex.getClass().getCanonicalName());
         return new ResponseEntity<ErrorDetail>(er, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 	 

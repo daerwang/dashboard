@@ -8,6 +8,15 @@
 </style>
 <script>
 $(document).ready(function() {
+	
+	
+	var token = Cookies.get('restToken');
+	var restApi = Cookies.get('restApi');
+	var userName = Cookies.get('userName');
+
+	function getContextPath() {
+		return window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
+	}
 
 	var url1 = "${userBootstrapValidatorUrl}";
 	url1 = url1.substring(1, url1.indexOf('{'));
@@ -47,12 +56,27 @@ $(document).ready(function() {
             validating: 'glyphicon glyphicon-refresh'
         },
         submitHandler: function(validator, form, submitButton){
+        	
+        	var formObj = form.serializeObject()
+        	console.log(formObj);
+        	formObj.accountNonLocked = 1;
+        	if(formObj.accountNonLockedHtml === 'on'){
+        		formObj.accountNonLocked = 0;
+        	}
+
+        	var formObj2 = formObj;
+        	delete formObj2.accountNonLockedHtml;
+        	
+			var jsonData = JSON.stringify(formObj2);
+			console.log(jsonData);
+			
+			var url = getContextPath() + '/administration/user/update';
 
 		    $.ajax({
 		    	type: "PUT",
-		    	url : '../../administration/user/update',
+		    	url : url,
 			  	dataType: 'json', 
-			    data: JSON.stringify(form.serializeObject()), 
+			    data: jsonData, 
 			    contentType: 'application/json',
 			    mimeType: 'application/json',
 			    success: function(data) { 
@@ -203,6 +227,19 @@ $(document).ready(function() {
 								placeholder="AS400 Username" tabindex="5"
 								value="<c:out value="${user.iseriesname}" />">
 						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="checkbox">
+								<label>
+									<input type="checkbox" name="accountNonLockedHtml" 
+										<c:if test="${user.accountNonLocked == 0}">checked="checked" value="On"</c:if> 
+										/>
+										
+										Account Locked
+								</label>
+							</div>
 					</div>
 				</div>
 

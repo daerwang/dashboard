@@ -1,7 +1,3 @@
-/**
- * 
- * Copyright (c) 2014-2015 the original author or authors.
- */
 package com.oceanbank.webapp.common.model;
 
 import java.util.Collection;
@@ -12,56 +8,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.oceanbank.webapp.common.model.Users;
 
 
+public class UserDetailsImpl implements UserDetails{
 
-
-/**
- * The Class AuthenticationUserDetails.
- * 
- * @author Marinell Medina
- * @since 03.10.2015
- */
-public class AuthenticationUserDetails implements UserDetails{
-
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	
-	/**
-	 * Instantiates a new authentication user details.
-	 */
-	public AuthenticationUserDetails(){}
+	public UserDetailsImpl(){}
 
-	/** The username. */
+
 	private String username;
-	
-	/** The password. */
 	private String password;
-	
-	/** The authorities. */
 	private Collection<? extends GrantedAuthority> authorities;
-	
-	/** The user. */
 	private Users user;
 	
-	/** The is account non expired. */
 	private Boolean isAccountNonExpired;
-	
-	/** The is account non locked. */
 	private Boolean isAccountNonLocked;
-	
-	/** The is credentials non expired. */
 	private Boolean isCredentialsNonExpired;
-	
-	/** The is enabled. */
 	private Boolean isEnabled;
 	
-	/**
-	 * Instantiates a new authentication user details.
-	 *
-	 * @param user the user
-	 * @param authorities the authorities
-	 * @param isEnabled the is enabled
-	 */
-	public AuthenticationUserDetails(Users user, Collection<? extends GrantedAuthority> authorities, Boolean isEnabled){
+
+	public UserDetailsImpl(Users user, Collection<? extends GrantedAuthority> authorities, Boolean isEnabled){
 		this.username = user.getUsername();
 		this.password = user.getPassword();
 		this.setUser(user);
@@ -75,17 +40,8 @@ public class AuthenticationUserDetails implements UserDetails{
 		
 	}
 	
-	/**
-	 * Instantiates a new authentication user details.
-	 *
-	 * @param user the user
-	 * @param authorities the authorities
-	 * @param isEnabled the is enabled
-	 * @param isAccountNonExpired the is account non expired
-	 * @param isAccountNonLocked the is account non locked
-	 * @param isCredentialsNonExpired the is credentials non expired
-	 */
-	public AuthenticationUserDetails(Users user, Collection<? extends GrantedAuthority> authorities
+	public UserDetailsImpl(Users user
+			, Collection<? extends GrantedAuthority> authorities
 			, Boolean isEnabled
 			, Boolean isAccountNonExpired
 			, Boolean isAccountNonLocked
@@ -101,18 +57,11 @@ public class AuthenticationUserDetails implements UserDetails{
 		this.isCredentialsNonExpired = isCredentialsNonExpired;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.springframework.security.core.userdetails.UserDetails#getAuthorities()
-	 */
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 
 		return authorities;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.core.userdetails.UserDetails#getPassword()
-	 */
 	public String getPassword() {
 
 		return password;

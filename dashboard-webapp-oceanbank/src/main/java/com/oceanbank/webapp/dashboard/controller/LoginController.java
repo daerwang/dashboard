@@ -4,11 +4,6 @@
  */
 package com.oceanbank.webapp.dashboard.controller;
 
-import com.oceanbank.webapp.common.handler.AjaxResponseHandler;
-import com.oceanbank.webapp.common.model.ChangePassword;
-import com.oceanbank.webapp.common.model.OauthTokenBean;
-import com.oceanbank.webapp.common.model.DashboardConstant;
-
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -22,6 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.oceanbank.webapp.common.handler.AjaxResponseHandler;
+import com.oceanbank.webapp.common.model.ChangePassword;
+import com.oceanbank.webapp.common.model.DashboardConstant;
+import com.oceanbank.webapp.common.model.OauthTokenBean;
 import com.oceanbank.webapp.dashboard.service.UserServiceImpl;
 
 
@@ -34,10 +33,6 @@ import com.oceanbank.webapp.dashboard.service.UserServiceImpl;
 @Controller
 public class LoginController extends OauthTokenBean{
 	
-	/** The logger. */
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-	
-	/** The userservice. */
 	@Autowired
 	private UserServiceImpl userservice;
 	
@@ -108,14 +103,11 @@ public class LoginController extends OauthTokenBean{
 	 * @param locale the locale
 	 * @return the string
 	 */
-	@RequestMapping({ "/", DashboardConstant.SHOW_LOGIN_PAGE })
+	@RequestMapping({ "/", "/login" })
 	public String showLoginPage(Model model, Locale locale) {
-		
-		LOGGER.info("Showing the Dashboard Login page.");
-		LOGGER.info("REST service: " + getRestApi());
-		
-		final String pageTitle = messageSource.getMessage("Page.title.login", null, locale);
-		final String changePassword1 = messageSource.getMessage("Page.title.changepassword", null, locale);
+
+		String pageTitle = messageSource.getMessage("Page.title.login", null, locale);
+		String changePassword1 = messageSource.getMessage("Page.title.changepassword", null, locale);
 		
 		model.addAttribute("title1",pageTitle);
 		model.addAttribute("changePassword1",changePassword1);

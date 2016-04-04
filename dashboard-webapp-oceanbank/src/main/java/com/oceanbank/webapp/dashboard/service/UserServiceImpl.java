@@ -4,6 +4,7 @@
  */
 package com.oceanbank.webapp.dashboard.service;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,10 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceanbank.webapp.common.handler.AjaxResponseHandler;
 import com.oceanbank.webapp.common.model.BootstrapValidatorResponse;
 import com.oceanbank.webapp.common.model.ChangePassword;
@@ -40,6 +45,68 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
     private PasswordEncoder passwordEncoder;
 	
 	public UserServiceImpl(){}
+	
+	private void checkRestException(String exceptionMessage) throws LockedException, BadCredentialsException{
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode mainNode;
+		try {
+			mainNode = mapper.readTree(exceptionMessage);
+			if(mainNode.has("name")){
+				String name = mainNode.path("name").asText();
+				String[] arr = name.split("\\.");
+				name = arr[arr.length - 1];
+				if(name.trim().contains("LockedException")){
+					throw new LockedException("The User is locked out.");
+				}
+				if(name.trim().contains("BadCredentialsException")){
+					throw new BadCredentialsException("The User name and password is not correct.");
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+		
+	}
+	
+	public String updateFailedAttempt(String username) throws LockedException, BadCredentialsException{
+		final HttpEntity<String> entity = CommonUtil.createHttpEntity(getAccessToken());
+		ResponseEntity<String> response = null;
+
+		try {
+			response = restTemplate.exchange(getRestApi() + "/api/user/updateFailedAttempt/{username}", HttpMethod.POST, entity,
+					String.class, username);
+		} catch (Exception e) {
+			e.printStackTrace();
+			String msg = e.getMessage();
+			checkRestException(msg);
+		}
+	
+		
+        String result = response.getBody();
+
+		return result;
+	}
+	
+	public String resetFailedAttempt(String username){
+		final HttpEntity<String> entity = CommonUtil.createHttpEntity(getAccessToken());
+		ResponseEntity<String> response = null;
+
+		try {
+			response = restTemplate.exchange(getRestApi() + "/api/user/resetFailedAttempt/{username}", HttpMethod.POST, entity,
+					String.class, username);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+		
+        String result = response.getBody();
+
+		return result;
+	}
 	
 	
 	@Override

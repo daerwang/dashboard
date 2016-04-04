@@ -50,7 +50,7 @@ $(document).ready(function(){
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" 
 						aria-expanded="false">
-							Welcome <sec:authentication property="principal.user.firstname" /> <span class="caret"></span>
+							Welcome <sec:authentication property="principal.username" /> <span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
 			            <li><a href="/users/resetPassword" id="resetPasswordLink">Reset Password</a></li>

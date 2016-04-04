@@ -196,3 +196,16 @@ CREATE TABLE `w8beneform` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8;
 
+
+CREATE TABLE `user_attempt` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) NOT NULL,
+  `attempt` int(11) NOT NULL DEFAULT '1',
+  `modifiedby` varchar(45) DEFAULT NULL,
+  `modifiedon` datetime DEFAULT NULL,
+  `createdby` varchar(45) DEFAULT NULL,
+  `createdon` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username_uq` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

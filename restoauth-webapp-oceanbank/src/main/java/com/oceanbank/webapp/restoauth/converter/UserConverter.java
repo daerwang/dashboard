@@ -47,6 +47,7 @@ public class UserConverter {
 		user.setPassword(response.getPassword());
 		user.setEmail(response.getEmail());
 		user.setIseriesname(response.getIseriesname());
+		user.setAccountNonLocked(response.getAccountNonLocked());
 		
 		user.setCreatedby(response.getCreatedby());
 		user.setModifiedby(response.getModifiedby());
@@ -90,6 +91,8 @@ public class UserConverter {
 		response.setEmail(user.getEmail());
 		response.setPassword(user.getPassword());
 		response.setIseriesname(user.getIseriesname());
+		
+		response.setAccountNonLocked(user.getAccountNonLocked());
 		
 		response.setCreatedby(user.getCreatedby());
 		response.setModifiedby(user.getModifiedby());
