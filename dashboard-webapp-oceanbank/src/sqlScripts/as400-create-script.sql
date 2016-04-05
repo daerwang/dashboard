@@ -72,7 +72,7 @@ INSERT INTO IBMOB700.DashboardUser (username, password, firstname, lastname, ema
 CREATE TABLE IBMOB700.DashboardUser(
   user_id INT GENERATED ALWAYS AS IDENTITY,
   username VARCHAR(45),
-  password VARCHAR(45),
+  password VARCHAR(100),
   firstname VARCHAR(45),
   lastname VARCHAR(45),
   iseriesname VARCHAR(45),
@@ -212,3 +212,13 @@ CREATE TABLE IBMOB700.DashboardComment (
 CREATE INDEX "id_index_dashboardcomment" ON IBMOB700.DashboardComment (id);
 CREATE INDEX "id_tableid_tablename_dashboardcomment" ON IBMOB700.DashboardComment(id, table_id, table_name);
 
+CREATE TABLE IBMOB700.user_attempt (
+  id INT GENERATED ALWAYS AS IDENTITY,
+  username VARCHAR(45) NOT NULL,
+  attempt INT NOT NULL,
+  createdby VARCHAR(45),
+  createdon TIMESTAMP,
+  modifiedby VARCHAR(45),
+  modifiedon TIMESTAMP,
+  PRIMARY KEY (id));
+CREATE INDEX "id_index_user_attempt" ON IBMOB700.user_attempt (id);
