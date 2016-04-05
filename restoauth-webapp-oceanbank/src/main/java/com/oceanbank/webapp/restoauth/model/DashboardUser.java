@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.oceanbank.webapp.restoauth.listener.AbstractAuditEntityTimestamp;
 
@@ -36,42 +37,28 @@ import com.oceanbank.webapp.restoauth.listener.AbstractAuditEntityTimestamp;
 		@StoredProcedureParameter(mode = ParameterMode.OUT, name = "res", type = Integer.class) })
 public class DashboardUser extends AbstractAuditEntityTimestamp implements java.io.Serializable {
 
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 1L;
 	
-	/** The user id. */
+
 	private int userId;
-	
-	/** The username. */
 	private String username;
-	
-	/** The password. */
 	private String password;
-	
-	/** The firstname. */
 	private String firstname;
-	
-	/** The lastname. */
 	private String lastname;
-	
 	private String iseriesname;
-	
-	/** The email. */
 	private String email;
-	
-	/** The enabled. */
 	private int enabled;
 	
-	/** The roleses. */
+	@Column(name = "accountNonLocked")
+	private Integer accountNonLocked;
+
 	private List<DashboardRole> roleses = new ArrayList<DashboardRole>();
-	
-	/** The createdby. */
 	private String createdby;
-	
-	/** The modifiedby. */
 	private String modifiedby;
 	
-	
+	@Transient
+	private String newPassword;
 
 	/**
 	 * Instantiates a new dashboard user.
@@ -154,7 +141,7 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	 *
 	 * @return the username
 	 */
-	@Column(name = "USERNAME", length = 45)
+	@Column(name = "USERNAME")
 	public String getUsername() {
 		return this.username;
 	}
@@ -173,7 +160,7 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	 *
 	 * @return the password
 	 */
-	@Column(name = "PASSWORD", length = 45)
+	@Column(name = "PASSWORD")
 	public String getPassword() {
 		return this.password;
 	}
@@ -230,7 +217,7 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	 *
 	 * @return the firstname
 	 */
-	@Column(name = "FIRSTNAME", length = 45)
+	@Column(name = "FIRSTNAME")
 	public String getFirstname() {
 		return firstname;
 	}
@@ -249,7 +236,7 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	 *
 	 * @return the lastname
 	 */
-	@Column(name = "LASTNAME", length = 45)
+	@Column(name = "LASTNAME")
 	public String getLastname() {
 		return lastname;
 	}
@@ -268,7 +255,7 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	 *
 	 * @return the email
 	 */
-	@Column(name = "EMAIL", length = 45)
+	@Column(name = "EMAIL")
 	public String getEmail() {
 		return email;
 	}
@@ -320,13 +307,30 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 		this.modifiedby = modifiedby;
 	}
 
-	@Column(name = "ISERIESNAME", length = 45)
+	@Column(name = "ISERIESNAME")
 	public String getIseriesname() {
 		return iseriesname;
 	}
 
 	public void setIseriesname(String iseriesname) {
 		this.iseriesname = iseriesname;
+	}
+
+	@Transient
+	public String getNewPassword() {
+		return newPassword;
+	}
+
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
+	}
+
+	public Integer getAccountNonLocked() {
+		return accountNonLocked;
+	}
+
+	public void setAccountNonLocked(Integer accountNonLocked) {
+		this.accountNonLocked = accountNonLocked;
 	}
 
 }

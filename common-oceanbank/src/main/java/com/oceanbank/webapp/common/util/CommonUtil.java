@@ -16,8 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import com.oceanbank.webapp.common.model.AuthenticationUserDetails;
+import org.springframework.security.core.userdetails.User;
 
 /**
  * The Class CommonUtil.
@@ -27,18 +26,12 @@ import com.oceanbank.webapp.common.model.AuthenticationUserDetails;
  */
 public class CommonUtil {
 	
-	/** The Constant LOGGER. */
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommonUtil.class);
 	
-	
-	/**
-	 * Gets the authenticated user details.
-	 *
-	 * @return the authenticated user details
-	 */
-	public static AuthenticationUserDetails getAuthenticatedUserDetails(){
+	public static User getAuthenticatedUserDetails(){
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		final AuthenticationUserDetails details = (AuthenticationUserDetails) authentication.getPrincipal();
+		final User details = (User) authentication.getPrincipal();
 		return details;
 	}
 	

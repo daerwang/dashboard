@@ -18,6 +18,7 @@
 	<properties>
 		<!-- Test Server -->
 		<jdk.version>1.7</jdk.version>
+		<org.springframework.version>4.2.5.RELEASE</org.springframework.version>
 	</properties>
 
 	<dependencies>

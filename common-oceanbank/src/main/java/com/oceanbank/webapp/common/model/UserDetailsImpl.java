@@ -19,7 +19,7 @@ public class UserDetailsImpl implements UserDetails{
 	private String password;
 	private Collection<? extends GrantedAuthority> authorities;
 	private Users user;
-
+	
 	private Boolean isAccountNonExpired;
 	private Boolean isAccountNonLocked;
 	private Boolean isCredentialsNonExpired;

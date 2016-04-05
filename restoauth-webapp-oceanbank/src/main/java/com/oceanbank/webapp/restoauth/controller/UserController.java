@@ -5,12 +5,6 @@
 package com.oceanbank.webapp.restoauth.controller;
 
 
-import com.oceanbank.webapp.common.model.BootstrapValidatorResponse;
-import com.oceanbank.webapp.common.model.ChangePassword;
-import com.oceanbank.webapp.common.model.DataTablesRequest;
-import com.oceanbank.webapp.common.model.UserResponse;
-import com.oceanbank.webapp.common.model.RestWebServiceUrl;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,27 +12,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oceanbank.webapp.common.model.BootstrapValidatorResponse;
+import com.oceanbank.webapp.common.model.ChangePassword;
+import com.oceanbank.webapp.common.model.DataTablesRequest;
+import com.oceanbank.webapp.common.model.RestWebServiceUrl;
+import com.oceanbank.webapp.common.model.UserResponse;
 import com.oceanbank.webapp.restoauth.converter.UserConverter;
+import com.oceanbank.webapp.restoauth.dao.UserRepository;
 import com.oceanbank.webapp.restoauth.model.DashboardRole;
 import com.oceanbank.webapp.restoauth.model.DashboardUser;
 import com.oceanbank.webapp.restoauth.service.RoleServiceImpl;
+import com.oceanbank.webapp.restoauth.service.UserAttemptService;
 import com.oceanbank.webapp.restoauth.service.UserServiceImpl;
 
-/**
- * The Class UserController.
- * 
- * @author Marinell Medina
- * @since 03.10.2015
- */
+@CrossOrigin()
 @RestController
 public class UserController {
 	
@@ -51,20 +48,60 @@ public class UserController {
 	@Autowired
 	private UserServiceImpl userservice;
 	
+	@Autowired
+	private UserRepository userRepository;
+
 	/** The roleservice. */
 	@Autowired
 	private RoleServiceImpl roleservice;
 	
+	@Autowired
+	private UserAttemptService userAttemptService;
+
 	/** The logger. */
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	
-	
-	/**
-	 * Change user password.
-	 *
-	 * @param changePassword the change password
-	 * @return the user response
-	 */
+	@RequestMapping(value = "/api/user/resetPassword", method = RequestMethod.PUT)
+	public DashboardUser resetUserPassword(@RequestBody DashboardUser user) throws Exception{
+		DashboardUser oldUser = userRepository.findByUsername(user.getUsername().trim());
+
+		if(oldUser == null){
+			throw new Exception("no User that is logged in");
+		}
+
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		Boolean isPasswordCorrect = passwordEncoder.matches(user.getPassword(), oldUser.getPassword());
+		if(!isPasswordCorrect){
+			throw new Exception("old password is not correct");
+		}
+		String hashedPassword = passwordEncoder.encode(user.getNewPassword());
+		oldUser.setPassword(hashedPassword);
+		oldUser.setModifiedby(user.getModifiedby());
+
+		DashboardUser newUser = userRepository.save(oldUser);
+		newUser.setRoleses(null);
+		return newUser;
+	}
+
+	@RequestMapping(value = "/api/user/updatePassword", method = RequestMethod.PUT)
+	public DashboardUser updateUserPassword(@RequestBody DashboardUser user){
+
+		DashboardUser oldUser = userRepository.findOne(user.getUserId());
+
+		if(user.getPassword() != null && user.getPassword().trim().length() > 0){
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			String hashedPassword = passwordEncoder.encode(user.getPassword());
+
+			oldUser.setPassword(hashedPassword);
+		}
+
+		oldUser.setModifiedby(user.getModifiedby());
+
+		DashboardUser newUser = userRepository.save(oldUser);
+		newUser.setRoleses(null);
+		return newUser;
+	}
+
 	@RequestMapping(value = RestWebServiceUrl.EXECUTE_CHANGE_PASSWORD, method = RequestMethod.PUT)
 	public UserResponse changeUserPassword(@RequestBody ChangePassword changePassword){
 	
@@ -187,8 +224,6 @@ public class UserController {
 	 */
 	@RequestMapping(value = RestWebServiceUrl.GET_USER_USERNAME, method = RequestMethod.GET)
 	public UserResponse getUserByUsername(@PathVariable("username") String username){
-	
-		LOGGER.info("Getting User with username = " + username);
 		
 		final DashboardUser user = userservice.findUserWithRoles(username);
 		
@@ -290,27 +325,59 @@ public class UserController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/api/user/updateFailedAttempt/{username}", method = RequestMethod.POST)
+	public String updateFailedAttempt(@PathVariable("username") String username){
+		userAttemptService.updateFailedAttempt(username);
+
+		return "ok";
+	}
+	
+	@RequestMapping(value = "/api/user/resetFailedAttempt/{username}", method = RequestMethod.POST)
+	public String resetFailedAttempt(@PathVariable("username") String username){
+		userAttemptService.resetFailedAttempt(username);
+
+		return "ok";
+	}
 	
 	
+	public class ErrorDetail{
+
+		public ErrorDetail(){
+
+		}
+
+		private String message;
+		private String cause;
+		private String name;
+
+		public String getMessage() {
+			return message;
+		}
+		public void setMessage(String message) {
+			this.message = message;
+		}
+		public String getCause() {
+			return cause;
+		}
+		public void setCause(String cause) {
+			this.cause = cause;
+		}
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+	}
 	
-	
-	
-	
-	
-	
-	/**
-	 * Handle server errors.
-	 *
-	 * @param ex the ex
-	 * @return the string
-	 */
+
 	@ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    public String handleServerErrors(Exception ex) {
-        LOGGER.error("UserRestController Message 1 " + ex.getMessage());
-        
-        return ex.getMessage();
+    public ResponseEntity<ErrorDetail> handleServerErrors(Exception ex) {
+		ErrorDetail er = new ErrorDetail();
+		er.setMessage(ex.getMessage());
+		er.setCause(ex.getClass() + "");
+		er.setName(ex.getClass().getCanonicalName());
+        return new ResponseEntity<ErrorDetail>(er, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 	 
     

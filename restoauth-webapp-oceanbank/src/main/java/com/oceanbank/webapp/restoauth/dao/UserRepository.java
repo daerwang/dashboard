@@ -24,7 +24,7 @@ import com.oceanbank.webapp.restoauth.model.DashboardUser;
  * @since 03.10.2015
  */
 @Transactional(readOnly = true)
-public interface UserRepository extends JpaRepository<DashboardUser, Long> {
+public interface UserRepository extends JpaRepository<DashboardUser, Integer> {
 	
 	/**
 	 * Find by user id is.

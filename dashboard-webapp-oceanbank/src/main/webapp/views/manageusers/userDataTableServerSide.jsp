@@ -92,7 +92,7 @@
 		
 		$('#newButton').on('click', function(event) {
 			$(location).attr('href', 'users/createUserForm');
-		});
+		});   
 
 		$('#changePasswordButton').on('click', function(event) {
 			if(!isHighlight){
@@ -101,7 +101,7 @@
 	 		}
 			
 			$(location).attr('href', 'users/changePassword/' + row_id);
-		});
+		}); 
 
 		$('#deleteButton').on('click', function(event) {
 

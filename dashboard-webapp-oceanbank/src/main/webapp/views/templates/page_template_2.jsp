@@ -11,7 +11,8 @@
 	<link href="<c:url value="/jquery/ui/1.11.2/jquery-ui.css" />" rel="stylesheet">
 	<script src="<c:url value="/jquery/ui/1.11.2/external/jquery/jquery.js" />"></script>
 	<script src="<c:url value="/jquery/ui/1.11.2/jquery-ui.js" />"></script>
-	
+	<script src="<c:url value="/jquery/cookies/js.cookie.js" />"></script>
+
 	<!-- Bootstrap Version 3.3.2 -->
 	<link href="<c:url value="/bootstrap/3.3.2/css/bootstrap.min.css" />" rel="stylesheet">
 	<script src="<c:url value="/bootstrap/3.3.2/js/bootstrap.min.js" />" ></script>

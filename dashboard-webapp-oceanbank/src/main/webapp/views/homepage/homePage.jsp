@@ -7,7 +7,27 @@
 
 	$(document).ready(function() {
 
+		setToken();
 
+
+
+		function setToken(){
+			$.ajax({
+				type: 'GET',
+				url: 'users/getApiToken',
+				success: function(data){
+					Cookies.set('restToken', data.accessToken);
+					Cookies.set('restApi', data.restApi);
+					Cookies.set('userName', data.userName);
+
+					$.ajaxSetup({
+					    beforeSend: function(xhr) {
+					        xhr.setRequestHeader('Authorization', 'bearer ' + data.accessToken);
+					    }
+					});
+				}
+			});
+		}
 	});
 
 </script>

@@ -28,6 +28,8 @@ public class RestOauthAccessToken {
 	
 	private String environment;
 
+	private String userName;
+
 	/**
 	 * Gets the ob dashboard roles list.
 	 *
@@ -106,6 +108,14 @@ public class RestOauthAccessToken {
 
 	public void setEnvironment(String environment) {
 		this.environment = environment;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }

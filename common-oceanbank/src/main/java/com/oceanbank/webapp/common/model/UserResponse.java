@@ -43,13 +43,13 @@ public class UserResponse {
     
     /** The role names. */
     private String[] roleNames;
-    
-    /** The createdby. */
+
     private String createdby;
-	
-	/** The modifiedby. */
+
 	private String modifiedby;
 	
+	private Integer accountNonLocked;
+
 	/**
 	 * Instantiates a new user response.
 	 */
@@ -245,5 +245,13 @@ public class UserResponse {
 
 	public void setIseriesname(String iseriesname) {
 		this.iseriesname = iseriesname;
+	}
+
+	public Integer getAccountNonLocked() {
+		return accountNonLocked;
+	}
+
+	public void setAccountNonLocked(Integer accountNonLocked) {
+		this.accountNonLocked = accountNonLocked;
 	}
 }

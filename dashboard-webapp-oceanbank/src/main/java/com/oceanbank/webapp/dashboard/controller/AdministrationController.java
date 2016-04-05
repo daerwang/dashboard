@@ -10,6 +10,7 @@ import com.oceanbank.webapp.common.model.DataTablesRequest;
 import com.oceanbank.webapp.common.model.DataTablesResponse;
 import com.oceanbank.webapp.common.model.ObDashboardRoles;
 import com.oceanbank.webapp.common.model.DashboardConstant;
+import com.oceanbank.webapp.common.model.RestOauthAccessToken;
 import com.oceanbank.webapp.common.model.UserDataTableResponse;
 import com.oceanbank.webapp.common.model.UserResponse;
 import com.oceanbank.webapp.common.util.CommonUtil;
@@ -57,7 +58,9 @@ public class AdministrationController {
 	@Autowired
 	private MessageSource messageSource;
 
-	
+	@Autowired
+	private RestOauthAccessToken oauthAccessToken;
+
 	
 	/**
 	 * Show administration page.
@@ -74,10 +77,10 @@ public class AdministrationController {
 		model.addAttribute("title1",pageTitle);
 		model.addAttribute("userDatatableUrl", DashboardConstant.GET_USER_BY_DATATABLE_JSON);
 		model.addAttribute("updateModalPageUrl", DashboardConstant.SHOW_UPDATE_MODAL_PAGE);
-		model.addAttribute("newModalPageUrl", DashboardConstant.SHOW_NEW_MODAL_PAGE);
+		model.addAttribute("newModalPageUrl", "/users/createUserForm");
 		model.addAttribute("deleteUserUrl", DashboardConstant.DELETE_USER_DATATABLE);
 
-		return DashboardConstant.TILES_ADMINISTRATION_TEMPLATE;
+		return "tiles_administration";
 	}
 	
 	/**
@@ -87,7 +90,7 @@ public class AdministrationController {
 	 * @param locale the locale
 	 * @return the string
 	 */
-	@RequestMapping(value = DashboardConstant.SHOW_NEW_MODAL_PAGE, method = RequestMethod.GET)
+	@RequestMapping(value = "/users/createUserForm", method = RequestMethod.GET)
 	public String showUserCreateModalPage(Model model, Locale locale) {
 		
 		// setup label locale
@@ -116,9 +119,7 @@ public class AdministrationController {
 		final ObDashboardRoles obRoles = userservice.getObDashboardRoles("test");
 		model.addAttribute("obRoles",obRoles);
 		
-		LOGGER.info("Invoking Create User Modal Form");
-		
-		return DashboardConstant.SHOW_ADMIN_USER_CREATE_FORM;
+		return "tiles_createUserForm";
 	}
 	
 	/**
@@ -127,7 +128,7 @@ public class AdministrationController {
 	 * @param response the response
 	 * @return the user response
 	 */
-	@RequestMapping(value = DashboardConstant.CREATE_USER_DATATABLE, method = RequestMethod.POST)
+	@RequestMapping(value = "/administration/user/create", method = RequestMethod.POST)
 	public @ResponseBody UserResponse executeUserCreate(@RequestBody UserResponse response) {
 		// manage auditing
 		response.setCreatedby(CommonUtil.getAuthenticatedUserDetails().getUsername());
@@ -161,18 +162,40 @@ public class AdministrationController {
 		return result;
 	}
 
-	/**
-	 * Show user update modal page.
-	 *
-	 * @param model the model
-	 * @param locale the locale
-	 * @param rowId the row id
-	 * @return the string
-	 */
-	@RequestMapping(value = DashboardConstant.SHOW_UPDATE_MODAL_PAGE, method = RequestMethod.GET)
+	@RequestMapping(value = "/users/getApiToken", method = RequestMethod.GET)
+	public @ResponseBody RestOauthAccessToken getApiToken() {
+
+		oauthAccessToken.setUserName(CommonUtil.getAuthenticatedUserDetails().getUsername());
+
+		return oauthAccessToken;
+	}
+
+	@RequestMapping(value = "/users/resetPassword", method = RequestMethod.GET)
+	public String showResetPassword(Model model) {
+
+		model.addAttribute("title1", "Reset Password");
+
+		return "tiles_changeUserPasswordByUser";
+	}
+
+	@RequestMapping(value = "/users/changePassword/{row_id}", method = RequestMethod.GET)
+	public String showChangePassword(Model model, Locale locale, @PathVariable("row_id") String rowId) {
+
+		final String[] rowArr = rowId.split("_");
+		final Integer user_id = Integer.parseInt(rowArr[1]);
+		final UserResponse userResponse = userservice.findUserByUserid(user_id);
+
+
+		model.addAttribute("user",userResponse);
+		model.addAttribute("title1", "Change Password");
+
+		return "tiles_changeUserPassword";
+	}
+
+	@RequestMapping(value = "/users/editUserForm/{row_id}", method = RequestMethod.GET)
 	public String showUserUpdateModalPage(Model model, Locale locale, @PathVariable("row_id") String rowId) {
 
-		final String pageTitle = messageSource.getMessage("Page.title.register", null, locale);
+		final String pageTitle = "Edit User";
 		final String email1 = messageSource.getMessage("label.user.email", null, locale);
 		final String password1 = messageSource.getMessage("label.user.password", null, locale);
 		final String role1 = messageSource.getMessage("label.user.role", null, locale);
@@ -200,7 +223,7 @@ public class AdministrationController {
 		model.addAttribute("obRoles",obRoles);
 		
 		
-		return DashboardConstant.SHOW_ADMIN_USER_EDIT_FORM;
+		return "tiles_editUserForm";
 	}
 	
 	/**
@@ -209,16 +232,13 @@ public class AdministrationController {
 	 * @param response the response
 	 * @return the user response
 	 */
-	@RequestMapping(value = DashboardConstant.UPDATE_USER_DATATABLE, method = RequestMethod.POST)
+	@RequestMapping(value = "/administration/user/update", method = RequestMethod.PUT)
 	public @ResponseBody UserResponse executeUserUpdate(@RequestBody UserResponse response) {
-		
-		// manage auditing
+
 		response.setModifiedby(CommonUtil.getAuthenticatedUserDetails().getUsername());
 				
 		final UserResponse updatedResponse = userservice.updateUser(response);
-		
-		LOGGER.info("Returning updated User of " + updatedResponse.getUsername());
-		
+
 		return updatedResponse;
 	}
 	
@@ -229,13 +249,22 @@ public class AdministrationController {
 	 * @param username the username
 	 * @return the user bootstrap validator exist
 	 */
-	@RequestMapping(value= DashboardConstant.GET_USER_BY_BOOTSTRAP_VALIDATOR_ORIGINAL, method = RequestMethod.POST)
+	@RequestMapping(value= "/administration/user/validator/{originalUsername}", method = RequestMethod.POST)
 	public @ResponseBody BootstrapValidatorResponse getUserBootstrapValidatorExist(@PathVariable("originalUsername") String originalUsername, @RequestParam("username") String username) {
- 
-    	LOGGER.info("Searching for: " + username);
-    	
+
     	final BootstrapValidatorResponse response = userservice.findUserByUsernameWithBootstrapValidatorOriginal(originalUsername, username);
     	
+		return response;
+	}
+
+	@RequestMapping(value= "/user/validatePassword/{password}", method = RequestMethod.POST)
+	public @ResponseBody BootstrapValidatorResponse checkPasswordRestriction(@PathVariable("password") String password) {
+
+    	final BootstrapValidatorResponse response = new BootstrapValidatorResponse();
+    	Boolean isCorrect = false;
+    	isCorrect = userservice.isPasswordCorrectFormat(password);
+    	response.setValid(isCorrect);
+
 		return response;
 	}
 

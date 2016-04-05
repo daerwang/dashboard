@@ -4,21 +4,24 @@ ADD UNIQUE INDEX `iseriesname_UNIQUE` (`iseriesname` ASC);
 
 
 
-CREATE TABLE IF NOT EXISTS `test-oceanbank-db`.`DashboardUser` (
-  `user_id` INT NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(45) NULL,
-  `password` VARCHAR(45) NULL,
-  `firstname` VARCHAR(45) NULL,
-  `lastname` VARCHAR(45) NULL,
-  `email` VARCHAR(45) NULL,
-  `enabled` INT NOT NULL DEFAULT 1,
-  `createdby` VARCHAR(45) NULL,
-  `createdon` DATETIME NULL,
-  `modifiedby` VARCHAR(45) NULL,
-  `modifiedon` DATETIME NULL,
+CREATE TABLE `dashboarduser` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) DEFAULT NULL,
+  `password` varchar(60) DEFAULT NULL,
+  `firstname` varchar(45) DEFAULT NULL,
+  `lastname` varchar(45) DEFAULT NULL,
+  `iseriesname` varchar(45) DEFAULT NULL,
+  `email` varchar(45) DEFAULT NULL,
+  `enabled` int(11) NOT NULL DEFAULT '1',
+  `createdby` varchar(45) DEFAULT NULL,
+  `createdon` datetime DEFAULT NULL,
+  `modifiedby` varchar(45) DEFAULT NULL,
+  `modifiedon` datetime DEFAULT NULL,
+  `accountNonLocked` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`user_id`),
-  UNIQUE INDEX `idx_username` (`username` ASC))
-ENGINE = InnoDB;
+  UNIQUE KEY `idx_username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE IF NOT EXISTS `test-oceanbank-db`.`DashboardRole` (
   `role_id` INT NOT NULL AUTO_INCREMENT,
@@ -195,4 +198,18 @@ CREATE TABLE `w8beneform` (
   `altCountryLabel` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `user_attempt` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) NOT NULL,
+  `attempt` int(11) NOT NULL DEFAULT '0',
+  `modifiedby` varchar(45) DEFAULT NULL,
+  `modifiedon` datetime DEFAULT NULL,
+  `createdby` varchar(45) DEFAULT NULL,
+  `createdon` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username_uq` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
 
