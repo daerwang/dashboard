@@ -221,4 +221,3 @@ CREATE TABLE IBMOB700.user_attempt (
   modifiedby VARCHAR(45),
   modifiedon TIMESTAMP,
   PRIMARY KEY (id));
-CREATE INDEX "id_index_user_attempt" ON IBMOB700.user_attempt (id);
