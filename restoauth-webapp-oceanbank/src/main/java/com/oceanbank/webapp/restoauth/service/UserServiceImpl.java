@@ -198,20 +198,17 @@ public class UserServiceImpl implements UserService {
 		user.setFirstname(response.getFirstname());
 		user.setLastname(response.getLastname());
 		user.setUsername(response.getUsername());
-		user.setPassword(response.getPassword());
+//		user.setPassword(response.getPassword());
 		user.setEmail(response.getEmail());
 		user.setModifiedby(response.getModifiedby());
 		user.setIseriesname(response.getIseriesname());
 		user.setAccountNonLocked(response.getAccountNonLocked());
 		user.setAccountNonExpired(response.getAccountNonExpired());
-
-		// for lazily loaded User, ensure that Roles are included before converting to bean
-		final List<DashboardRole> entityRoles = roleRepository.findByUseridIs(user.getUserId());
-		user.setRoleses(entityRoles);
+		
 
 		// set the variables
 		List<String> roleNamesList = new ArrayList<String>();
-		final List<DashboardRole> roleList = user.getRoleses();
+		final List<DashboardRole> roleList = roleRepository.findByUseridIs(user.getUserId());
 		String[] roleNames = null;
 		
 		if(roleList != null && roleList.size() > 0){

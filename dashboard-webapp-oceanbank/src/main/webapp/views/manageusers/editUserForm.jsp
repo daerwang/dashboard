@@ -99,8 +99,25 @@ $(document).ready(function() {
 			            }]
 			        });		
 			    },
-			    error:function(data,status,er) { 
-			        alert("error: "+data+" status: "+status+" er:"+er);
+			    error: function (data, status, er) {
+			        console.log(data);
+			        console.log(status);
+			        console.log(er);
+			        var json = data.responseText;
+			        var errorObj = $.parseJSON(json);
+			        BootstrapDialog.show({
+				        type : BootstrapDialog.TYPE_WARNING,
+			            title: 'Warning',
+			            message: 'Error: ' + errorObj.message + ' by ' + errorObj.cause,
+			            buttons: [{
+			                label: 'Ok',
+			                cssClass: 'btn-warning',
+			                action: function(dialog){
+			                    dialog.close();
+			                    location.reload();
+			                }
+			            }]
+			         });
 			    }
 			});
 			

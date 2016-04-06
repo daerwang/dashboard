@@ -15,9 +15,6 @@ import com.oceanbank.webapp.dashboard.service.UserServiceImpl;
 public class LimitLoginAuthenticationProvider extends DaoAuthenticationProvider {
 	
 	@Autowired
-	private UserDetailsServiceImpl userDetailsServiceImpl;
-	
-	@Autowired
 	private UserServiceImpl userServiceImpl;
 
 

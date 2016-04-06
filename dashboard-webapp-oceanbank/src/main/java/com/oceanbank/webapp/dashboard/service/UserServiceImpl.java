@@ -52,10 +52,9 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 	
 	public void validateAccountExpiry(UserResponse userResponse){
 		if(userResponse.getAccountNonExpired() == 1){
-	        Date createdOn = userResponse.getCreatedon() != null ? userResponse.getCreatedon() : new Date();
 	        Date modifiedOn = userResponse.getModifiedon() != null ? userResponse.getModifiedon() : new Date();
-	        DateTime start = new DateTime(createdOn);
-	        DateTime end = new DateTime(modifiedOn);
+	        DateTime start = new DateTime(modifiedOn);
+	        DateTime end = new DateTime(new Date());
 
 			Integer daysDiff = Days.daysBetween(start.toLocalDate(), end.toLocalDate()).getDays();
 			if(daysDiff > 60){
@@ -81,6 +80,9 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 				}
 				if(name.trim().contains("BadCredentialsException")){
 					throw new BadCredentialsException("The User name and password is not correct.");
+				}
+				if(name.trim().contains("JpaSystemException")){
+					throw new BadCredentialsException("The User name and password is not correct. - JpaSystemException");
 				}
 			}
 		} catch (IOException e) {
