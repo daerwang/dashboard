@@ -1,67 +1,43 @@
-# User-specific stuff:
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/dictionaries
-.idea/vcs.xml
-.idea/jsLibraryMappings.xml
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
 
-# Sensitive or high-churn files:
-.idea/dataSources.ids
-.idea/dataSources.xml
-.idea/dataSources.local.xml
-.idea/sqlDataSources.xml
-.idea/dynamic.xml
-.idea/uiDesigner.xml
+# Folder config file
+Desktop.ini
 
-.idea/**
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
 
-.metadata
-bin/
-tmp/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.settings/
-.loadpath
-.recommenders
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
 
-# Eclipse Core
-.project
+# Windows shortcuts
+*.lnk
 
-# External tool builders
-.externalToolBuilders/
+# =========================
+# Operating System Files
+# =========================
 
-# Locally stored "Eclipse launch configurations"
-*.launch
+# OSX
+# =========================
 
-# PyDev specific (Python IDE for Eclipse)
-*.pydevproject
+.DS_Store
+.AppleDouble
+.LSOverride
 
-# CDT-specific (C/C++ Development Tooling)
-.cproject
+# Thumbnails
+._*
 
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
 
-# Java annotation processor (APT)
-.factorypath
-
-# PDT-specific (PHP Development Tools)
-.buildpath
-
-# sbteclipse plugin
-.target
-
-# Tern plugin
-.tern-project
-
-# TeXlipse plugin
-.texlipse
-
-# STS (Spring Tool Suite)
-.springBeans
-
-# Code Recommenders
-.recommenders/
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
