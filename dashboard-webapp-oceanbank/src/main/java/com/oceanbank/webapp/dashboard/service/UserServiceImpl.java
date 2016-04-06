@@ -6,15 +6,19 @@ package com.oceanbank.webapp.dashboard.service;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,6 +50,23 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 
 	public UserServiceImpl(){}
 	
+	public void validateAccountExpiry(UserResponse userResponse){
+		if(userResponse.getAccountNonExpired() == 1){
+	        Date createdOn = userResponse.getCreatedon() != null ? userResponse.getCreatedon() : new Date();
+	        Date modifiedOn = userResponse.getModifiedon() != null ? userResponse.getModifiedon() : new Date();
+	        DateTime start = new DateTime(createdOn);
+	        DateTime end = new DateTime(modifiedOn);
+
+			Integer daysDiff = Days.daysBetween(start.toLocalDate(), end.toLocalDate()).getDays();
+			if(daysDiff > 60){
+				System.out.println("Expire this account!");
+				userResponse.setAccountNonExpired(0);
+				// update DB
+				updateUser(userResponse);
+			}
+		}
+	}
+
 	private void checkRestException(String exceptionMessage) throws LockedException, BadCredentialsException{
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode mainNode;
@@ -64,9 +85,10 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new InternalAuthenticationServiceException("The DB or Server may not be responding.");
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw e;
+			throw new InternalAuthenticationServiceException("The DB or Server may not be responding.");
 		}
 
 
@@ -116,7 +138,7 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 		ResponseEntity<UserResponse> response = null;
 
 		try {
-			response = restTemplate.exchange(getRestApi() + RestWebServiceUrl.GET_USER_USERNAME, HttpMethod.GET, entity,
+			response = restTemplate.exchange(getRestApi() + "/api/user/username/{username}", HttpMethod.GET, entity,
 					UserResponse.class, username);
 		} catch (Exception e) {
 			e.printStackTrace();

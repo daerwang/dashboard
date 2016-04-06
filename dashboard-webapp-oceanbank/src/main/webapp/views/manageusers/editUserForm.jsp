@@ -60,12 +60,17 @@ $(document).ready(function() {
         	var formObj = form.serializeObject()
         	console.log(formObj);
         	formObj.accountNonLocked = 1;
+        	formObj.accountNonExpired = 1;
         	if(formObj.accountNonLockedHtml === 'on'){
         		formObj.accountNonLocked = 0;
+        	}
+        	if(formObj.accountNonExpiredHtml === 'on'){
+        		formObj.accountNonExpired = 0;
         	}
 
         	var formObj2 = formObj;
         	delete formObj2.accountNonLockedHtml;
+        	delete formObj2.accountNonExpiredHtml;
 
 			var jsonData = JSON.stringify(formObj2);
 			console.log(jsonData);
@@ -238,6 +243,19 @@ $(document).ready(function() {
 										/>
 
 										Account Locked
+								</label>
+							</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="checkbox">
+								<label>
+									<input type="checkbox" name="accountNonExpiredHtml"
+										<c:if test="${user.accountNonExpired == 0}">checked="checked" value="On"</c:if>
+										/>
+
+										Account Expired
 								</label>
 							</div>
 					</div>
