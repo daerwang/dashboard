@@ -177,9 +177,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cedce7', end
             
             
         </div><!-- /card-container -->
-        <c:if test="${param.error eq 'accountLocked'}">
+            <c:if test="${param.error eq 'accountLocked'}">
 			<div class="alert alert-error text-center" style="color:RED">
 					The account is locked out. Please contact Admin.
+			</div>
+			</c:if>
+			<c:if test="${param.error eq 'accountExpired'}">
+			<div class="alert alert-error text-center" style="color:RED">
+					The account is expired. Please contact Admin.
 			</div>
 			</c:if>
 			<c:if test="${param.error eq 'badCredentials'}">
@@ -189,7 +194,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cedce7', end
 			</c:if>
 			<c:if test="${param.error eq 'badConnection'}">
 			<div class="alert alert-error text-center" style="color:RED">
-				<spring:message code="message.badConnection"></spring:message>
+					There is bad server connection. Please contact Admin.
 			</div>
 			</c:if>
 			<c:if test="${param.loggedout != null}">

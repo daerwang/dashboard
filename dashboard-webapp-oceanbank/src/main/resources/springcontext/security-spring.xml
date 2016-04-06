@@ -72,6 +72,8 @@
 							key="org.springframework.security.authentication.LockedException">/login?error=accountLocked</prop>
 						<prop
 							key="org.springframework.security.authentication.InternalAuthenticationServiceException">/login?error=badConnection</prop>
+						<prop
+							key="org.springframework.security.authentication.AccountExpiredException">/login?error=accountExpired</prop>	
 					</props>
 				</property>
 			</bean>

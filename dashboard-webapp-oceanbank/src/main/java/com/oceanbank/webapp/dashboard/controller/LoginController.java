@@ -6,8 +6,6 @@ package com.oceanbank.webapp.dashboard.controller;
 
 import java.util.Locale;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -106,10 +104,9 @@ public class LoginController extends OauthTokenBean{
 	@RequestMapping({ "/", "/login" })
 	public String showLoginPage(Model model, Locale locale) {
 
-		String pageTitle = messageSource.getMessage("Page.title.login", null, locale);
 		String changePassword1 = messageSource.getMessage("Page.title.changepassword", null, locale);
 		
-		model.addAttribute("title1",pageTitle);
+		model.addAttribute("title1", "Login");
 		model.addAttribute("changePassword1",changePassword1);
 		model.addAttribute("changePasswordUrl", DashboardConstant.SHOW_CHANGE_PASSWORD_PAGE);
 		model.addAttribute("username1", "Username");
@@ -127,11 +124,10 @@ public class LoginController extends OauthTokenBean{
 	 * @param locale the locale
 	 * @return the string
 	 */
-	@RequestMapping(value = DashboardConstant.SHOW_HOME_PAGE, method = RequestMethod.GET)
+	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public String showHomePage(Model model, Locale locale) {
 		
-		final String pageTitle = messageSource.getMessage("Page.title.home", null, locale);
-		model.addAttribute("title1",pageTitle);
+		model.addAttribute("title1","Dashboard");
 		
 		model.addAttribute("administrationUrl", DashboardConstant.SHOW_ADMIN_PAGE);
 		model.addAttribute("kycBatchApprovalUrl", DashboardConstant.SHOW_AML_BATCH_PAGE);

@@ -222,7 +222,7 @@ public class UserController {
 	 * @param username the username
 	 * @return the user by username
 	 */
-	@RequestMapping(value = RestWebServiceUrl.GET_USER_USERNAME, method = RequestMethod.GET)
+	@RequestMapping(value = "/api/user/username/{username}", method = RequestMethod.GET)
 	public UserResponse getUserByUsername(@PathVariable("username") String username){
 		
 		final DashboardUser user = userservice.findUserWithRoles(username);

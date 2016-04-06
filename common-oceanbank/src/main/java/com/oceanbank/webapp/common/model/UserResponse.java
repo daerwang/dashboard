@@ -4,6 +4,7 @@
  */
 package com.oceanbank.webapp.common.model;
 
+import java.util.Date;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -49,6 +50,11 @@ public class UserResponse {
 	private String modifiedby;
 	
 	private Integer accountNonLocked;
+	
+	private Integer accountNonExpired;
+	
+	private Date createdon;
+	private Date modifiedon;
 	
 	/**
 	 * Instantiates a new user response.
@@ -253,5 +259,29 @@ public class UserResponse {
 
 	public void setAccountNonLocked(Integer accountNonLocked) {
 		this.accountNonLocked = accountNonLocked;
+	}
+
+	public Integer getAccountNonExpired() {
+		return accountNonExpired;
+	}
+
+	public void setAccountNonExpired(Integer accountNonExpired) {
+		this.accountNonExpired = accountNonExpired;
+	}
+
+	public Date getCreatedon() {
+		return createdon;
+	}
+
+	public void setCreatedon(Date createdon) {
+		this.createdon = createdon;
+	}
+
+	public Date getModifiedon() {
+		return modifiedon;
+	}
+
+	public void setModifiedon(Date modifiedon) {
+		this.modifiedon = modifiedon;
 	}
 }

@@ -53,6 +53,9 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	@Column(name = "accountNonLocked")
 	private Integer accountNonLocked;
 	
+	@Column(name = "accountNonExpired")
+	private Integer accountNonExpired;
+	
 	private List<DashboardRole> roleses = new ArrayList<DashboardRole>();
 	private String createdby;
 	private String modifiedby;
@@ -331,6 +334,14 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 
 	public void setAccountNonLocked(Integer accountNonLocked) {
 		this.accountNonLocked = accountNonLocked;
+	}
+
+	public Integer getAccountNonExpired() {
+		return accountNonExpired;
+	}
+
+	public void setAccountNonExpired(Integer accountNonExpired) {
+		this.accountNonExpired = accountNonExpired;
 	}
 
 }
