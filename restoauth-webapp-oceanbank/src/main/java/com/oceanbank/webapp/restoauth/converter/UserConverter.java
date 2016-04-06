@@ -48,6 +48,7 @@ public class UserConverter {
 		user.setEmail(response.getEmail());
 		user.setIseriesname(response.getIseriesname());
 		user.setAccountNonLocked(response.getAccountNonLocked());
+		user.setAccountNonExpired(response.getAccountNonExpired());
 
 		user.setCreatedby(response.getCreatedby());
 		user.setModifiedby(response.getModifiedby());
@@ -93,10 +94,13 @@ public class UserConverter {
 		response.setIseriesname(user.getIseriesname());
 		
 		response.setAccountNonLocked(user.getAccountNonLocked());
+		response.setAccountNonExpired(user.getAccountNonExpired());
 
 		response.setCreatedby(user.getCreatedby());
 		response.setModifiedby(user.getModifiedby());
-		
+		response.setCreatedon(user.getCreatedon());
+		response.setModifiedon(user.getModifiedon());
+
 		// check if Roles are available
 		// get Roles via db call to make sure Roles are picked up
 		List<DashboardRole> roleListOut = null;

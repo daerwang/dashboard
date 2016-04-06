@@ -203,6 +203,7 @@ public class UserServiceImpl implements UserService {
 		user.setModifiedby(response.getModifiedby());
 		user.setIseriesname(response.getIseriesname());
 		user.setAccountNonLocked(response.getAccountNonLocked());
+		user.setAccountNonExpired(response.getAccountNonExpired());
 
 		// for lazily loaded User, ensure that Roles are included before converting to bean
 		final List<DashboardRole> entityRoles = roleRepository.findByUseridIs(user.getUserId());
