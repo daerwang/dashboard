@@ -1,7 +1,3 @@
-/**
- * 
- * Copyright (c) 2014-2015 the original author or authors.
- */
 package com.oceanbank.webapp.dashboard.security;
 
 import java.io.IOException;
@@ -23,23 +19,15 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import com.oceanbank.webapp.common.model.DashboardConstant;
 
-/**
- * The Class ObAuthenticationHandler.
- * 
- * @author Marinell Medina
- * @since 03.10.2015
- */
-public class ObAuthenticationHandler implements AuthenticationSuccessHandler{
+
+public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler{
 	
-	/** The logger. */
+
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	
-	/** The redirect strategy. */
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.web.authentication.AuthenticationSuccessHandler#onAuthenticationSuccess(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.security.core.Authentication)
-	 */
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
@@ -52,15 +40,6 @@ public class ObAuthenticationHandler implements AuthenticationSuccessHandler{
 		
 	}
 	
-	
-	/**
-	 * Handle.
-	 *
-	 * @param request the request
-	 * @param response the response
-	 * @param authentication the authentication
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
 	protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 		final String targetUrl = determineTargetUrl(authentication);
 
@@ -72,12 +51,6 @@ public class ObAuthenticationHandler implements AuthenticationSuccessHandler{
         redirectStrategy.sendRedirect(request, response, targetUrl);
     }
 	
-	/**
-	 * Determine target url.
-	 *
-	 * @param authentication the authentication
-	 * @return the string
-	 */
 	protected String determineTargetUrl(Authentication authentication) {
 
 		final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -93,7 +66,7 @@ public class ObAuthenticationHandler implements AuthenticationSuccessHandler{
             }
         }
         
-        return DashboardConstant.SHOW_HOME_PAGE;
+        return "/home";
         
     }
 	

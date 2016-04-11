@@ -10,10 +10,9 @@
 	</definition>
 	
 	<!-- Home page -->
-	<definition name="tiles_home" extends="page_template_3">
- 		<put-attribute name="topMenuBar"	value="/views/templates/topMenuBar.jsp" />
-	    <put-attribute name="pageHeader"	value="" />
-	    <put-attribute name="pageDataTable"	value="/views/homepage/homePage.jsp" />
+	<definition name="tiles_home" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/homepage/homePage.jsp" />
 	</definition>
 	
 	<!-- Administration page -->

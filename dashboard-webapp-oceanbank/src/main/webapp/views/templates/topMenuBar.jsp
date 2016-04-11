@@ -22,6 +22,15 @@ $(document).ready(function(){
 		$(location).attr('href', getContextPath() + '/users/resetPassword');
 	});
 
+	$('#logoutLink').click(function(e){
+		e.preventDefault();
+
+		// remove certain cookies after logout
+		Cookies.remove('resetReminder');
+		Cookies.remove('restToken');
+		
+		$(location).attr('href', getContextPath() + '/j_spring_security_logout');
+	});
 
 });
 
@@ -53,7 +62,7 @@ $(document).ready(function(){
 							Welcome <sec:authentication property="principal.username" /> <span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
-			            <li><a href="/users/resetPassword" id="resetPasswordLink">Reset Password</a></li>
+			            <li><a href="#" id="resetPasswordLink">Reset Password</a></li>
 			        </ul>
 				</li>
 				</sec:authorize>
@@ -67,7 +76,7 @@ $(document).ready(function(){
 					<li><a href="<c:url value="/login"/>">Login</a></li>
 				</sec:authorize>
 				<sec:authorize access="isAuthenticated()">
-					<li><a href="<c:url value="/j_spring_security_logout" />">Logout</a></li>
+					<li><a href="#" id="logoutLink">Logout</a></li>
 				</sec:authorize>
 			</ul>
 		</div>

@@ -56,7 +56,7 @@
 		class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
 		<property name="authenticationManager" ref="authenticationManager" />
 		<property name="filterProcessesUrl" value="/j_spring_security_check" />
-		<property name="authenticationSuccessHandler" ref="obAuthenticationHandler" />
+		<property name="authenticationSuccessHandler" ref="customAuthenticationSuccessHandler" />
 		<property name="authenticationFailureHandler">
 			<!--bean class=" org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler 
 				"/ -->
@@ -85,8 +85,8 @@
 		<property name="loginFormUrl" value="/login"></property>
 	</bean>
 
-	<bean id="obAuthenticationHandler"
-		class="com.oceanbank.webapp.dashboard.security.ObAuthenticationHandler" />
+	<bean id="customAuthenticationSuccessHandler"
+		class="com.oceanbank.webapp.dashboard.security.CustomAuthenticationSuccessHandler" />
 
 
 	<sec:authentication-manager alias="authenticationManager">

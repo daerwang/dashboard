@@ -212,4 +212,15 @@ CREATE TABLE `user_attempt` (
   UNIQUE KEY `username_uq` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
+CREATE TABLE `user_password` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) NOT NULL,
+  `password` varchar(60) DEFAULT NULL,
+  `modifiedby` varchar(45) DEFAULT NULL,
+  `modifiedon` datetime DEFAULT NULL,
+  `createdby` varchar(45) DEFAULT NULL,
+  `createdon` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
 

@@ -1,7 +1,3 @@
-/**
- * 
- * Copyright (c) 2014-2015 the original author or authors.
- */
 package com.oceanbank.webapp.dashboard.controller;
 
 import com.oceanbank.webapp.common.handler.GsonDataTableTypeAdapter;
@@ -38,23 +34,17 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.oceanbank.webapp.dashboard.service.UserServiceImpl;
 
-/**
- * The Class AdministrationController.
- * 
- * @author Marinell Medina
- * @since 03.10.2015
- */
+
 @Controller
 public class AdministrationController {
 
-	/** The logger. */
+	
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-	/** The userservice. */
+	
 	@Autowired
 	private UserServiceImpl userservice;
 
-	/** The message source. */
 	@Autowired
 	private MessageSource messageSource;
 
@@ -62,13 +52,17 @@ public class AdministrationController {
 	private RestOauthAccessToken oauthAccessToken;
 
 	
-	/**
-	 * Show administration page.
-	 *
-	 * @param model the model
-	 * @param locale the locale
-	 * @return the string
-	 */
+	@RequestMapping(value = "/users/daysBeforeAccountExpiration", method = RequestMethod.GET)
+	@ResponseBody
+	public Integer checkAccountExpirationWarning(){
+		String username = CommonUtil.getAuthenticatedUserDetails().getUsername();
+		UserResponse user = userservice.findUserByUsername(username);
+		
+		Integer daysDiff = userservice.daysBeforeExpiry(user.getModifiedon());
+		
+		return daysDiff;
+	}
+
 	@RequestMapping(value = DashboardConstant.SHOW_ADMIN_PAGE, method = RequestMethod.GET)
 	public String showAdministrationPage(Model model) {
 
@@ -122,12 +116,6 @@ public class AdministrationController {
 		return "tiles_createUserForm";
 	}
 	
-	/**
-	 * Execute user create.
-	 *
-	 * @param response the response
-	 * @return the user response
-	 */
 	@RequestMapping(value = "/administration/user/create", method = RequestMethod.POST)
 	public @ResponseBody UserResponse executeUserCreate(@RequestBody UserResponse response) {
 		// manage auditing
@@ -135,19 +123,11 @@ public class AdministrationController {
 		response.setModifiedby(CommonUtil.getAuthenticatedUserDetails().getUsername());
 		
 		// Assumed that the request has been validated by BootstrapValidator
-		final UserResponse createdResponse = userservice.createUser(response);
+		UserResponse newUser = userservice.createUser(response);
 		
-		LOGGER.info("Returning Created User of " + createdResponse.getUsername());
-		
-		return createdResponse;
+		return newUser;
 	}
 	
-	/**
-	 * Execute user delete.
-	 *
-	 * @param rowId the row id
-	 * @return the string
-	 */
 	@RequestMapping(value = DashboardConstant.DELETE_USER_DATATABLE, method = RequestMethod.DELETE)
 	public @ResponseBody String executeUserDelete(@PathVariable("row_id") String rowId) {
 		

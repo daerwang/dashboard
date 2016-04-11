@@ -36,9 +36,6 @@ $(document).ready(function(){
 			    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
 			},
 		    error: function (data, status, er) {
-		        console.log(data);
-		        console.log(status);
-		        console.log(er);
 		        var json = data.responseText;
 		        var errorObj = $.parseJSON(json);
 		        BootstrapDialog.show({
@@ -50,7 +47,7 @@ $(document).ready(function(){
 		                cssClass: 'btn-warning',
 		                action: function(dialog){
 		                    dialog.close();
-		                    location.reload();
+		                    $(location).attr('href', getContextPath() + '/j_spring_security_logout');
 		                }
 		            }]
 		         });

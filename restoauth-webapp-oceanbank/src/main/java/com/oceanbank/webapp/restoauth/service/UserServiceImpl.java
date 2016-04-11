@@ -17,9 +17,11 @@ import com.oceanbank.webapp.common.model.UserResponse;
 import com.oceanbank.webapp.common.util.RestUtil;
 import com.oceanbank.webapp.restoauth.converter.UserConverter;
 import com.oceanbank.webapp.restoauth.dao.RoleRepository;
+import com.oceanbank.webapp.restoauth.dao.UserPasswordDao;
 import com.oceanbank.webapp.restoauth.dao.UserRepository;
 import com.oceanbank.webapp.restoauth.model.DashboardRole;
 import com.oceanbank.webapp.restoauth.model.DashboardUser;
+import com.oceanbank.webapp.restoauth.model.UserPassword;
 /**
  * The Class UserServiceImpl.
  * 
@@ -29,18 +31,17 @@ import com.oceanbank.webapp.restoauth.model.DashboardUser;
 @Service
 public class UserServiceImpl implements UserService {
 	
-	/** The user repository. */
 	@Autowired
     private UserRepository userRepository;
 	
-	/** The role repository. */
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+	private UserPasswordDao userPasswordDao;
     
-    /**
-     * Instantiates a new {@link UserServiceImpl}.
-     */
-    public UserServiceImpl(){}
+    
+	public UserServiceImpl(){}
     
     
 	/* (non-Javadoc)
@@ -108,8 +109,16 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public void deleteUser(Integer user_id) {
+		DashboardUser user = userRepository.findOne(user_id);
 		
-		userRepository.delete(new DashboardUser(user_id));
+		if(user != null){
+			userRepository.delete(user);
+			
+			List<UserPassword> list = userPasswordDao.findByUsernameOrderByCreatedonDesc(user.getUsername());
+			if(list != null && list.size() > 0){
+				userPasswordDao.delete(list);
+			}
+		}
 		
 	}
 

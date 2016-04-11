@@ -47,20 +47,27 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 
 	@Autowired
     private PasswordEncoder passwordEncoder;
+	
+	private static Integer ALLOWED_DAYS_BEFORE_EXPIRATION = 60;
 
 	public UserServiceImpl(){}
 	
+	public Integer daysBeforeExpiry(Date modifiedOn){
+		DateTime start = new DateTime(modifiedOn);
+        DateTime end = new DateTime(new Date());
+
+		Integer daysDiff = Days.daysBetween(start.toLocalDate(), end.toLocalDate()).getDays();
+		
+		return daysDiff;
+	}
+	
 	public void validateAccountExpiry(UserResponse userResponse){
 		if(userResponse.getAccountNonExpired() == 1){
-	        Date modifiedOn = userResponse.getModifiedon() != null ? userResponse.getModifiedon() : new Date();
-	        DateTime start = new DateTime(modifiedOn);
-	        DateTime end = new DateTime(new Date());
-
-			Integer daysDiff = Days.daysBetween(start.toLocalDate(), end.toLocalDate()).getDays();
-			if(daysDiff > 60){
-				System.out.println("Expire this account!");
+			Integer daysDiff = daysBeforeExpiry(userResponse.getModifiedon());
+			if(daysDiff > ALLOWED_DAYS_BEFORE_EXPIRATION){
+				
 				userResponse.setAccountNonExpired(0);
-				// update DB
+				
 				updateUser(userResponse);
 			}
 		}

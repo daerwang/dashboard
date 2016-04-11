@@ -2,9 +2,11 @@
 
 
 <script>
-	$(document)
-			.ready(
-					function() {
+	$(document).ready(function() {
+						
+						function getContextPath() {
+							return window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
+						}
 
 						var url1 = "${userBootstrapValidatorUrl}";
 						url1 = url1.substring(1, url1.length);
@@ -51,6 +53,7 @@
 								}
 							} ]
 						});
+						
 
 						$('#userForm')
 								.bootstrapValidator(
@@ -62,27 +65,43 @@
 											},
 											submitHandler : function(validator,
 													form, submitButton) {
-												$
-														.ajax({
+												
+												var result = form.serializeObject();
+												delete result.matchingPassword;
+												var json = JSON.stringify(result)
+												
+												$.ajax({
 															type : "POST",
 															url : '../administration/user/create',
 															dataType : 'json',
-															data : JSON.stringify(form.serializeObject()),
+															data : json,
 															contentType : 'application/json',
 															mimeType : 'application/json',
 															success : function(data) {
+																
 																successDialog.open();
+																
 															},
-															error : function(
-																	data,
-																	status, er) {
-																alert("error: "
-																		+ data
-																		+ " status: "
-																		+ status
-																		+ " er:"
-																		+ er);
-															}
+														    error: function (data, status, er) {
+														        console.log(data);
+														        console.log(status);
+														        console.log(er);
+														        var json = data.responseText;
+														        var errorObj = $.parseJSON(json);
+														        BootstrapDialog.show({
+															        type : BootstrapDialog.TYPE_WARNING,
+														            title: 'Warning',
+														            message: 'Error: ' + errorObj.message + ' by ' + errorObj.cause,
+														            buttons: [{
+														                label: 'Ok',
+														                cssClass: 'btn-warning',
+														                action: function(dialog){
+														                    dialog.close();
+														                    location.reload();
+														                }
+														            }]
+														         });
+														    }
 														});
 
 											},
@@ -202,8 +221,6 @@
 	<div class="row">
 		<div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-3">
 			<form id="userForm" role="form">
-				<input type="hidden" name="userId"
-					value="<c:out value="${user.userId}" /> ">
 				<h2>
 					User Registration
 				</h2>

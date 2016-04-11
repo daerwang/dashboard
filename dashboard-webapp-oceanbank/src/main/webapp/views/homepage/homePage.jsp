@@ -7,9 +7,13 @@
 
 	$(document).ready(function() {
 
-		setToken();
+		if(!Cookies.get('restToken')){
+			setToken();
+		}
 
-
+		if(!Cookies.get('resetReminder')){
+			checkAccountExpiry();
+		}
 
 		function setToken(){
 			$.ajax({
@@ -20,11 +24,44 @@
 					Cookies.set('restApi', data.restApi);
 					Cookies.set('userName', data.userName);
 
-					$.ajaxSetup({
-					    beforeSend: function(xhr) {
-					        xhr.setRequestHeader('Authorization', 'bearer ' + data.accessToken);
-					    }
-					});
+				}
+			});
+		}
+		
+		function getContextPath() {
+			return window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
+		}
+		
+		function checkAccountExpiry(){
+			$.ajax({
+				type: 'GET',
+				url: 'users/daysBeforeAccountExpiration',
+				success: function(data){
+					console.log('its is ' + data);
+					var remaining = 60 - data;
+					if(remaining < 14){
+						BootstrapDialog.show({
+					        type : BootstrapDialog.TYPE_WARNING,
+				            title: 'Warning',
+				            message: 'Your account is about to expire in ' + remaining + ' days. Please reset your password.',
+				            closable: false,
+				            buttons: [{
+				                label: 'Cancel',
+				                action: function(dialogRef){
+				                    dialogRef.close();
+				                    Cookies.set('resetReminder', 'yes');
+				                }
+				            }, {
+				                label: 'Reset Password',
+				                cssClass: 'btn-warning',
+				                action: function(dialogRef){
+				                	$(location).attr('href', getContextPath() + '/users/resetPassword');
+				                }
+				            }]
+				         });
+
+					}
+					
 				}
 			});
 		}
