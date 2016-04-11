@@ -1,13 +1,18 @@
 package com.oceanbank.webapp.restoauth.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.oceanbank.webapp.restoauth.dao.UserAttemptDao;
+import com.oceanbank.webapp.restoauth.dao.UserPasswordDao;
 import com.oceanbank.webapp.restoauth.dao.UserRepository;
 import com.oceanbank.webapp.restoauth.model.DashboardUser;
 import com.oceanbank.webapp.restoauth.model.UserAttempt;
+import com.oceanbank.webapp.restoauth.model.UserPassword;
 
 @Service
 public class UserAttemptService {
@@ -18,7 +23,41 @@ public class UserAttemptService {
 	@Autowired
 	private UserRepository userDao;
 	
+	@Autowired
+	private UserPasswordDao userPasswordDao;
+	
 	private static final Integer ALLOWED_FAILED_ATTEMPTS = 3; 
+	
+	public Boolean isPasswordDuplicate(String username, String rawPassword){
+		Boolean isDuplicate = false;
+		BCryptPasswordEncoder enc = new BCryptPasswordEncoder();
+		List<UserPassword> list = userPasswordDao.findByUsernameOrderByCreatedonDesc(username);
+		if(list != null && list.size() > 0){
+			int i = 0;
+			for(UserPassword u : list){
+				if(i < 5){
+					isDuplicate = enc.matches(rawPassword, u.getPassword());
+					if(isDuplicate)
+						break;
+				}
+				i++;
+			}
+		}
+		
+		return isDuplicate;
+	}
+	
+	public UserPassword saveUserPassword(String createdBy, String username, String password){
+		
+		UserPassword userPassword = new UserPassword();
+		userPassword.setCreatedBy(createdBy);
+		userPassword.setUsername(username);
+		userPassword.setPassword(password);
+		
+		UserPassword up = userPasswordDao.save(userPassword);
+		
+		return up;
+	}
 	
 	public void updateFailedAttempt(String username){
 		

@@ -1,20 +1,37 @@
 package com.oceanbank.test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.junit.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-
-@Ignore
+//@Ignore
 public class UserTest {
+	
+	@Test
+	public void test_exam() throws Exception{
+		
+		List<String> children = new ArrayList<String>();
+		children.add("Nell");
+		children.add("Jerry");
+		children.add("William");
+		children.add("Malone");
+
+
+		ChildrenGame.startGame(children, 10);
+		System.out.println("Losers are " + ChildrenGame.getLosers());
+		System.out.println("Winner is " + ChildrenGame.getWinner());
+		
+	}
 	
 	@Test
 	public void test_content() throws JsonProcessingException, IOException{

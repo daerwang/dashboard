@@ -1,7 +1,3 @@
-/**
- * 
- * Copyright (c) 2014-2015 the original author or authors.
- */
 package com.oceanbank.webapp.restoauth.controller;
 
 
@@ -39,55 +35,65 @@ import com.oceanbank.webapp.restoauth.service.UserServiceImpl;
 @RestController
 public class UserController {
 	
-	/**
-	 * Instantiates a new user controller.
-	 */
+
 	public UserController(){}
 
-	/** The userservice. */
 	@Autowired
 	private UserServiceImpl userservice;
 	
 	@Autowired
 	private UserRepository userRepository;
 
-	/** The roleservice. */
 	@Autowired
 	private RoleServiceImpl roleservice;
 	
 	@Autowired
 	private UserAttemptService userAttemptService;
 
-	/** The logger. */
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	
 	@RequestMapping(value = "/api/user/resetPassword", method = RequestMethod.PUT)
-	public DashboardUser resetUserPassword(@RequestBody DashboardUser user) throws Exception{
+	public DashboardUser resetPasswordByUser(@RequestBody DashboardUser user) throws Exception{
 		DashboardUser oldUser = userRepository.findByUsername(user.getUsername().trim());
 
 		if(oldUser == null){
-			throw new Exception("no User that is logged in");
+			throw new Exception("No User is logged in");
 		}
-
+		
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		Boolean isPasswordCorrect = passwordEncoder.matches(user.getPassword(), oldUser.getPassword());
 		if(!isPasswordCorrect){
-			throw new Exception("old password is not correct");
+			userAttemptService.updateFailedAttempt(oldUser.getUsername());
+			throw new Exception("The old password is not correct");
 		}
+		
+		if(userAttemptService.isPasswordDuplicate(oldUser.getUsername(), user.getNewPassword())){
+			throw new Exception("Password cannot be the same for the last 5 passwords");
+		}
+		
 		String hashedPassword = passwordEncoder.encode(user.getNewPassword());
 		oldUser.setPassword(hashedPassword);
 		oldUser.setModifiedby(user.getModifiedby());
 
 		DashboardUser newUser = userRepository.save(oldUser);
 		newUser.setRoleses(null);
+		
+		userAttemptService.saveUserPassword(newUser.getCreatedby(), newUser.getUsername(), newUser.getPassword());
+		
 		return newUser;
 	}
 
 	@RequestMapping(value = "/api/user/updatePassword", method = RequestMethod.PUT)
-	public DashboardUser updateUserPassword(@RequestBody DashboardUser user){
+	public DashboardUser updateUserPasswordByAdmin(@RequestBody DashboardUser user) throws Exception{
 
 		DashboardUser oldUser = userRepository.findOne(user.getUserId());
 
+		Boolean isPasswordDuplicate = userAttemptService.isPasswordDuplicate(oldUser.getUsername(), user.getPassword());
+		
+		if(isPasswordDuplicate){
+			throw new Exception("Password cannot be the same for the last 5 passwords");
+		}
+		
 		if(user.getPassword() != null && user.getPassword().trim().length() > 0){
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 			String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -99,6 +105,9 @@ public class UserController {
 
 		DashboardUser newUser = userRepository.save(oldUser);
 		newUser.setRoleses(null);
+		
+		userAttemptService.saveUserPassword(newUser.getCreatedby(), newUser.getUsername(), newUser.getPassword());
+		
 		return newUser;
 	}
 
@@ -261,8 +270,6 @@ public class UserController {
 	@RequestMapping(value = RestWebServiceUrl.DELETE_USER, method = RequestMethod.DELETE)
 	public String deleteUser(@PathVariable("userid") int userId){
 	
-		LOGGER.info("Deleting User with user_id = " + userId);
-		
 		userservice.deleteUser(userId);
 		
 		return "The User with Id " + userId + " is deleted.";
@@ -297,8 +304,6 @@ public class UserController {
 	 */
 	@RequestMapping(value = RestWebServiceUrl.GET_ALL_USER, method = RequestMethod.GET)
 	public List<UserResponse> getAllUser(){
-	
-		LOGGER.info("Getting all Users");
 		
 		final List<DashboardUser> userList = userservice.findAllUsers();
 		final List<UserResponse> userResponseList = new ArrayList<UserResponse>();
@@ -311,16 +316,13 @@ public class UserController {
 		
 		return userResponseList;
 	}
-	
-	/**
-	 * Creates the user.
-	 *
-	 * @param userResponse the user response
-	 * @return the user response
-	 */
+
 	@RequestMapping(value = RestWebServiceUrl.CREATE_USER, method = RequestMethod.POST)
 	public UserResponse createUser(@RequestBody UserResponse userResponse){
-		final UserResponse response = userservice.createUser(userResponse);
+		UserResponse response = userservice.createUser(userResponse);
+		
+		// store password for duplicate checking
+		userAttemptService.saveUserPassword(response.getCreatedby(), response.getUsername(), response.getPassword());
 		
 		return response;
 	}
