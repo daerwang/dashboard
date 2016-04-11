@@ -51,6 +51,9 @@ public class UserServiceImpl implements UserService {
 	public UserResponse createUser(UserResponse response) {
     	
     	final DashboardUser user = UserConverter.convertFromBean(response);
+    	user.setAccountNonExpired(1);
+    	user.setAccountNonLocked(1);
+    	
     	// save a User
     	final DashboardUser newUser = userRepository.save(user);
 		
