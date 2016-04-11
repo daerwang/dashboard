@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.mail.MessagingException;
+
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -332,6 +334,10 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 		}
 
 		return handler;
+	}
+	
+	public void sendEmail() throws MessagingException{
+		EmailService.sendEmail();
 	}
 
 	
