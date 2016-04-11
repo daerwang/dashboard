@@ -223,3 +223,13 @@ CREATE TABLE IBMOB700.user_attempt (
   modifiedby VARCHAR(45),
   modifiedon TIMESTAMP,
   PRIMARY KEY (id));
+  
+  CREATE TABLE IBMOB700.user_password (
+  id INT GENERATED ALWAYS AS IDENTITY,
+  username VARCHAR(45) NOT NULL,
+  password VARCHAR(60),
+  createdby VARCHAR(45),
+  createdon TIMESTAMP,
+  modifiedby VARCHAR(45),
+  modifiedon TIMESTAMP,
+  PRIMARY KEY (id));
