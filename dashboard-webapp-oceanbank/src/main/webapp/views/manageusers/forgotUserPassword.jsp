@@ -28,10 +28,10 @@ $(document).ready(function(){
 	}
 	
 	function setToken(){
-		
+		var url = getContextPath() + '/login/getApiToken';
 		$.ajax({
 			type: 'GET',
-			url: 'login/getApiToken',
+			url: url,
 			success: function(data){
 				Cookies.set('restToken', data.accessToken);
 				Cookies.set('restApi', data.restApi);

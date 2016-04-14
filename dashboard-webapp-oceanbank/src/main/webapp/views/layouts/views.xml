@@ -40,6 +40,10 @@
  		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
 	    <put-attribute name="pageContainer"	value="/views/manageusers/forgotUserPassword.jsp" />
 	</definition>
+	<definition name="tiles_changeForgotPassword" extends="page_template_2">
+ 		<put-attribute name="topPageContainer"	value="/views/templates/topMenuBar.jsp" />
+	    <put-attribute name="pageContainer"	value="/views/manageusers/changeForgotUserPassword.jsp" />
+	</definition>
 	
 	<!-- Error page -->
 	<definition name="tiles_403accessDeniedPage" extends="page_template_3">

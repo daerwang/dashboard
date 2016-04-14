@@ -6,10 +6,48 @@ $(document).ready(function(){
 
 	var token = Cookies.get('restToken');
 	var restApi = Cookies.get('restApi');
-	var userName = Cookies.get('userName');
 	
 	
-	function updatePassword(jsonData, url){
+	setToken();
+	
+	$.fn.serializeObject = function() {
+		var o = {};
+		var a = this.serializeArray();
+		$.each(a, function() {
+			if (o[this.name] !== undefined) {
+				if (!o[this.name].push) {
+					o[this.name] = [ o[this.name] ];
+				}
+				o[this.name].push(this.value || '');
+			} else {
+				o[this.name] = this.value || '';
+			}
+		});
+		return o;
+	};
+
+	function getContextPath() {
+		return window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
+	}
+	
+	function setToken(){
+		
+		var url = getContextPath() + '/login/getApiToken';
+		
+		$.ajax({
+			type: 'GET',
+			url: url,
+			success: function(data){
+				Cookies.set('restToken', data.accessToken);
+				Cookies.set('restApi', data.restApi);
+				
+				token = data.accessToken;
+				restApi = data.restApi;
+			}
+		});
+	}
+	
+	function changeForgotPassword(jsonData, url){
 		$.ajax({
 			type: 'PUT',
 			data: jsonData,
@@ -21,7 +59,7 @@ $(document).ready(function(){
 				BootstrapDialog.show({
 			        type : BootstrapDialog.TYPE_SUCCESS,
 		            title: 'Success',
-		            message: 'The Password is reset successfully.',
+		            message: 'The Password is changed successfully.',
 		            buttons: [{
 		                label: 'Ok',
 		                cssClass: 'btn-success',
@@ -55,25 +93,6 @@ $(document).ready(function(){
 		});
 	}
 	
-	$.fn.serializeObject = function() {
-		var o = {};
-		var a = this.serializeArray();
-		$.each(a, function() {
-			if (o[this.name] !== undefined) {
-				if (!o[this.name].push) {
-					o[this.name] = [ o[this.name] ];
-				}
-				o[this.name].push(this.value || '');
-			} else {
-				o[this.name] = this.value || '';
-			}
-		});
-		return o;
-	};
-
-	function getContextPath() {
-		return window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
-	}
 	
 	$('#userForm1')
 	.bootstrapValidator(
@@ -87,26 +106,17 @@ $(document).ready(function(){
 			
 			var formObj = form.serializeObject()
 			var userObj = new Object();
-			userObj.username = userName;
-			userObj.password = formObj.oldPassword;
-			userObj.newPassword = formObj.newPassword;
-			userObj.modifiedby = userName;
+			userObj.resetToken = formObj.resetToken;
+			userObj.password = formObj.newPassword;
 			var jsonData = JSON.stringify(userObj);
 
-			var url = restApi + '/api/user/resetPassword';
-
-			updatePassword(jsonData, url);
+			var url = restApi + '/api/user/changeForgotPassword';
+			console.log(jsonData);
+			changeForgotPassword(jsonData, url);
 
 		},
 		submitButtons : 'button[type="submit"]',
 		fields : {
-			oldPassword : {
-				validators : {
-					notEmpty : {
-						message : 'The old password is required and cannot be empty'
-					}
-				}
-			},
 			newPassword : {
 				validators : {
 					notEmpty : {
@@ -145,23 +155,12 @@ $(document).ready(function(){
 	<div class="row">
 		<div class="col-xs-12 col-sm-8 col-md-5 col-md-offset-3">
 			<form id="userForm1" role="form">
-				<input type="hidden" name="userId" value="<c:out value="${user.userId}" /> ">
+				<input type="hidden" name="resetToken" value="<c:out value="${activation}" /> ">
 				<h2>
-					Reset Password
+					Change Password
 				</h2>
-				<p>Use the form below to reset your password. Your password cannot be the same as your username.</p>
+				<p>Use the form below to change your password. Your password cannot be the same as your username.</p>
 				<hr class="colorgraph">
-				<h3 class="text-center">${user.firstname} ${user.lastname}</h3>
-				
-				<div class="row">
-					<div class="col-xs-12 col-md-12">
-						<div class="form-group">
-							<input type="password" name="oldPassword"
-								class="form-control input-lg" placeholder="Old Password"
-								tabindex="1" value="">
-						</div>
-					</div>
-				</div>
 				
 				<div class="row">
 					<div class="col-xs-12 col-md-12">
@@ -187,7 +186,7 @@ $(document).ready(function(){
 				<div class="row">
 					<div class="col-xs-12 col-md-7 col-md-offset-2">
 						<button class="btn btn-primary btn-block btn-lg" 
-							type="submit" tabindex="3">Reset Password</button>
+							type="submit" tabindex="3">Change Password</button>
 					</div>
 				</div>
 				

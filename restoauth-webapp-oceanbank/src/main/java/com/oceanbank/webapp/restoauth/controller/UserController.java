@@ -349,7 +349,7 @@ public class UserController {
 		return user;
 	}
 	
-	@RequestMapping(value = "/api/user/changeForgotPassword/{resetToken}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/api/user/changeForgotPassword", method = RequestMethod.PUT)
 	public DashboardUser changeForgotPassword(@RequestBody DashboardUser user) throws Exception{
 
 		DashboardUser oldUser = userRepository.findByResetToken(user.getResetToken().trim());
@@ -367,7 +367,7 @@ public class UserController {
 			oldUser.setPassword(hashedPassword);
 		}
 
-		oldUser.setModifiedby(user.getModifiedby());
+		oldUser.setModifiedby(oldUser.getModifiedby());
 
 		DashboardUser newUser = userRepository.save(oldUser);
 		newUser.setRoleses(null);

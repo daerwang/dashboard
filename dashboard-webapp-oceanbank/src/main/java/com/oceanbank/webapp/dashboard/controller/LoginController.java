@@ -22,17 +22,10 @@ import com.oceanbank.webapp.common.model.DashboardConstant;
 import com.oceanbank.webapp.common.model.OauthTokenBean;
 import com.oceanbank.webapp.common.model.RestOauthAccessToken;
 import com.oceanbank.webapp.common.model.UserResponse;
-import com.oceanbank.webapp.common.util.CommonUtil;
 import com.oceanbank.webapp.dashboard.service.EmailService;
 import com.oceanbank.webapp.dashboard.service.UserServiceImpl;
 
 
-/**
- * The Class LoginController.
- * 
- * @author Marinell Medina
- * @since 03.10.2015
- */
 @Controller
 public class LoginController extends OauthTokenBean{
 	
@@ -45,6 +38,22 @@ public class LoginController extends OauthTokenBean{
 	@Autowired
 	private UserServiceImpl userService;
 	
+	
+	
+	
+	
+	
+	
+	
+	@RequestMapping(value = "/login/changeForgotPassword/{activation}", method = RequestMethod.GET)
+	public String changeForgotPassword(Model model, @PathVariable String activation) {
+		
+		model.addAttribute("title1", "Change Forgot Password");
+		model.addAttribute("activation", activation);
+		
+		return "tiles_changeForgotPassword";	
+	}
+	
 	@RequestMapping(value = "/login/getApiToken", method = RequestMethod.GET)
 	public @ResponseBody RestOauthAccessToken getApiToken() {
 
@@ -55,16 +64,15 @@ public class LoginController extends OauthTokenBean{
 	public @ResponseBody String sendActivationLinkEmail(HttpServletRequest request, @PathVariable String username) throws MessagingException {
 		
 		UserResponse user = userService.findUserByUsername(username);
-		
-		// send token to User via email
+
 		String from = "dashboard@oceanbank.com";
 		String to = user.getEmail();
-		//to = "mmedina@oceanbank.com";
 		String subject = "Dashboard - Password Activation Link";
 		
-		String activationUrl = "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/changeForgotPassword";
+		String activationUrl = "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() 
+				+ "/login/changeForgotPassword/" + user.getResetToken();
 		String message = activationUrl;
-
+		System.out.println("it is " + activationUrl);
 		EmailService emailService = new EmailService(from, to, subject, message);
 		emailService.sendEmail();
 		

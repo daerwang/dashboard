@@ -100,6 +100,8 @@ public class UserConverter {
 		response.setModifiedby(user.getModifiedby());
 		response.setCreatedon(user.getCreatedon());
 		response.setModifiedon(user.getModifiedon());
+		
+		response.setResetToken(user.getResetToken());
 
 		// check if Roles are available
 		// get Roles via db call to make sure Roles are picked up

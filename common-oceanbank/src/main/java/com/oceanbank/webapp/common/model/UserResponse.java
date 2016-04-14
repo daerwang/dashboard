@@ -52,6 +52,8 @@ public class UserResponse {
 	private Integer accountNonLocked;
 
 	private Integer accountNonExpired;
+	
+	private String resetToken;
 
 	private Date createdon;
 	private Date modifiedon;
@@ -283,5 +285,13 @@ public class UserResponse {
 
 	public void setModifiedon(Date modifiedon) {
 		this.modifiedon = modifiedon;
+	}
+
+	public String getResetToken() {
+		return resetToken;
+	}
+
+	public void setResetToken(String resetToken) {
+		this.resetToken = resetToken;
 	}
 }
