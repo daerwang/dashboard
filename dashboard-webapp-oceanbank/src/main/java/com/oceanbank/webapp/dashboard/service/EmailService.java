@@ -29,9 +29,6 @@ public class EmailService {
 	}
 	
 	public void sendEmail() throws MessagingException{
-
-//		String from = "mmedina@oceanbank.com";
-//		String to = "nellbryant@yahoo.com";
 		
 		Properties props = System.getProperties();
         props.put("mail.smtp.host", HOST_ADDRESS);

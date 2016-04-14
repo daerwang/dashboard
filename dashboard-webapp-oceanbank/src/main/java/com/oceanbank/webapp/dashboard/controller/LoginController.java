@@ -14,7 +14,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,6 +22,7 @@ import com.oceanbank.webapp.common.model.DashboardConstant;
 import com.oceanbank.webapp.common.model.OauthTokenBean;
 import com.oceanbank.webapp.common.model.RestOauthAccessToken;
 import com.oceanbank.webapp.common.model.UserResponse;
+import com.oceanbank.webapp.common.util.CommonUtil;
 import com.oceanbank.webapp.dashboard.service.EmailService;
 import com.oceanbank.webapp.dashboard.service.UserServiceImpl;
 
@@ -35,9 +35,6 @@ import com.oceanbank.webapp.dashboard.service.UserServiceImpl;
  */
 @Controller
 public class LoginController extends OauthTokenBean{
-
-	@Autowired
-	private UserServiceImpl userservice;
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -45,25 +42,31 @@ public class LoginController extends OauthTokenBean{
 	@Autowired
 	private RestOauthAccessToken oauthAccessToken;
 	
+	@Autowired
+	private UserServiceImpl userService;
+	
 	@RequestMapping(value = "/login/getApiToken", method = RequestMethod.GET)
 	public @ResponseBody RestOauthAccessToken getApiToken() {
 
 		return oauthAccessToken;
 	}
 	
-	@RequestMapping(value = "/login/sendActivationLinkEmail/{emailAddress}", method = RequestMethod.GET)
-	public @ResponseBody String sendActivationLinkEmail(HttpServletRequest request, @PathVariable String emailAddress) throws MessagingException {
+	@RequestMapping(value = "/login/sendActivationLinkEmail/{username}", method = RequestMethod.GET)
+	public @ResponseBody String sendActivationLinkEmail(HttpServletRequest request, @PathVariable String username) throws MessagingException {
+		
+		UserResponse user = userService.findUserByUsername(username);
 		
 		// send token to User via email
-		String from = "mmedina@oceanbank.com";
-		String to = emailAddress;
-		String subject = "Forgot Password Activation Link";
+		String from = "dashboard@oceanbank.com";
+		String to = user.getEmail();
+		//to = "mmedina@oceanbank.com";
+		String subject = "Dashboard - Password Activation Link";
 		
-		String appUrl = "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/changeForgotPassword";
-		String message = appUrl;
+		String activationUrl = "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/changeForgotPassword";
+		String message = activationUrl;
 
 		EmailService emailService = new EmailService(from, to, subject, message);
-//		email.sendEmail();
+		emailService.sendEmail();
 		
 		return "Email has been sent successfully.";	
 	}

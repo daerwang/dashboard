@@ -36,7 +36,7 @@ $(document).ready(function(){
 				Cookies.set('restToken', data.accessToken);
 				Cookies.set('restApi', data.restApi);
 				
-				restToken = data.accessToken;
+				token = data.accessToken;
 				restApi = data.restApi;
 			}
 		});
@@ -93,8 +93,8 @@ $(document).ready(function(){
 			contentType : 'application/json',
 			mimeType : 'application/json',
 			success: function(data){
-				
-				var url = getContextPath() + '/login/sendActivationLinkEmail/' + data.email;
+				var username = data.username;
+				var url = getContextPath() + '/login/sendActivationLinkEmail/' + username;
 				console.log(url);
 				sendActivationEmail(url);
 				
