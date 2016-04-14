@@ -61,11 +61,11 @@ public class UserDetailsServiceImpl implements UserDetailsService{
                 enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, getGrantedAuthorities(userResponse));
 		
 		
-		try {
-			userservice.sendEmail();
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			userservice.sendEmail();
+//		} catch (MessagingException e) {
+//			e.printStackTrace();
+//		}
 		
 		return springUser;
 	}

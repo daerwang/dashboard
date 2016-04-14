@@ -26,20 +26,12 @@ import com.oceanbank.webapp.restoauth.model.DashboardUser;
 @Transactional(readOnly = true)
 public interface UserRepository extends JpaRepository<DashboardUser, Integer> {
 	
-	/**
-	 * Find by user id is.
-	 *
-	 * @param user_id the user_id
-	 * @return the dashboard user
-	 */
+	DashboardUser findByResetToken(String resetToken);
+	
+	DashboardUser findByEmail(String email);
+	
 	DashboardUser findByUserIdIs(Integer userId);
 
-	/**
-	 * Find by username.
-	 *
-	 * @param username the username
-	 * @return the dashboard user
-	 */
 	DashboardUser findByUsername(String username);
 	
 	/**

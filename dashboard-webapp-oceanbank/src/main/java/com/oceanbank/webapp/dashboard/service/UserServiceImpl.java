@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.mail.MessagingException;
-
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +26,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oceanbank.webapp.common.handler.AjaxResponseHandler;
 import com.oceanbank.webapp.common.model.BootstrapValidatorResponse;
-import com.oceanbank.webapp.common.model.ChangePassword;
 import com.oceanbank.webapp.common.model.DataTablesRequest;
 import com.oceanbank.webapp.common.model.OauthTokenBean;
 import com.oceanbank.webapp.common.model.ObDashboardRoles;
@@ -311,34 +307,5 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 		
         return result;
 	}
-
-	/* (non-Javadoc)
-	 * @see com.oceanbank.webapp.dashboard.service.UserService#changeUserPassword(com.oceanbank.webapp.common.model.ChangePassword)
-	 */
-	@Override
-	public AjaxResponseHandler changeUserPassword(ChangePassword request) {
-
-		final HttpEntity<ChangePassword> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), request);
-
-		final ResponseEntity<UserResponse> updatedResponse = restTemplate.exchange(getRestApi()
-				+ RestWebServiceUrl.EXECUTE_CHANGE_PASSWORD, HttpMethod.PUT, entity, UserResponse.class);
-
-		final UserResponse result = updatedResponse.getBody();
-		
-		final AjaxResponseHandler handler = new AjaxResponseHandler();
-		if(result.getUsername() == null){
-			return null;
-		}else{
-			handler.setCode("OK");
-			handler.setMessage("Your password is changed successfully.");
-		}
-
-		return handler;
-	}
-	
-	public void sendEmail() throws MessagingException{
-		EmailService.sendEmail();
-	}
-
 	
 }

@@ -23,6 +23,7 @@
 		<sec:intercept-url pattern="/.progress*" access="permitAll" />
 		<sec:intercept-url pattern="/home*" access="permitAll" />
 		<sec:intercept-url pattern="/login*" access="permitAll" />
+		<sec:intercept-url pattern="/login/**" access="permitAll" />
 		<sec:intercept-url pattern="/logout*" access="permitAll" />
 		<sec:intercept-url pattern="/user/bootstrap/validator*" access="permitAll" />
 		<sec:intercept-url pattern="/resources/**" access="permitAll" />
@@ -31,8 +32,8 @@
 		<sec:intercept-url pattern="/css/**" access="permitAll" />
 		<sec:intercept-url pattern="/datatables/**" access="permitAll" />
 		<sec:intercept-url pattern="/jquery/**" access="permitAll" />
-		<sec:intercept-url pattern="/login/changepassword**" access="permitAll" />
-		<sec:intercept-url pattern="/login/changepassword/execute**" access="permitAll" />
+		<sec:intercept-url pattern="/forgotPassword**" access="permitAll" />
+		<sec:intercept-url pattern="/changeForgotPassword**" access="permitAll" />
 		<sec:intercept-url pattern="/error/403accessDeniedPage**" access="permitAll" />
 		<sec:intercept-url pattern="/views/**" access="permitAll" />
 		

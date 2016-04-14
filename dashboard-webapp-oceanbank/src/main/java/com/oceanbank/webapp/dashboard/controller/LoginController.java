@@ -6,19 +6,24 @@ package com.oceanbank.webapp.dashboard.controller;
 
 import java.util.Locale;
 
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.oceanbank.webapp.common.handler.AjaxResponseHandler;
-import com.oceanbank.webapp.common.model.ChangePassword;
 import com.oceanbank.webapp.common.model.DashboardConstant;
 import com.oceanbank.webapp.common.model.OauthTokenBean;
+import com.oceanbank.webapp.common.model.RestOauthAccessToken;
+import com.oceanbank.webapp.common.model.UserResponse;
+import com.oceanbank.webapp.dashboard.service.EmailService;
 import com.oceanbank.webapp.dashboard.service.UserServiceImpl;
 
 
@@ -34,73 +39,43 @@ public class LoginController extends OauthTokenBean{
 	@Autowired
 	private UserServiceImpl userservice;
 	
-	/** The message source. */
 	@Autowired
 	private MessageSource messageSource;
 	
-	/**
-	 * Show change password page.
-	 *
-	 * @param model the model
-	 * @param locale the locale
-	 * @return the string
-	 */
-	@RequestMapping(value = DashboardConstant.SHOW_CHANGE_PASSWORD_PAGE, method = RequestMethod.GET)
-	public String showChangePasswordPage(Model model, Locale locale) {
+	@Autowired
+	private RestOauthAccessToken oauthAccessToken;
+	
+	@RequestMapping(value = "/login/getApiToken", method = RequestMethod.GET)
+	public @ResponseBody RestOauthAccessToken getApiToken() {
 
-        final String pageTitle = messageSource.getMessage("Page.title.changepassword", null, locale);
-        final String matchPassword1 = messageSource.getMessage("label.user.confirmPass", null, locale);
-        
-        final String oldPassword1 = "Old Password";
-        final String newPassword1 = "New Password";
-        
-        
-		model.addAttribute("title1",pageTitle);
-		model.addAttribute("username1", "Username");
-		model.addAttribute("oldPassword1",oldPassword1);
-		model.addAttribute("newPassword1",newPassword1);
-		model.addAttribute("matchPassword1",matchPassword1);
-		model.addAttribute("changePasswordUrl", DashboardConstant.EXECUTE_CHANGE_PASSWORD);
-		model.addAttribute("loginPageUrl", DashboardConstant.SHOW_LOGIN_PAGE);
-
-		final ChangePassword password = new ChangePassword();
-		model.addAttribute("passwordObj",password);
-
-		return DashboardConstant.TILES_CHANGE_PASSWORD_TEMPLATE;
+		return oauthAccessToken;
 	}
 	
-	/**
-	 * Execute change password.
-	 *
-	 * @param password the password
-	 * @return the ajax response handler
-	 */
-	@RequestMapping(value = DashboardConstant.EXECUTE_CHANGE_PASSWORD, method = RequestMethod.POST)
-	public @ResponseBody AjaxResponseHandler executeChangePassword(@RequestBody ChangePassword password) {
+	@RequestMapping(value = "/login/sendActivationLinkEmail/{emailAddress}", method = RequestMethod.GET)
+	public @ResponseBody String sendActivationLinkEmail(HttpServletRequest request, @PathVariable String emailAddress) throws MessagingException {
 		
-		String messageResult = null;
-		AjaxResponseHandler handler = userservice.changeUserPassword(password);
+		// send token to User via email
+		String from = "mmedina@oceanbank.com";
+		String to = emailAddress;
+		String subject = "Forgot Password Activation Link";
 		
-		// if not match, return error;
-		if(handler == null){
-			messageResult = "The username or password does not match.";
-			handler = new AjaxResponseHandler(); 
-			handler.setCode("ERROR");
-			handler.setMessage(messageResult);
-		}
+		String appUrl = "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/changeForgotPassword";
+		String message = appUrl;
+
+		EmailService emailService = new EmailService(from, to, subject, message);
+//		email.sendEmail();
 		
-		
-		return handler;
+		return "Email has been sent successfully.";	
 	}
 	
+	@RequestMapping(value = "/forgotPassword", method = RequestMethod.GET)
+	public String showForgotPassword(Model model) {
+		
+		model.addAttribute("title1", "Forgot Password");
+		
+		return "tiles_forgotUserPassword";	
+	}
 	
-	/**
-	 * Show login page.
-	 *
-	 * @param model the model
-	 * @param locale the locale
-	 * @return the string
-	 */
 	@RequestMapping({ "/", "/login" })
 	public String showLoginPage(Model model, Locale locale) {
 
@@ -116,14 +91,6 @@ public class LoginController extends OauthTokenBean{
 		return DashboardConstant.TILES_LOGIN_TEMPLATE;
 	}
 	
-	
-	/**
-	 * Show home page.
-	 *
-	 * @param model the model
-	 * @param locale the locale
-	 * @return the string
-	 */
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public String showHomePage(Model model, Locale locale) {
 		
@@ -138,13 +105,6 @@ public class LoginController extends OauthTokenBean{
 		return DashboardConstant.TILES_HOME_TEMPLATE;	
 	}
 	
-	/**
-	 * Show403 error page.
-	 *
-	 * @param model the model
-	 * @param locale the locale
-	 * @return the string
-	 */
 	@RequestMapping(value = DashboardConstant.SHOW_403_ERROR_PAGE, method = RequestMethod.GET)
 	public String show403ErrorPage(Model model) {
 		

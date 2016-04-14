@@ -97,13 +97,4 @@ public interface UserService {
 	 */
 	String deleteUser(Integer user_id);
 	
-	/**
-	 * Change user password.
-	 *
-	 * @param request the request
-	 * @return the ajax response handler
-	 */
-	AjaxResponseHandler changeUserPassword(ChangePassword request);
-	
-	
 }

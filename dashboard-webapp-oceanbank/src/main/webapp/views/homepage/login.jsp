@@ -171,7 +171,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cedce7', end
                 </div>
                 <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
             </form><!-- /form -->
-            <a href="resetPassword" class="forgot-password">
+            <a href="forgotPassword" class="forgot-password">
                 Forgot the password?
             </a>
 

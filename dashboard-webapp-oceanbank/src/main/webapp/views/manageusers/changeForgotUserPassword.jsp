@@ -5,7 +5,9 @@
 $(document).ready(function(){
 
 	var token = Cookies.get('restToken');
-	var restApi = Cookies.get('restApi');	
+	var restApi = Cookies.get('restApi');
+	var userName = Cookies.get('userName');
+	
 	
 	function updatePassword(jsonData, url){
 		$.ajax({

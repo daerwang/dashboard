@@ -5,9 +5,9 @@
 package com.oceanbank.webapp.restoauth.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -59,6 +59,12 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	private List<DashboardRole> roleses = new ArrayList<DashboardRole>();
 	private String createdby;
 	private String modifiedby;
+	
+	@Column(name = "resetToken")
+	private String resetToken;
+	
+	@Column(name = "resetExpiry")
+	private Date resetExpiry;
 	
 	@Transient
 	private String newPassword;
@@ -201,7 +207,7 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 	 *
 	 * @return the roleses
 	 */
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "users", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "users")
 	public List<DashboardRole> getRoleses() {
 		return roleses;
 	}
@@ -342,6 +348,22 @@ public class DashboardUser extends AbstractAuditEntityTimestamp implements java.
 
 	public void setAccountNonExpired(Integer accountNonExpired) {
 		this.accountNonExpired = accountNonExpired;
+	}
+
+	public String getResetToken() {
+		return resetToken;
+	}
+
+	public void setResetToken(String resetToken) {
+		this.resetToken = resetToken;
+	}
+
+	public Date getResetExpiry() {
+		return resetExpiry;
+	}
+
+	public void setResetExpiry(Date resetExpiry) {
+		this.resetExpiry = resetExpiry;
 	}
 
 }

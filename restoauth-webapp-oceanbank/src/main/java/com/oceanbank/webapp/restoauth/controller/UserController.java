@@ -341,6 +341,42 @@ public class UserController {
 		return "ok";
 	}
 	
+	@RequestMapping(value = "/api/user/resetToken/{username}", method = RequestMethod.GET)
+	public DashboardUser getResetToken(@PathVariable("username") String username) throws Exception{
+
+		DashboardUser user = userservice.createResetToken(username);
+		user.setRoleses(null);
+		return user;
+	}
+	
+	@RequestMapping(value = "/api/user/changeForgotPassword/{resetToken}", method = RequestMethod.PUT)
+	public DashboardUser changeForgotPassword(@RequestBody DashboardUser user) throws Exception{
+
+		DashboardUser oldUser = userRepository.findByResetToken(user.getResetToken().trim());
+
+		Boolean isPasswordDuplicate = userAttemptService.isPasswordDuplicate(oldUser.getUsername(), user.getPassword());
+		
+		if(isPasswordDuplicate){
+			throw new Exception("Password cannot be the same for the last 5 passwords");
+		}
+		
+		if(user.getPassword() != null && user.getPassword().trim().length() > 0){
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			String hashedPassword = passwordEncoder.encode(user.getPassword());
+
+			oldUser.setPassword(hashedPassword);
+		}
+
+		oldUser.setModifiedby(user.getModifiedby());
+
+		DashboardUser newUser = userRepository.save(oldUser);
+		newUser.setRoleses(null);
+		
+		userAttemptService.saveUserPassword(newUser.getCreatedby(), newUser.getUsername(), newUser.getPassword());
+		
+		return newUser;
+	}
+	
 	
 	public class ErrorDetail{
 

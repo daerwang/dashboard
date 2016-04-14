@@ -18,9 +18,13 @@ CREATE TABLE `dashboarduser` (
   `modifiedby` varchar(45) DEFAULT NULL,
   `modifiedon` datetime DEFAULT NULL,
   `accountNonLocked` tinyint(4) DEFAULT '1',
+  `accountNonExpired` tinyint(4) DEFAULT '1',
+  `resetToken` varchar(60) DEFAULT NULL,
+  `resetExpiry` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `idx_username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+
 
 
 CREATE TABLE IF NOT EXISTS `test-oceanbank-db`.`DashboardRole` (

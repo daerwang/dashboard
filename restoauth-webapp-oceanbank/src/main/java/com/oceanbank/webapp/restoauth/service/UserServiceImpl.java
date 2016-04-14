@@ -7,7 +7,10 @@ package com.oceanbank.webapp.restoauth.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
+import org.joda.time.DateTime;
+import org.joda.time.Seconds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +25,8 @@ import com.oceanbank.webapp.restoauth.dao.UserRepository;
 import com.oceanbank.webapp.restoauth.model.DashboardRole;
 import com.oceanbank.webapp.restoauth.model.DashboardUser;
 import com.oceanbank.webapp.restoauth.model.UserPassword;
-/**
- * The Class UserServiceImpl.
- * 
- * @author Marinell Medina
- * @since 03.10.2015
- */
+
+
 @Service
 public class UserServiceImpl implements UserService {
 	
@@ -42,11 +41,48 @@ public class UserServiceImpl implements UserService {
     
     
 	public UserServiceImpl(){}
+	
+	public Boolean isResetTokenValid(String resetToken){
+		Boolean isValid = false;
+		DashboardUser user = userRepository.findByResetToken(resetToken);
+		if(user != null){
+			Integer secondsDiff = Seconds.secondsBetween(DateTime.now(), new DateTime(user.getResetExpiry())).getSeconds();
+			if(secondsDiff < 8400){
+				isValid = true;
+			}
+		}
+		return isValid;
+	}
     
+    public DashboardUser createResetToken(String userNameOrEmail) throws Exception{
+    	DashboardUser user = userRepository.findByUsername(userNameOrEmail);
+    	if(user == null){
+    		user = userRepository.findByEmail(userNameOrEmail);
+    	}
+    	if(user == null){
+    		throw new Exception("The Username or Email is not a valid account.");
+    	}
+    	
+    	if(user.getResetToken() != null && isResetTokenValid(user.getResetToken())){
+    		// do nothing
+    	}else{
+    		String resetToken = UUID.randomUUID().toString();
+    		user.setResetToken(resetToken);
+    		user.setResetExpiry(DateTime.now().plusDays(1).toDate());
+    		
+    		List<DashboardRole> updatedRoles = new ArrayList<DashboardRole>();
+    		updatedRoles = roleRepository.findByUseridIs(user.getUserId());
+    		//user.getRoleses().clear();
+    		user.setRoleses(updatedRoles);
+    		
+    		
+    		user = userRepository.save(user);
+    	}
+    	
+    	
+		return user;
+    }
     
-	/* (non-Javadoc)
-	 * @see com.oceanbank.webapp.restoauth.service.UserService#createUser(com.oceanbank.webapp.restoauth.api.UserResponse)
-	 */
 	@Override
 	public UserResponse createUser(UserResponse response) {
     	
@@ -199,23 +235,27 @@ public class UserServiceImpl implements UserService {
 		return userList;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see com.oceanbank.webapp.restoauth.service.UserService#updateUser(com.oceanbank.webapp.restoauth.api.UserResponse)
-	 */
 	@Override
 	public DashboardUser updateUser(UserResponse response) {
 		// get the selected User and update it
 		DashboardUser user = userRepository.findByUserIdIs(response.getUserId());
-		user.setFirstname(response.getFirstname());
-		user.setLastname(response.getLastname());
-		user.setUsername(response.getUsername());
+		if(response.getFirstname() != null)
+			user.setFirstname(response.getFirstname());
+		if(response.getLastname() != null)
+			user.setLastname(response.getLastname());
+		if(response.getUsername() != null)
+			user.setUsername(response.getUsername());
 //		user.setPassword(response.getPassword());
-		user.setEmail(response.getEmail());
-		user.setModifiedby(response.getModifiedby());
-		user.setIseriesname(response.getIseriesname());
-		user.setAccountNonLocked(response.getAccountNonLocked());
-		user.setAccountNonExpired(response.getAccountNonExpired());
+		if(response.getEmail() != null)
+			user.setEmail(response.getEmail());
+		if(response.getModifiedby() != null)
+			user.setModifiedby(response.getModifiedby());
+		if(response.getIseriesname() != null)
+			user.setIseriesname(response.getIseriesname());
+		if(response.getAccountNonLocked() != null)
+			user.setAccountNonLocked(response.getAccountNonLocked());
+		if(response.getAccountNonExpired() != null)
+			user.setAccountNonExpired(response.getAccountNonExpired());
 		
 
 		// set the variables
