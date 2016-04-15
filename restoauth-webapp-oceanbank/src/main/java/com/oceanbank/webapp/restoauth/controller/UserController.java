@@ -261,18 +261,13 @@ public class UserController {
 		return response;
 	}
 	
-	/**
-	 * Delete user.
-	 *
-	 * @param user_id the user_id
-	 * @return the string
-	 */
-	@RequestMapping(value = RestWebServiceUrl.DELETE_USER, method = RequestMethod.DELETE)
+
+	@RequestMapping(value = "/api/user/delete/{userid}", method = RequestMethod.DELETE)
 	public String deleteUser(@PathVariable("userid") int userId){
 	
 		userservice.deleteUser(userId);
 		
-		return "The User with Id " + userId + " is deleted.";
+		return "ok";
 	}
 	
 	/**
@@ -415,6 +410,7 @@ public class UserController {
 		er.setMessage(ex.getMessage());
 		er.setCause(ex.getClass() + "");
 		er.setName(ex.getClass().getCanonicalName());
+		ex.printStackTrace();
         return new ResponseEntity<ErrorDetail>(er, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 	 

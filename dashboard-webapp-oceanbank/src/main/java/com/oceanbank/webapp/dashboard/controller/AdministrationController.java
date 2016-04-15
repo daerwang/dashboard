@@ -127,20 +127,6 @@ public class AdministrationController {
 		
 		return newUser;
 	}
-	
-	@RequestMapping(value = DashboardConstant.DELETE_USER_DATATABLE, method = RequestMethod.DELETE)
-	public @ResponseBody String executeUserDelete(@PathVariable("row_id") String rowId) {
-		
-		final String[] rowArr = rowId.split("_");
-		final Integer user_id = Integer.parseInt(rowArr[1]);
-		
-		String result = null; 
-		result = userservice.deleteUser(user_id);
-		
-		LOGGER.info(result);
-		
-		return result;
-	}
 
 	@RequestMapping(value = "/users/getApiToken", method = RequestMethod.GET)
 	public @ResponseBody RestOauthAccessToken getApiToken() {

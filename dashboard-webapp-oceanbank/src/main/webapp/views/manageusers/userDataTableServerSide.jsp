@@ -15,6 +15,8 @@
 	
 	$(document).ready(function() {
 		
+		var token = Cookies.get('restToken');
+		var restApi = Cookies.get('restApi');
 		
 		var noSelectionDialog;
 		
@@ -102,33 +104,60 @@
 			
 			$(location).attr('href', 'users/changePassword/' + row_id);
 		}); 
-
-		$('#deleteButton').on('click', function(event) {
-
+		
+		function deleteUser(url){
 			$.ajax({
-		    	type: "DELETE",
-			  	url: deleteUserUrl + row_id,
-			    success: function(data) { 
-				        BootstrapDialog.show({
+				type: 'DELETE',
+				url: url,
+				success: function(data){
+
+					BootstrapDialog.show({
+				        type : BootstrapDialog.TYPE_SUCCESS,
 			            title: 'Success',
 			            message: 'The User is Deleted successfully.',
-			            cssClass: 'user-success-dialog',
 			            buttons: [{
 			                label: 'Ok',
-			                cssClass: 'btn-primary',
+			                cssClass: 'btn-success',
 			                action: function(dialog){
 			                    dialog.close();
 			                    table = $('#manageUserDatatable').DataTable();
 			                    table.ajax.reload();
 			                }
 			            }]
-			        });		
-			    },
-			    error:function(data,status,er) { 
-			        alert("error: "+data+" status: "+status+" er:"+er);
+			         });
+				},
+				beforeSend: function (xhr) {
+				    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+				},
+			    error: function (data, status, er) {
+			        var json = data.responseText;
+			        var errorObj = $.parseJSON(json);
+			        BootstrapDialog.show({
+				        type : BootstrapDialog.TYPE_WARNING,
+			            title: 'Warning',
+			            message: 'Error: ' + errorObj.message + ' by ' + errorObj.cause,
+			            buttons: [{
+			                label: 'Ok',
+			                cssClass: 'btn-warning',
+			                action: function(dialog){
+			                    dialog.close();
+			                    table = $('#manageUserDatatable').DataTable();
+			                    table.ajax.reload();
+			                }
+			            }]
+			         });
 			    }
 			});
+		}
+
+		$('#deleteButton').on('click', function(event) {
 			
+			var array = row_id.split('_');
+			var id = array[1];
+			var url = restApi + '/api/user/delete/' + id;
+
+			deleteUser(url);
+
 		});
 		
 		

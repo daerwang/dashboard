@@ -7,8 +7,6 @@ package com.oceanbank.webapp.dashboard.security;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.mail.MessagingException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -59,13 +57,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 		
 		User springUser = new User(userResponse.getUsername(), userResponse.getPassword(), 
                 enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, getGrantedAuthorities(userResponse));
-		
-		
-//		try {
-//			userservice.sendEmail();
-//		} catch (MessagingException e) {
-//			e.printStackTrace();
-//		}
+
 		
 		return springUser;
 	}

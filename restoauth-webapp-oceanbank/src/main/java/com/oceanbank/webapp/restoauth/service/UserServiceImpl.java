@@ -20,10 +20,12 @@ import com.oceanbank.webapp.common.model.UserResponse;
 import com.oceanbank.webapp.common.util.RestUtil;
 import com.oceanbank.webapp.restoauth.converter.UserConverter;
 import com.oceanbank.webapp.restoauth.dao.RoleRepository;
+import com.oceanbank.webapp.restoauth.dao.UserAttemptDao;
 import com.oceanbank.webapp.restoauth.dao.UserPasswordDao;
 import com.oceanbank.webapp.restoauth.dao.UserRepository;
 import com.oceanbank.webapp.restoauth.model.DashboardRole;
 import com.oceanbank.webapp.restoauth.model.DashboardUser;
+import com.oceanbank.webapp.restoauth.model.UserAttempt;
 import com.oceanbank.webapp.restoauth.model.UserPassword;
 
 
@@ -38,6 +40,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private UserPasswordDao userPasswordDao;
+	
+	@Autowired
+	private UserAttemptDao userAttemptDao;
     
     
 	public UserServiceImpl(){}
@@ -151,12 +156,24 @@ public class UserServiceImpl implements UserService {
 		DashboardUser user = userRepository.findOne(user_id);
 		
 		if(user != null){
-			userRepository.delete(user);
-			
+			// dashboard_role
+			List<DashboardRole> roles = roleRepository.findByUseridIs(user_id);
+			if(roles != null && roles.size() > 0)
+				roleRepository.delete(roles);
+
+			// user_password
 			List<UserPassword> list = userPasswordDao.findByUsernameOrderByCreatedonDesc(user.getUsername());
 			if(list != null && list.size() > 0){
 				userPasswordDao.delete(list);
 			}
+			
+			// user_attempt
+			UserAttempt userAttempt = userAttemptDao.findByUsername(user.getUsername());
+			if(userAttempt != null)
+				userAttemptDao.delete(userAttempt);
+			
+			// dashboard_user
+			userRepository.delete(user);
 		}
 		
 	}
