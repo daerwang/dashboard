@@ -169,9 +169,8 @@
 </script>
 
 <div class="page-header">
-	<h3>Administration</h3>
-	<p>Admin page to manage Users and Roles like resetting password or
-		adding new Users.</p>
+	<h3>User Management</h3>
+	<p>This is an admin page to manage Users and Roles.</p>
 </div>
 
 <p>

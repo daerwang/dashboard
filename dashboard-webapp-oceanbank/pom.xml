@@ -231,7 +231,7 @@
 
 
 	<build>
-		<finalName>dashboard-webapp-oceanbank</finalName>
+		<finalName>dashboard</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
