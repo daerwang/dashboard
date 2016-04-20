@@ -111,7 +111,7 @@ $(document).ready(function(){
 							},
 							regexp : {
 								regexp : /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]+$/,
-								message : 'The password must contain one digit 0-9, one lowercase letter, one uppercase letter, and one special symbol in the list "@#$%&"'
+								message : 'The password must contain one digit 0-9, one lowercase letter, and one special symbol in the list "@#$%&"'
 							}
 						}
 					},

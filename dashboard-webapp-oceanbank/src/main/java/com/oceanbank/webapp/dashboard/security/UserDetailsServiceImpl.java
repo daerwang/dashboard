@@ -43,12 +43,12 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
 		UserResponse userResponse = userservice.findUserByUsername(username);
-		
-		userservice.validateAccountExpiry(userResponse);
 
 		if(userResponse == null){
 			throw new UsernameNotFoundException("Username not found"); 
-		} 
+		}
+		
+		userservice.validateAccountExpiry(userResponse);
 		
 		boolean enabled = true;
 		boolean accountNonExpired = userResponse.getAccountNonExpired() == 0 ? false : true;

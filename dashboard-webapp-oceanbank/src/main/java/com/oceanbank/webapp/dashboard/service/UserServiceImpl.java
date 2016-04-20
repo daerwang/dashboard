@@ -54,7 +54,7 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 		DateTime start = new DateTime(modifiedOn);
         DateTime end = new DateTime(new Date());
 
-		Integer daysDiff = Days.daysBetween(start.toLocalDate(), end.toLocalDate()).getDays();
+		Integer daysDiff = Days.daysBetween(end.toLocalDate(), start.toLocalDate()).getDays();
 		
 		return daysDiff;
 	}
@@ -83,7 +83,7 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 				if(name.trim().contains("LockedException")){
 					throw new LockedException("The User is locked out.");
 				}
-				if(name.trim().contains("BadCredentialsException")){
+				if(name.trim().contains("BadCredentialsException") || name.trim().contains("NullPointerException")){
 					throw new BadCredentialsException("The User name and password is not correct.");
 				}
 				if(name.trim().contains("JpaSystemException")){
@@ -93,11 +93,7 @@ public class UserServiceImpl extends OauthTokenBean implements UserService {
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new InternalAuthenticationServiceException("The DB or Server may not be responding.");
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InternalAuthenticationServiceException("The DB or Server may not be responding.");
-		}
-
+		} 
 
 	}
 

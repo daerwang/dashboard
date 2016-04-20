@@ -105,26 +105,34 @@
 			$(location).attr('href', 'users/changePassword/' + row_id);
 		}); 
 		
+		function showDeleteUser(url){
+			BootstrapDialog.show({
+				type : BootstrapDialog.TYPE_DANGER,
+	            title: 'Warning',
+	            draggable: true,
+	            message: 'Do you really want to delete?',
+	            buttons: [{
+	            	label: 'Delete',
+	            	action: function(dialog){
+	            		dialog.close();
+	            		deleteUser(url);
+	            	}
+	            },{
+	                label: 'Close',
+	                action: function(dialog){
+	                    dialog.close();
+	                }
+	            }]
+	        });
+		}
+		
 		function deleteUser(url){
 			$.ajax({
 				type: 'DELETE',
 				url: url,
 				success: function(data){
-
-					BootstrapDialog.show({
-				        type : BootstrapDialog.TYPE_SUCCESS,
-			            title: 'Success',
-			            message: 'The User is Deleted successfully.',
-			            buttons: [{
-			                label: 'Ok',
-			                cssClass: 'btn-success',
-			                action: function(dialog){
-			                    dialog.close();
-			                    table = $('#manageUserDatatable').DataTable();
-			                    table.ajax.reload();
-			                }
-			            }]
-			         });
+					table = $('#manageUserDatatable').DataTable();
+                    table.ajax.reload();
 				},
 				beforeSend: function (xhr) {
 				    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
@@ -156,7 +164,7 @@
 			var id = array[1];
 			var url = restApi + '/api/user/delete/' + id;
 
-			deleteUser(url);
+			showDeleteUser(url);
 
 		});
 		

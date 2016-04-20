@@ -292,8 +292,6 @@ public class AdministrationController {
 		total = pageNumber + pageLength;
 		second = total < recordsTotal ? total: recordsTotal;
 		
-		LOGGER.info("first " + pageNumber + " and second " + second + ".");
-		
 		userDatatableList = userDatatableList.subList(pageNumber, second);
 		
 		
