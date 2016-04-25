@@ -1,15 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 
-<!-- Datatables Version 3 -->
-<link href="<c:url value="/datatables/integration/bootstrap/3/dataTables.bootstrap.css" />" rel="stylesheet">
-<script src="<c:url value="/datatables/media/js/jquery.dataTables.min.js" />"></script>
-<script src="<c:url value="/datatables/integration/bootstrap/3/dataTables.bootstrap.js" />"></script>
-
-<!-- Dialog 3 -->
-<link href="<c:url value="/bootstrap/dialog3/css/bootstrap-dialog.min.css" />" rel="stylesheet">
-<script src="<c:url value="/bootstrap/dialog3/js/bootstrap-dialog.min.js" />"></script>
-
 <style>
 .centerclass{
 	text-align:center; 

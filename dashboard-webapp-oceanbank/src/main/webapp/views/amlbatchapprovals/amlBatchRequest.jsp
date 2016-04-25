@@ -59,9 +59,9 @@ select option{color: #555;}
 		var isOwner = "${isOwner}";
 		
 		
-		var highlight = 'success'; 
-		var highlightUpload = 'success';
-		var highlightComment = 'success';
+		var highlight = 'active'; 
+		var highlightUpload = 'active';
+		var highlightComment = 'active';
 		
 		var isHighlight = false;
 		var isHighlightUpload = false;
