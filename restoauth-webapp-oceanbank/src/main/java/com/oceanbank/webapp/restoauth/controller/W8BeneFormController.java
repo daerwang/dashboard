@@ -2,7 +2,6 @@ package com.oceanbank.webapp.restoauth.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -42,17 +41,14 @@ public class W8BeneFormController {
 	@Autowired
 	private AmlBatchServiceImpl amlBatchServiceImpl;
 
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+	//private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	
 	private DashboardConverter<DashboardUpload, DashboardUploadResponse> dashboardUploadConverter = new DashboardUploadConverter();
 
 	@RequestMapping(value = "/createPdfToDisk", method = RequestMethod.POST)
 	public String createPdfToDisk(@RequestBody IrsFormSelected selected) throws DashboardException, IOException{
 
-		final Date startTime = new Date();
-		// find the active File to be used as template
-		// throw error if no template yet
-		List<DashboardUpload> uploads = amlBatchServiceImpl.findDashboardUploadByTableNameAndDescription("w8beneform", "active");
+		List<DashboardUpload> uploads = amlBatchServiceImpl.findDashboardUploadByTableNameAndDescription("W8BeneForm", "active");
 		if(uploads.isEmpty()){
 			throw new DashboardException("There is no PDF template found", null);
 		}else{
@@ -68,12 +64,7 @@ public class W8BeneFormController {
 		synchronized (this) {
 			w8BeneFormService.createPdfToDisk(list, fullLocation);
 		}
-		
-		final Date endTime = new Date();
-		LOGGER.info("Process Completed generateSelectedMailCode(): " + endTime);
-		final long timeTakenInSec = endTime.getTime() - startTime.getTime();
-		LOGGER.info("Time taken: " + (timeTakenInSec / 1000) + " secs " + (timeTakenInSec % 1000) + " ms");
-		
+	
 		return "OK!";
 	}
 	
@@ -100,7 +91,7 @@ public class W8BeneFormController {
 	@RequestMapping(value = "/createPdfToDiskDirect", method = RequestMethod.POST)
 	public String createPdfToDiskDirect(@RequestBody IrsFormSelected selected) throws DashboardException, IOException{
 
-		List<DashboardUpload> uploads = amlBatchServiceImpl.findDashboardUploadByTableNameAndDescription("w8beneformDirect", "active");
+		List<DashboardUpload> uploads = amlBatchServiceImpl.findDashboardUploadByTableNameAndDescription("W8BeneFormDirect", "active");
 		if(uploads.isEmpty()){
 
 			throw new DashboardException("There is no PDF template found", null);
