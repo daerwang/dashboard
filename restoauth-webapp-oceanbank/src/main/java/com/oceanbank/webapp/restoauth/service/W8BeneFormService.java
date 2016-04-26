@@ -18,16 +18,23 @@ import com.oceanbank.webapp.common.model.W8BeneFormResponse;
 import com.oceanbank.webapp.common.util.RestUtil;
 import com.oceanbank.webapp.restoauth.converter.DashboardConverter;
 import com.oceanbank.webapp.restoauth.converter.W8BeneFormConverter;
+import com.oceanbank.webapp.restoauth.converter.W8BeneFormDirectConverter;
 import com.oceanbank.webapp.restoauth.dao.W8BeneFormDao;
+import com.oceanbank.webapp.restoauth.dao.W8BeneFormDirectDao;
 import com.oceanbank.webapp.restoauth.model.W8BeneForm;
+import com.oceanbank.webapp.restoauth.model.W8BeneFormDirect;
 
 @Service
 public class W8BeneFormService {
 	
 	@Autowired
 	private W8BeneFormDao w8BeneFormDao;
+
+	@Autowired
+	private W8BeneFormDirectDao w8BeneFormDirectDao;
 	
 	private DashboardConverter<W8BeneForm, W8BeneFormResponse> converter = new W8BeneFormConverter();
+	private DashboardConverter<W8BeneFormDirect, W8BeneFormResponse> converterDirect = new W8BeneFormDirectConverter();
 	
 	//private static String W8BENEFORM_CLASSPATH = "pdf/W8BeneForm_Empty.pdf";
 	private static String W8BENEFORM_INDIVIDUAL_DIRECTORY = "C://dashboard//w8beneform//individual";
@@ -40,6 +47,14 @@ public class W8BeneFormService {
 		//pdfFormWriter.writeToTemplate(W8BENEFORM_CLASSPATH, W8BENEFORM_INDIVIDUAL_DIRECTORY, forms);
 		pdfFormWriter.writeToTemplate(templateFilePath, W8BENEFORM_INDIVIDUAL_DIRECTORY, forms);
 		//pdfFormWriter.writeToClearPaper(W8BENEFORM_CLASSPATH, W8BENEFORM_INDIVIDUAL_DIRECTORY, forms);
+		pdfFormWriter.mergePdf(W8BENEFORM_INDIVIDUAL_DIRECTORY, W8BENEFORM_MERGE_DIRECTORY, W8BENEFORM_TEMP_DIRECTORY, MERGE_PDF_NAME);
+	}
+	
+	public void createPdfToDiskDirect(List<W8BeneFormDirect> forms, String templateFilePath){
+		W8BeneFormPdfWriter pdfFormWriter = new W8BeneFormPdfWriter();
+		
+		pdfFormWriter.writeToTemplateDirect(templateFilePath, W8BENEFORM_INDIVIDUAL_DIRECTORY, forms);
+		
 		pdfFormWriter.mergePdf(W8BENEFORM_INDIVIDUAL_DIRECTORY, W8BENEFORM_MERGE_DIRECTORY, W8BENEFORM_TEMP_DIRECTORY, MERGE_PDF_NAME);
 	}
 	
@@ -65,6 +80,26 @@ public class W8BeneFormService {
 		return list;
 	}
 	
+	public List<W8BeneFormDirect> findByPk(IrsFormSelected selected) throws DashboardException{
+		String[] selectedId = selected.getSelected();
+		List<String> cifs = Arrays.asList(selectedId);
+		List<W8BeneFormDirect> list = new ArrayList<W8BeneFormDirect>();
+		
+		try {
+			for(String cif : cifs){
+				W8BeneFormDirect entity = w8BeneFormDirectDao.findByCif(cif);
+				if(cif != null){
+					list.add(entity);
+				}
+			}
+
+		} catch (Exception e) {
+			throw new DashboardException("The findByPk() failed with an Exception.", e);
+		}
+		
+		return list;
+	}
+	
 	public List<W8BeneFormResponse> findByDatatableSearch(String search){
 		final List<W8BeneFormResponse> list = new ArrayList<W8BeneFormResponse>();
 		List<W8BeneForm> entityList = new ArrayList<W8BeneForm>();
@@ -79,6 +114,27 @@ public class W8BeneFormService {
 		for (W8BeneForm entity : entityList) {
 			
 			final W8BeneFormResponse response = converter.convertFromEntity(entity);
+			list.add(response);
+		}
+
+
+		return list;
+	}
+	
+	public List<W8BeneFormResponse> findByDatatableSearchDirect(String search){
+		final List<W8BeneFormResponse> list = new ArrayList<W8BeneFormResponse>();
+		List<W8BeneFormDirect> entityList = new ArrayList<W8BeneFormDirect>();
+
+		if (!RestUtil.isNullOrEmpty(search)){
+			entityList = w8BeneFormDirectDao.findByCifLike("%" + search + "%");
+		} else {
+			final Page<W8BeneFormDirect> data = w8BeneFormDirectDao.findAll(new PageRequest(0, 200));
+			entityList = data.getContent();
+		}
+			
+		for (W8BeneFormDirect entity : entityList) {
+			
+			final W8BeneFormResponse response = converterDirect.convertFromEntity(entity);
 			list.add(response);
 		}
 

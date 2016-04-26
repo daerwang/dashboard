@@ -96,7 +96,8 @@ body {
 				<li><a href="<c:url value="${excelConverterUrl}"/>" id="excelConverter">Advisor File Converter</a></li>
 			</sec:authorize>
 			<sec:authorize access="hasAnyRole('Administrator','1042S_Form')">
-				<li><a href="<c:url value="${w8BeneFormUrl}"/>" id="w8BeneForm">W-8BEN-E Forms</a></li>
+				<li><a href="<c:url value="${w8BeneFormUrl}"/>" id="w8BeneForm">W-8BEN-E Forms (Manual)</a></li>
+				<li><a href="w8beneformDirect" id="w8BeneFormDirect">W-8BEN-E Forms (Direct)</a></li>
 			</sec:authorize>
 		</ul>
 	</div>

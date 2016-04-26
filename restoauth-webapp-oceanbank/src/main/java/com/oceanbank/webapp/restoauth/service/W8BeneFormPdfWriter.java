@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.oceanbank.webapp.restoauth.model.IrsFormCoordinate;
 import com.oceanbank.webapp.restoauth.model.W8BeneForm;
 import com.oceanbank.webapp.restoauth.model.W8BeneFormAddress;
+import com.oceanbank.webapp.restoauth.model.W8BeneFormDirect;
 
 public class W8BeneFormPdfWriter implements PdfFormWriter {
 	
@@ -139,6 +140,110 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 		}
 		IrsFormCoordinate altCityLabel = new IrsFormCoordinate("altCityLabel", left, 608, 8, entity.getAltCityLabel(), 10);
 		IrsFormCoordinate altCountryLabel = new IrsFormCoordinate("altCountryLabel", left, 598, 8, entity.getAltCountryLabel(), 10);
+		
+		
+		coordinates.add(cif);
+		coordinates.add(name);
+		coordinates.add(physicalCountryInc);
+		coordinates.add(physicalAddress);
+		coordinates.add(physicalCity);
+		coordinates.add(altAddress);
+		coordinates.add(altCity);
+		coordinates.add(altCountry);
+		coordinates.add(account);
+		coordinates.add(labelName);
+		coordinates.add(officer);
+		coordinates.add(altAddressLabel);
+		coordinates.add(altAddressLabel2);
+		coordinates.add(altCityLabel);
+		coordinates.add(altCountryLabel);
+		
+		return coordinates;
+	}
+	
+	
+    @SuppressWarnings("unchecked")
+	public void writeToTemplateDirect(String templateFilePath, String individualDirectory, List<W8BeneFormDirect> forms) {
+		
+		PDDocument document = null;
+		String individualFilePath = null;
+		PDFont font = PDType1Font.HELVETICA_BOLD;
+		//File pdfFile = w8BeneFormService.getFile(templateFilePath);
+		File pdfFile = new File(templateFilePath);
+		w8BeneFormService.clearDirectory(individualDirectory);
+		
+		
+		for(W8BeneFormDirect f : forms){
+			String cif = f.getPkId().getCif().trim();
+			individualFilePath = individualDirectory + "//W8BeneForm_" + cif + ".pdf";
+			List<IrsFormCoordinate> coordinates = setupFormCoordinatesDirect(f);
+			try {
+				document = PDDocument.load(pdfFile);
+				List<PDPage> pages = document.getDocumentCatalog().getAllPages();
+				int i = 0;
+				for(PDPage p : pages){
+					PDPageContentStream contentStream = new PDPageContentStream(document, p, true, true);
+					
+					draw(contentStream, coordinates, font, ++i);
+					contentStream.close();
+				}
+
+				document.save(individualFilePath);
+				document.close();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (COSVisitorException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	public List<IrsFormCoordinate> setupFormCoordinatesDirect(W8BeneFormDirect entity) {
+
+		List<IrsFormCoordinate> coordinates = new ArrayList<IrsFormCoordinate>();
+		
+		// for Page 1
+		IrsFormCoordinate cif = new IrsFormCoordinate("cif", 495, 748, 10, entity.getPkId().getCif(), 1);
+		IrsFormCoordinate name = new IrsFormCoordinate("name", 32, 555, 10, entity.getPkId().getName(), 1);
+		String address1 = entity.getPhysicalAddress().trim() + ", " + entity.getPhysicalCity().trim();
+		if(entity.getPhysicalCity() != null && entity.getPhysicalCity().trim().length() == 0 || entity.getPhysicalCity() == null){
+			address1 = address1.substring(0, address1.length() - 2);
+		}
+		String address2 = entity.getPhysicalCountryInc().trim();
+		String address3 = entity.getPhysicalCountry().trim();
+		IrsFormCoordinate physicalAddress = new IrsFormCoordinate("physicalAddress", 34, 146, 10, address1, 1);
+		IrsFormCoordinate physicalCity = new IrsFormCoordinate("physicalCity", 34, 122, 10, address2, 1);
+		IrsFormCoordinate physicalCountryInc = new IrsFormCoordinate("physicalCountryInc", 440, 122, 10, address3, 1);
+		int a = 48;
+		
+		if(!entity.getPhysicalAddress().equalsIgnoreCase(entity.getAltAddress())){
+			address1 = entity.getAltAddress().trim() + ", " + entity.getAltCity().trim();
+			if(entity.getAltCity() != null && entity.getAltCity().trim().length() == 0 || entity.getAltCity() == null){
+				address1 = address1.substring(0, address1.length() - 2);
+			}
+			address2 = entity.getAltCountryInc().trim();
+			address3 = entity.getAltCountry().trim();
+		}
+		
+		IrsFormCoordinate altAddress = new IrsFormCoordinate("altAddress", 34, 146 - a, 10, address1, 1);
+		IrsFormCoordinate altCity = new IrsFormCoordinate("altCity", 34, 122 - a, 10, address2, 1);
+		IrsFormCoordinate altCountry = new IrsFormCoordinate("altCountry", 440, 122 - a, 10, address3, 1);
+		IrsFormCoordinate account = new IrsFormCoordinate("account", 426, 122 - a - 25, 10, "", 1);
+		
+		// for Page 10
+		int left = 105;
+		IrsFormCoordinate labelName = new IrsFormCoordinate("labelName", left, 640, 8, entity.getPkId().getName(), 10);
+		IrsFormCoordinate officer = new IrsFormCoordinate("officer", 350, 640, 8, entity.getOfficer().trim() + "    " + entity.getBranch().trim(), 10);
+		W8BeneFormAddress trimAddress = trimAddress(address1);
+		IrsFormCoordinate altAddressLabel = new IrsFormCoordinate("altAddressLabel", left, 630, 8, trimAddress.getFirstLine().trim(), 10);
+		IrsFormCoordinate altAddressLabel2 = new IrsFormCoordinate();
+		if(trimAddress.getSecondLine().trim().length() > 0){
+			altAddressLabel2 = new IrsFormCoordinate("altAddressLabel2", left, 620, 8, trimAddress.getSecondLine().trim(), 10);
+		}
+		IrsFormCoordinate altCityLabel = new IrsFormCoordinate("altCityLabel", left, 608, 8, address2, 10);
+		IrsFormCoordinate altCountryLabel = new IrsFormCoordinate("altCountryLabel", left, 598, 8, address3, 10);
 		
 		
 		coordinates.add(cif);

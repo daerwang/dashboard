@@ -34,7 +34,6 @@ import com.oceanbank.webapp.common.exception.DashboardException;
 import com.oceanbank.webapp.common.model.DashboardConstant;
 import com.oceanbank.webapp.common.model.DashboardUploadResponse;
 import com.oceanbank.webapp.common.model.DataTablesRequest;
-import com.oceanbank.webapp.common.model.ExcelFileMeta;
 import com.oceanbank.webapp.common.model.IrsFormSelected;
 import com.oceanbank.webapp.common.model.OauthTokenBean;
 import com.oceanbank.webapp.common.model.W8BeneFormResponse;
@@ -65,10 +64,30 @@ public class W8BenFormService extends OauthTokenBean {
 		return list;
 	}
 	
+	public List<W8BeneFormResponse> searchFormDataTableDirect(DataTablesRequest datatableRequest) {
+		
+		HttpEntity<DataTablesRequest> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), datatableRequest);
+		String url = getRestApi() + "/api/w8beneform/dataTableDirect";
+		ResponseEntity<W8BeneFormResponse[]> response = restTemplate.exchange(url, HttpMethod.POST, entity, W8BeneFormResponse[].class);
+
+		List<W8BeneFormResponse> list = Arrays.asList(response.getBody());
+
+		return list;
+	}
+	
 	public String createPdfToDisk(IrsFormSelected selected){
 		final HttpEntity<IrsFormSelected> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), selected);
 		
 		final ResponseEntity<String> response = restTemplate.exchange(getRestApi() + "/api/w8beneform/createPdfToDisk", HttpMethod.POST, entity, String.class);
+		final String result = response.getBody();
+
+		return result;
+	}
+
+	public String createPdfToDiskDirect(IrsFormSelected selected){
+		final HttpEntity<IrsFormSelected> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), selected);
+		
+		final ResponseEntity<String> response = restTemplate.exchange(getRestApi() + "/api/w8beneform/createPdfToDiskDirect", HttpMethod.POST, entity, String.class);
 		final String result = response.getBody();
 
 		return result;
@@ -94,11 +113,40 @@ public class W8BenFormService extends OauthTokenBean {
 		}
 
 	}
+	
+	public void savePdfToDiskDirect(MultipartFile mpf, String createdBy) throws DashboardException, IOException{
+
+		// 1. save pdf details to DB
+		DashboardUploadResponse response = new DashboardUploadResponse();
+    	response.setFilename(mpf.getOriginalFilename());
+    	response.setCreatedby(createdBy);
+    	response.setDescription("active");
+    	response = createDashboardUploadDirect(response);
+
+		// 2. copy pdf to disk
+    	String permanentFileDirectory =  DashboardConstant.W8BENEFORM_TEMPLATE_UPLOAD_DIRECTORY + response.getId();
+    	amlBatchService.createLocationDirectory(permanentFileDirectory, false);
+		String fullFileLocation = permanentFileDirectory + "//" + mpf.getOriginalFilename();
+		try {
+			FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(fullFileLocation));
+		} catch (IOException e) {
+			throw new DashboardException("Error in savePdfToDisk() method", e.getCause());
+		}
+
+	}
 
 	public DashboardUploadResponse createDashboardUpload(DashboardUploadResponse response) {
 
 		final HttpEntity<DashboardUploadResponse> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), response);
 		final ResponseEntity<DashboardUploadResponse> request = restTemplate.exchange(getRestApi() + "/api/w8beneform/pdfUpload", HttpMethod.POST, entity, DashboardUploadResponse.class);
+
+		return request.getBody();
+	}
+	
+	public DashboardUploadResponse createDashboardUploadDirect(DashboardUploadResponse response) {
+
+		final HttpEntity<DashboardUploadResponse> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), response);
+		final ResponseEntity<DashboardUploadResponse> request = restTemplate.exchange(getRestApi() + "/api/w8beneform/pdfUploadDirect", HttpMethod.POST, entity, DashboardUploadResponse.class);
 
 		return request.getBody();
 	}
@@ -108,6 +156,20 @@ public class W8BenFormService extends OauthTokenBean {
 		final HttpEntity<DataTablesRequest> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), datatableRequest);
 
 		final ResponseEntity<DashboardUploadResponse[]> response = restTemplate.exchange(getRestApi() + "/api/w8beneform/uploadDataTable", HttpMethod.POST, entity, DashboardUploadResponse[].class);
+
+		List<DashboardUploadResponse> list = new ArrayList<DashboardUploadResponse>();
+		if(response != null){
+			list = Arrays.asList(response.getBody());
+		}
+
+		return list;
+	}
+	
+	public List<DashboardUploadResponse> getDashboardUploadDataTableDirect(DataTablesRequest datatableRequest) {
+
+		final HttpEntity<DataTablesRequest> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), datatableRequest);
+
+		final ResponseEntity<DashboardUploadResponse[]> response = restTemplate.exchange(getRestApi() + "/api/w8beneform/uploadDataTableDirect", HttpMethod.POST, entity, DashboardUploadResponse[].class);
 
 		List<DashboardUploadResponse> list = new ArrayList<DashboardUploadResponse>();
 		if(response != null){
@@ -129,7 +191,7 @@ public class W8BenFormService extends OauthTokenBean {
 
 		Iterator<String> itr =  request.getFileNames();
         MultipartFile mpf = null;
-        ExcelFileMeta fileMeta = null;
+        //ExcelFileMeta fileMeta = null;
 
         String fileName1 = itr.next();
     	mpf = request.getFile(fileName1);

@@ -11,7 +11,7 @@
 
 
 	<groupId>com.oceanbank.webapp</groupId>
-	<artifactId>dashboard-webapp-oceanbank</artifactId>
+	<artifactId>dashboard</artifactId>
 	<packaging>war</packaging>
 	<name>dashboard-webapp-oceanbank Maven Webapp</name>
 	<description>The Maven as Web Project.</description>
@@ -240,7 +240,7 @@
 				<configuration>
 					<url>http://localhost:8085/manager/text</url>
 					<server>TomcatServer</server>
-					<path>/dashboard-webapp-oceanbank</path>
+					<path>/dashboard</path>
 				</configuration>
 			</plugin>
 			<plugin>

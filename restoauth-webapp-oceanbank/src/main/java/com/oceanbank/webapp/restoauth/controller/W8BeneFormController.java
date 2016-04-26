@@ -19,13 +19,13 @@ import com.oceanbank.webapp.common.model.DashboardConstant;
 import com.oceanbank.webapp.common.model.DashboardUploadResponse;
 import com.oceanbank.webapp.common.model.DataTablesRequest;
 import com.oceanbank.webapp.common.model.IrsFormSelected;
-import com.oceanbank.webapp.common.model.RestWebServiceUrl;
 import com.oceanbank.webapp.common.model.W8BeneFormResponse;
 import com.oceanbank.webapp.restoauth.converter.DashboardConverter;
 import com.oceanbank.webapp.restoauth.converter.DashboardUploadConverter;
 import com.oceanbank.webapp.restoauth.dao.DashboardUploadRepository;
 import com.oceanbank.webapp.restoauth.model.DashboardUpload;
 import com.oceanbank.webapp.restoauth.model.W8BeneForm;
+import com.oceanbank.webapp.restoauth.model.W8BeneFormDirect;
 import com.oceanbank.webapp.restoauth.service.AmlBatchServiceImpl;
 import com.oceanbank.webapp.restoauth.service.W8BeneFormService;
 
@@ -50,8 +50,6 @@ public class W8BeneFormController {
 	public String createPdfToDisk(@RequestBody IrsFormSelected selected) throws DashboardException, IOException{
 
 		final Date startTime = new Date();
-		LOGGER.info("Executing createPdfToDisk() Start time: " + startTime.toString());
-		
 		// find the active File to be used as template
 		// throw error if no template yet
 		List<DashboardUpload> uploads = amlBatchServiceImpl.findDashboardUploadByTableNameAndDescription("w8beneform", "active");
@@ -88,12 +86,60 @@ public class W8BeneFormController {
 		
 		return responseList;
 	}
+	
+	@RequestMapping(value = "/dataTableDirect", method = RequestMethod.POST)
+	public List<W8BeneFormResponse> getBySearchOnDatatablesDirect(@RequestBody DataTablesRequest datatableRequest){
+	
+		String searchParameter = datatableRequest.getValue();
+    	List<W8BeneFormResponse> responseList = w8BeneFormService.findByDatatableSearchDirect(searchParameter);
+		
+		
+		return responseList;
+	}
+	
+	@RequestMapping(value = "/createPdfToDiskDirect", method = RequestMethod.POST)
+	public String createPdfToDiskDirect(@RequestBody IrsFormSelected selected) throws DashboardException, IOException{
+
+		List<DashboardUpload> uploads = amlBatchServiceImpl.findDashboardUploadByTableNameAndDescription("w8beneformDirect", "active");
+		if(uploads.isEmpty()){
+
+			throw new DashboardException("There is no PDF template found", null);
+		
+		}else{
+			if(uploads.size() > 1){
+				throw new DashboardException("There are 1 or more template enabled. Please enable 1 only.", null);
+			}
+		}
+		DashboardUpload activeTemplate = uploads.get(0);
+		String fullLocation = DashboardConstant.W8BENEFORM_TEMPLATE_UPLOAD_DIRECTORY + activeTemplate.getId() + "//" + activeTemplate.getFileName();
+
+		List<W8BeneFormDirect> list = w8BeneFormService.findByPk(selected);
+		
+		synchronized (this) {
+			w8BeneFormService.createPdfToDiskDirect(list, fullLocation);
+		}
+		
+		
+		return "OK!";
+	}
 
 	@RequestMapping(value = "/pdfUpload", method = RequestMethod.POST)
 	public DashboardUploadResponse createDashboardUpload(@RequestBody DashboardUploadResponse response) throws DashboardException{
 
 		DashboardUpload upload = dashboardUploadConverter.convertFromBean(response);
 		upload.setTableName("W8BeneForm");
+		upload = amlBatchServiceImpl.createDashboardUpload(upload);
+
+		final DashboardUploadResponse result = dashboardUploadConverter.convertFromEntity(upload);
+
+		return result;
+	}
+	
+	@RequestMapping(value = "/pdfUploadDirect", method = RequestMethod.POST)
+	public DashboardUploadResponse createDashboardUploadDirect(@RequestBody DashboardUploadResponse response) throws DashboardException{
+
+		DashboardUpload upload = dashboardUploadConverter.convertFromBean(response);
+		upload.setTableName("W8BeneFormDirect");
 		upload = amlBatchServiceImpl.createDashboardUpload(upload);
 
 		final DashboardUploadResponse result = dashboardUploadConverter.convertFromEntity(upload);
@@ -107,6 +153,23 @@ public class W8BeneFormController {
 		final List<DashboardUploadResponse> resultList = new ArrayList<DashboardUploadResponse>();
 
 		uploadList = amlBatchServiceImpl.findDashboardUploadByTableName("W8BeneForm");
+
+		if(!uploadList.isEmpty()){
+			for (DashboardUpload entity : uploadList) {
+				final DashboardUploadResponse response = dashboardUploadConverter.convertFromEntity(entity);
+				resultList.add(response);
+			}
+		}
+
+		return resultList;
+	}
+	
+	@RequestMapping(value = "/uploadDataTableDirect", method = RequestMethod.POST)
+	public List<DashboardUploadResponse> getDashboardUploadDatatablesDirect(@RequestBody DataTablesRequest datatableRequest){
+		List<DashboardUpload> uploadList = new ArrayList<DashboardUpload>();
+		final List<DashboardUploadResponse> resultList = new ArrayList<DashboardUploadResponse>();
+
+		uploadList = amlBatchServiceImpl.findDashboardUploadByTableName("W8BeneFormDirect");
 
 		if(!uploadList.isEmpty()){
 			for (DashboardUpload entity : uploadList) {

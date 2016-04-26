@@ -11,7 +11,7 @@ import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 
 @Entity
-@Table(name="w8beneform", schema="IBMOB700")
+@Table(name="w8beneform")
 @NamedQueries({
 	  @NamedQuery(name="W8BeneForm.findByDatatableSearch",
 	              query = "from W8BeneForm where cif LIKE :search OR name LIKE :search OR physicalCountryInc LIKE :search"),
@@ -79,7 +79,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="cif", length=45)
+   @Column(name="cif")
    public String getCif() {
        return this.cif;
    }
@@ -89,7 +89,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="name", length=500)
+   @Column(name="name")
    public String getName() {
        return this.name;
    }
@@ -99,7 +99,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="physicalCountryInc", length=45)
+   @Column(name="physicalCountryInc")
    public String getPhysicalCountryInc() {
        return this.physicalCountryInc;
    }
@@ -109,7 +109,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="physicalAddress", length=500)
+   @Column(name="physicalAddress")
    public String getPhysicalAddress() {
        return this.physicalAddress;
    }
@@ -119,7 +119,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="physicalCity", length=45)
+   @Column(name="physicalCity")
    public String getPhysicalCity() {
        return this.physicalCity;
    }
@@ -129,7 +129,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="physicalCountry", length=45)
+   @Column(name="physicalCountry")
    public String getPhysicalCountry() {
        return this.physicalCountry;
    }
@@ -139,7 +139,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="altAddress", length=500)
+   @Column(name="altAddress")
    public String getAltAddress() {
        return this.altAddress;
    }
@@ -149,7 +149,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="altCity", length=45)
+   @Column(name="altCity")
    public String getAltCity() {
        return this.altCity;
    }
@@ -159,7 +159,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="altCountry", length=45)
+   @Column(name="altCountry")
    public String getAltCountry() {
        return this.altCountry;
    }
@@ -169,7 +169,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="account", length=45)
+   @Column(name="account")
    public String getAccount() {
        return this.account;
    }
@@ -179,7 +179,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="labelName", length=200)
+   @Column(name="labelName")
    public String getLabelName() {
        return this.labelName;
    }
@@ -189,7 +189,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="officer", length=45)
+   @Column(name="officer")
    public String getOfficer() {
        return this.officer;
    }
@@ -199,7 +199,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="branch", length=45)
+   @Column(name="branch")
    public String getBranch() {
        return this.branch;
    }
@@ -209,7 +209,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="altAddressLabel", length=500)
+   @Column(name="altAddressLabel")
    public String getAltAddressLabel() {
        return this.altAddressLabel;
    }
@@ -219,7 +219,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="altCityLabel", length=45)
+   @Column(name="altCityLabel")
    public String getAltCityLabel() {
        return this.altCityLabel;
    }
@@ -229,7 +229,7 @@ public class W8BeneForm  implements java.io.Serializable {
    }
 
    
-   @Column(name="altCountryLabel", length=45)
+   @Column(name="altCountryLabel")
    public String getAltCountryLabel() {
        return this.altCountryLabel;
    }

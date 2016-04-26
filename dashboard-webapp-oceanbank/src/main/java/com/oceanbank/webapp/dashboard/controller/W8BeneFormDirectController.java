@@ -55,8 +55,8 @@ import com.oceanbank.webapp.dashboard.service.W8BenFormService;
 
 
 @Controller
-@RequestMapping("/w8beneform")
-public class W8BeneFormController {
+@RequestMapping("/w8beneformDirect")
+public class W8BeneFormDirectController {
 	
 	@Autowired
 	private W8BenFormService w8BenFormService;
@@ -72,9 +72,9 @@ public class W8BeneFormController {
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String mainPage(Model model) throws IOException{
 
-		model.addAttribute("title1","W-8BEN-E Form");
+		model.addAttribute("title1","W-8BEN-E Form Direct");
 
-		return "tiles_w8BeneForm";
+		return "tiles_w8BeneForm_direct";
 								
 	}
 	
@@ -102,7 +102,7 @@ public class W8BeneFormController {
 		datatableRequest.setLength(pageLength);
 
 		// retrieve the Users from parameters given but only 50 rows for blank search for quickness....
-		final List<W8BeneFormResponse> responseList = w8BenFormService.searchFormDataTable(datatableRequest);
+		final List<W8BeneFormResponse> responseList = w8BenFormService.searchFormDataTableDirect(datatableRequest);
 		Integer recordsTotal = 0;
 		recordsTotal = responseList.size();
 		
@@ -111,10 +111,10 @@ public class W8BeneFormController {
 		
 		for (W8BeneFormResponse u : responseList) {
 			final W8BeneFormDatatableResponse dt = new W8BeneFormDatatableResponse();
-			dt.setW8BeneFormId(u.getId() + "");
+			dt.setW8BeneFormId(u.getCif());
 			dt.setCif(u.getCif());
 			dt.setName(u.getName());
-			dt.setPhysicalCountryInc(u.getPhysicalCountryInc());
+			dt.setPhysicalCountryInc(u.getPhysicalCountry());
 			
 			responseDatatableList.add(dt);
 		}
@@ -158,7 +158,7 @@ public class W8BeneFormController {
 		IrsFormSelected sel = new IrsFormSelected();
 		String result = null;
 		try {
-			result = w8BenFormService.createPdfToDisk(selected);
+			result = w8BenFormService.createPdfToDiskDirect(selected);
 		} catch (RestClientException e) {
 			throw new DashboardException(e.getMessage(), e.getCause());
 		}
@@ -203,15 +203,6 @@ public class W8BeneFormController {
 
 	}
 
-	@RequestMapping(value = "/uploadExcelData", method = RequestMethod.POST)
-	public void uploadExcelData(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
-
-		List<W8BeneFormResponse> list = new ArrayList<W8BeneFormResponse>();
-		list = w8BenFormService.createW8BeneFormFromExcel(request);
-		w8BenFormService.insertW8BeneForms(list);
-	}
-
-
 	@RequestMapping(value = "/uploadPdfTemplate", method = RequestMethod.POST)
 	public void uploadPdfTemplate(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
 		//@ResponseBody ExcelFileMeta
@@ -234,7 +225,7 @@ public class W8BeneFormController {
     	String createdBy = CommonUtil.getAuthenticatedUserDetails().getUsername();
 
     	synchronized (this) {
-    		w8BenFormService.savePdfToDisk(mpf, createdBy);
+    		w8BenFormService.savePdfToDiskDirect(mpf, createdBy);
 		}
 
         fileMeta = new ExcelFileMeta();
@@ -266,7 +257,7 @@ public class W8BeneFormController {
 
 
 		// retrieve the Users from parameters given but only 50 rows for blank search for quickness....
-		final List<DashboardUploadResponse> responseList = w8BenFormService.getDashboardUploadDataTable(datatableRequest);
+		final List<DashboardUploadResponse> responseList = w8BenFormService.getDashboardUploadDataTableDirect(datatableRequest);
 		Integer recordsTotal = 0;
 		recordsTotal = responseList.size();
 
@@ -333,15 +324,7 @@ public class W8BeneFormController {
 
 		model.addAttribute("title1", "Upload PDF File");
 
-		return "/w8beneforms/w8BeneFormUpload";
-	}
-
-	@RequestMapping(value = "/showUploadExcelPage", method = RequestMethod.GET)
-	public String showUploadExcelPage(Model model) {
-
-		model.addAttribute("title1", "Upload PDF File");
-
-		return "/w8beneforms/w8BeneFormDataUpload";
+		return "/w8beneforms/w8BeneFormDirectUpload";
 	}
 
 	@RequestMapping(value = "/{id}/deletePdfUpload", method = RequestMethod.DELETE)

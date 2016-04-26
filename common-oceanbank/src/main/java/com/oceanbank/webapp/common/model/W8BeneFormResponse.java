@@ -15,6 +15,7 @@ public class W8BeneFormResponse {
     private String altAddress;
     private String altCity;
     private String altCountry;
+    private String altCountryInc;
     private String account;
     private String labelName;
     private String officer;
@@ -123,5 +124,11 @@ public class W8BeneFormResponse {
 	}
 	public void setAltCountryLabel(String altCountryLabel) {
 		this.altCountryLabel = altCountryLabel;
+	}
+	public String getAltCountryInc() {
+		return altCountryInc;
+	}
+	public void setAltCountryInc(String altCountryInc) {
+		this.altCountryInc = altCountryInc;
 	}
 }
