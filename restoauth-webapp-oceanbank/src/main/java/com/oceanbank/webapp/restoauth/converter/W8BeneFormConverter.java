@@ -14,6 +14,9 @@ public class W8BeneFormConverter implements DashboardConverter<W8BeneForm, W8Ben
 		c.setId(response.getId());
 		c.setCif(response.getCif());
 		c.setName(response.getName());
+		c.setPhysicalAddress(response.getPhysicalAddress());
+		c.setPhysicalCity(response.getPhysicalCity());
+		c.setPhysicalCountry(response.getPhysicalCountry());
 		c.setPhysicalCountryInc(response.getPhysicalCountryInc());
 		c.setAltAddress(response.getAltAddress());
 		c.setAltCity(response.getAltCity());
@@ -37,6 +40,9 @@ public class W8BeneFormConverter implements DashboardConverter<W8BeneForm, W8Ben
 		res.setId(entity.getId());
 		res.setCif(entity.getCif());
 		res.setName(entity.getName());
+		res.setPhysicalAddress(entity.getPhysicalAddress());
+		res.setPhysicalCity(entity.getPhysicalCity());
+		res.setPhysicalCountry(entity.getPhysicalCountry());
 		res.setPhysicalCountryInc(entity.getPhysicalCountryInc());
 		res.setAltAddress(entity.getAltAddress());
 		res.setAltCity(entity.getAltCity());

@@ -119,13 +119,25 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 		// for Page 1
 		IrsFormCoordinate cif = new IrsFormCoordinate("cif", 495, 748, 10, entity.getCif(), 1);
 		IrsFormCoordinate name = new IrsFormCoordinate("name", 32, 555, 10, entity.getName(), 1);
-		IrsFormCoordinate physicalAddress = new IrsFormCoordinate("physicalAddress", 34, 146, 10, entity.getPhysicalAddress(), 1);
-		IrsFormCoordinate physicalCity = new IrsFormCoordinate("physicalCity", 34, 122, 10, entity.getPhysicalCity(), 1);
-		IrsFormCoordinate physicalCountryInc = new IrsFormCoordinate("physicalCountryInc", 440, 122, 10, entity.getPhysicalCountryInc(), 1);
+		String address1 = entity.getPhysicalAddress().trim();
+		String address2 = entity.getPhysicalCity().trim();
+		String address3 = entity.getPhysicalCountry().trim();
+		IrsFormCoordinate physicalAddress = new IrsFormCoordinate("physicalAddress", 34, 146, 10, address1, 1);
+		IrsFormCoordinate physicalCity = new IrsFormCoordinate("physicalCity", 34, 122, 10, address2, 1);
+		IrsFormCoordinate physicalCountryInc = new IrsFormCoordinate("physicalCountryInc", 440, 122, 10, address3, 1);
 		int a = 48;
-		IrsFormCoordinate altAddress = new IrsFormCoordinate("altAddress", 34, 146 - a, 10, entity.getAltAddress(), 1);
-		IrsFormCoordinate altCity = new IrsFormCoordinate("altCity", 34, 122 - a, 10, entity.getAltCity(), 1);
-		IrsFormCoordinate altCountry = new IrsFormCoordinate("altCountry", 440, 122 - a, 10, entity.getAltCountry(), 1);
+		String altAddress1 = "";
+		String altAddress2 = "";
+		String altAddress3 = "";
+		if(!entity.getPhysicalAddress().equalsIgnoreCase(entity.getAltAddress())){
+			altAddress1 = entity.getAltAddress().trim();
+			altAddress2 = entity.getAltCity().trim();
+			altAddress3 = entity.getAltCountry().trim();
+		}
+		
+		IrsFormCoordinate altAddress = new IrsFormCoordinate("altAddress", 34, 146 - a, 10, altAddress1, 1);
+		IrsFormCoordinate altCity = new IrsFormCoordinate("altCity", 34, 122 - a, 10, altAddress2, 1);
+		IrsFormCoordinate altCountry = new IrsFormCoordinate("altCountry", 440, 122 - a, 10, altAddress3, 1);
 		IrsFormCoordinate account = new IrsFormCoordinate("account", 426, 122 - a - 25, 10, entity.getAccount(), 1);
 		
 		// for Page 10
@@ -218,6 +230,9 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 		IrsFormCoordinate physicalCountryInc = new IrsFormCoordinate("physicalCountryInc", 440, 122, 10, address3, 1);
 		int a = 48;
 		
+		String altAddress1 = "";
+		String altAddress2 = "";
+		String altAddress3 = "";
 		if(!entity.getPhysicalAddress().equalsIgnoreCase(entity.getAltAddress())){
 			address1 = entity.getAltAddress().trim() + ", " + entity.getAltCity().trim();
 			if(entity.getAltCity() != null && entity.getAltCity().trim().length() == 0 || entity.getAltCity() == null){
@@ -225,11 +240,14 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 			}
 			address2 = entity.getAltCountryInc().trim();
 			address3 = entity.getAltCountry().trim();
+			altAddress1 = address1;
+			altAddress2 = address2;
+			altAddress3 = address3;
 		}
 		
-		IrsFormCoordinate altAddress = new IrsFormCoordinate("altAddress", 34, 146 - a, 10, address1, 1);
-		IrsFormCoordinate altCity = new IrsFormCoordinate("altCity", 34, 122 - a, 10, address2, 1);
-		IrsFormCoordinate altCountry = new IrsFormCoordinate("altCountry", 440, 122 - a, 10, address3, 1);
+		IrsFormCoordinate altAddress = new IrsFormCoordinate("altAddress", 34, 146 - a, 10, altAddress1, 1);
+		IrsFormCoordinate altCity = new IrsFormCoordinate("altCity", 34, 122 - a, 10, altAddress2, 1);
+		IrsFormCoordinate altCountry = new IrsFormCoordinate("altCountry", 440, 122 - a, 10, altAddress3, 1);
 		IrsFormCoordinate account = new IrsFormCoordinate("account", 426, 122 - a - 25, 10, "", 1);
 		
 		// for Page 10
