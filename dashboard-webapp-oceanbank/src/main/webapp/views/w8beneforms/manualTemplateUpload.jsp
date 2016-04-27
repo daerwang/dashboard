@@ -4,11 +4,8 @@
 
 $(document).ready(function() {
 	
-	var executeAmlBatchRequestUpload = "<c:url value="${executeAmlBatchRequestUpload}"/>";
 	var table = $('#dashboardUploadDatatable').DataTable();
-	var requestId = "${requestId}";
-	
-	
+
 	$(function () {
 		
 	    $('#fileupload').fileupload({

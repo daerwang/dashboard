@@ -328,20 +328,28 @@ public class W8BeneFormController {
 
 	}
 
-	@RequestMapping(value = "/showUploadPage", method = RequestMethod.GET)
-	public String showUploadPage(Model model) {
+	@RequestMapping(value = "/manualTemplateUpload", method = RequestMethod.GET)
+	public String manualTemplateUpload(Model model) {
+
+		model.addAttribute("title1", "Manual Template Upload");
+
+		return "/w8beneforms/manualTemplateUpload";
+	}
+
+	@RequestMapping(value = "/manualExcelUpload", method = RequestMethod.GET)
+	public String manualExcelUpload(Model model) {
+
+		model.addAttribute("title1", "Upload PDF File");
+
+		return "/w8beneforms/manualExcelUpload";
+	}
+	
+	@RequestMapping(value = "/uploadManual", method = RequestMethod.GET)
+	public String uploadManual(Model model) {
 
 		model.addAttribute("title1", "Upload PDF File");
 
 		return "/w8beneforms/w8BeneFormUpload";
-	}
-
-	@RequestMapping(value = "/showUploadExcelPage", method = RequestMethod.GET)
-	public String showUploadExcelPage(Model model) {
-
-		model.addAttribute("title1", "Upload PDF File");
-
-		return "/w8beneforms/w8BeneFormDataUpload";
 	}
 
 	@RequestMapping(value = "/{id}/deletePdfUpload", method = RequestMethod.DELETE)

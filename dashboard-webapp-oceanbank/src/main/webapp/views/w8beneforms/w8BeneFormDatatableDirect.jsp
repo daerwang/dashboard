@@ -25,7 +25,7 @@ $(document).ready(function() {
 		var selected = [];
 		var selectedPdf = '';
 		
-		var table = $('#w8BeneFormDatatable').DataTable({
+		var table = $('#w8BeneFormDirectDatatable').DataTable({
 			"processing" : true,
 			"serverSide" : true,
 			"ajax" : {
@@ -47,7 +47,7 @@ $(document).ready(function() {
 		
 	
 
-		$('#w8BeneFormDatatable tbody').on('click', 'tr', function(){
+		$('#w8BeneFormDirectDatatable tbody').on('click', 'tr', function(){
 			
 			var id = this.id;
 			row_id = this.id;
@@ -62,7 +62,7 @@ $(document).ready(function() {
 	        $(this).toggleClass(highlight);
             
 	        isHighlight = false;
-            $('#w8BeneFormDatatable tbody').find('tr').each(function(){
+            $('#w8BeneFormDirectDatatable tbody').find('tr').each(function(){
 	            if ($(this).hasClass(highlight) ) {
 	            	
 	                isHighlight = true;
@@ -133,7 +133,7 @@ $(document).ready(function() {
 	 	
 		// ----------- for upload -----------
 
-	 	var table2 = $('#dashboardUploadDatatable').DataTable({
+	 	var table2 = $('#directTemplateDatatable').DataTable({
 			"processing" : true,
 			"serverSide" : true,
 			"searching": false,
@@ -171,7 +171,7 @@ $(document).ready(function() {
 	 	var highlight = 'active';
 	 	var isHighlightUpload = false;
 
-	    $('#dashboardUploadDatatable tbody').on('change', 'input[type="checkbox"]', function(){
+	    $('#directTemplateDatatable tbody').on('change', 'input[type="checkbox"]', function(){
 	        var $table = table2.table().container();
 	        var $chkbox_checked = $('tbody input[type="checkbox"]:checked', $table);
 	        var checkboxRow = $(this).closest('tr');
@@ -246,7 +246,7 @@ $(document).ready(function() {
 			});
 	    }
 
-		$('#dashboardUploadDatatable tbody').on('click', 'tr', function () {
+		$('#directTemplateDatatable tbody').on('click', 'tr', function () {
 
 			row_idUpload = this.id;
 
@@ -280,7 +280,7 @@ $(document).ready(function() {
 					return $message;
 				},
 				data : {
-					'pageToLoad' : 'w8beneformDirect/showUploadPage'
+					'pageToLoad' : 'w8beneformDirect/directTemplateUpload'
 				}
 			 });
 
@@ -307,7 +307,7 @@ $(document).ready(function() {
 		        		    	type: "DELETE",
 		        			  	url: 'w8beneformDirect/' + row_idUpload + '/deletePdfUpload',
 		        			    success: function(data) {
-		        			    	   table = $('#dashboardUploadDatatable').DataTable();
+		        			    	   table = $('#directTemplateDatatable').DataTable();
 		        			    	   table.ajax.reload();
 		        					   isHighlight = false;
 		        			    },
@@ -371,7 +371,7 @@ $(document).ready(function() {
 	<button class="btn btn-default btn-sm" id="openButton">Open PDF</button>
 </p>
 
-<table id="w8BeneFormDatatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+<table id="w8BeneFormDirectDatatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
 	<thead>
 		<tr>
 			<th>CIF</th>
@@ -395,7 +395,7 @@ $(document).ready(function() {
 	<button type="button" class="btn btn-default btn-sm" id="newUploadButton">Upload Attachment</button>
 </p>
 
-<table id="dashboardUploadDatatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+<table id="directTemplateDatatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
 	<thead>
 		<tr>
 			<th>File Name</th>

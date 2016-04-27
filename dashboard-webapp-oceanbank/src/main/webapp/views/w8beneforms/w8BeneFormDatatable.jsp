@@ -287,7 +287,7 @@ $(document).ready(function() {
 					return $message;
 				},
 				data : {
-					'pageToLoad' : 'w8beneform/showUploadPage'
+					'pageToLoad' : 'w8beneform/manualTemplateUpload'
 				}
 			 });
 
@@ -372,7 +372,7 @@ $(document).ready(function() {
 					return $message;
 				},
 				data : {
-					'pageToLoad' : 'w8beneform/showUploadExcelPage'
+					'pageToLoad' : 'w8beneform/manualExcelUpload'
 				}
 			 });
 

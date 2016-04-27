@@ -319,12 +319,12 @@ public class W8BeneFormDirectController {
 
 	}
 
-	@RequestMapping(value = "/showUploadPage", method = RequestMethod.GET)
-	public String showUploadPage(Model model) {
+	@RequestMapping(value = "/directTemplateUpload", method = RequestMethod.GET)
+	public String directTemplateUpload(Model model) {
 
-		model.addAttribute("title1", "Upload PDF File");
+		model.addAttribute("title1", "Direct Template Upload");
 
-		return "/w8beneforms/w8BeneFormDirectUpload";
+		return "/w8beneforms/directTemplateUpload";
 	}
 
 	@RequestMapping(value = "/{id}/deletePdfUpload", method = RequestMethod.DELETE)
