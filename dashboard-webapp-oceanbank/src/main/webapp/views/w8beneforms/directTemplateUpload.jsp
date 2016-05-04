@@ -4,7 +4,7 @@
 
 $(document).ready(function() {
 	
-	var table = $('#directTemp;ateDatatable').DataTable();
+	var table = $('#directTemplateDatatable').DataTable();
 	
 	$(function () {
 		
