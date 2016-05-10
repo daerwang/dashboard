@@ -9,7 +9,7 @@ import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 
 @Entity
-@Table(name="IBTN007F1")
+@Table(name="IBTN007F1", schema="IBMOB100")
 @NamedQueries({
 	  @NamedQuery(name="W8BeneFormDirect.findByW8BeneFormDirectPK", query = "from W8BeneFormDirect w where pkId.cif = :cif and pkId.name = :name"),
 	  @NamedQuery(name="W8BeneFormDirect.findByCifLike", query = "from W8BeneFormDirect where pkId.cif LIKE :search"),
