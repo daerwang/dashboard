@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +16,12 @@ import com.oceanbank.webapp.common.model.DashboardConstant;
 import com.oceanbank.webapp.common.model.DashboardUploadResponse;
 import com.oceanbank.webapp.common.model.DataTablesRequest;
 import com.oceanbank.webapp.common.model.IrsFormSelected;
+import com.oceanbank.webapp.common.model.MailCodeResponse;
 import com.oceanbank.webapp.common.model.W8BeneFormResponse;
 import com.oceanbank.webapp.restoauth.converter.DashboardConverter;
 import com.oceanbank.webapp.restoauth.converter.DashboardUploadConverter;
 import com.oceanbank.webapp.restoauth.dao.DashboardUploadRepository;
+import com.oceanbank.webapp.restoauth.dao.W8BeneFormDirectDao;
 import com.oceanbank.webapp.restoauth.model.DashboardUpload;
 import com.oceanbank.webapp.restoauth.model.W8BeneForm;
 import com.oceanbank.webapp.restoauth.model.W8BeneFormDirect;
@@ -40,6 +40,9 @@ public class W8BeneFormController {
 
 	@Autowired
 	private AmlBatchServiceImpl amlBatchServiceImpl;
+	
+	@Autowired
+	private W8BeneFormDirectDao w8BeneFormDirectDao;
 
 	//private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	
@@ -79,10 +82,13 @@ public class W8BeneFormController {
 	}
 	
 	@RequestMapping(value = "/dataTableDirect", method = RequestMethod.POST)
-	public List<W8BeneFormResponse> getBySearchOnDatatablesDirect(@RequestBody DataTablesRequest datatableRequest){
+	public List<W8BeneFormResponse> getBySearchOnDatatablesDirect(@RequestBody DataTablesRequest datatableRequest) throws Exception{
 	
 		String searchParameter = datatableRequest.getValue();
-    	List<W8BeneFormResponse> responseList = w8BeneFormService.findByDatatableSearchDirect(searchParameter);
+		String officerCode = datatableRequest.getMailCode();
+		
+		
+    	List<W8BeneFormResponse> responseList = w8BeneFormService.findByDatatableSearchDirect(searchParameter, officerCode);
 		
 		
 		return responseList;
@@ -105,6 +111,58 @@ public class W8BeneFormController {
 		String fullLocation = DashboardConstant.W8BENEFORM_TEMPLATE_UPLOAD_DIRECTORY + activeTemplate.getId() + "//" + activeTemplate.getFileName();
 
 		List<W8BeneFormDirect> list = w8BeneFormService.findByPk(selected);
+		
+		synchronized (this) {
+			w8BeneFormService.createPdfToDiskDirect(list, fullLocation);
+		}
+		
+		
+		return "OK!";
+	}
+	
+	@RequestMapping(value = "/createPdfToDiskDirectFromFilter", method = RequestMethod.POST)
+	public String createPdfToDiskDirectFromFilter(@RequestBody IrsFormSelected selected) throws DashboardException, IOException{
+		List<DashboardUpload> uploads = amlBatchServiceImpl.findDashboardUploadByTableNameAndDescription("W8BeneFormDirect", "active");
+		if(uploads.isEmpty()){
+
+			throw new DashboardException("There is no PDF template found", null);
+		
+		}else{
+			if(uploads.size() > 1){
+				throw new DashboardException("There are 1 or more template enabled. Please enable 1 only.", null);
+			}
+		}
+		DashboardUpload activeTemplate = uploads.get(0);
+		String fullLocation = DashboardConstant.W8BENEFORM_TEMPLATE_UPLOAD_DIRECTORY + activeTemplate.getId() + "//" + activeTemplate.getFileName();
+		
+		List<W8BeneFormDirect> list = new ArrayList<W8BeneFormDirect>();
+		list = w8BeneFormService.findByOfficerCodes(selected);
+		
+		synchronized (this) {
+			w8BeneFormService.createPdfToDiskDirect(list, fullLocation);
+		}
+		
+		
+		return "OK!";
+	}
+	
+	@RequestMapping(value = "/createPdfToDiskDirectFromFilterCif", method = RequestMethod.POST)
+	public String createPdfToDiskDirectFromFilterCif(@RequestBody IrsFormSelected selected) throws DashboardException, IOException{
+		List<DashboardUpload> uploads = amlBatchServiceImpl.findDashboardUploadByTableNameAndDescription("W8BeneFormDirect", "active");
+		if(uploads.isEmpty()){
+
+			throw new DashboardException("There is no PDF template found", null);
+		
+		}else{
+			if(uploads.size() > 1){
+				throw new DashboardException("There are 1 or more template enabled. Please enable 1 only.", null);
+			}
+		}
+		DashboardUpload activeTemplate = uploads.get(0);
+		String fullLocation = DashboardConstant.W8BENEFORM_TEMPLATE_UPLOAD_DIRECTORY + activeTemplate.getId() + "//" + activeTemplate.getFileName();
+		
+		List<W8BeneFormDirect> list = new ArrayList<W8BeneFormDirect>();
+		list = w8BeneFormService.findByOfficerCodesCif(selected);
 		
 		synchronized (this) {
 			w8BeneFormService.createPdfToDiskDirect(list, fullLocation);
@@ -158,8 +216,8 @@ public class W8BeneFormController {
 	@RequestMapping(value = "/uploadDataTableDirect", method = RequestMethod.POST)
 	public List<DashboardUploadResponse> getDashboardUploadDatatablesDirect(@RequestBody DataTablesRequest datatableRequest){
 		List<DashboardUpload> uploadList = new ArrayList<DashboardUpload>();
-		final List<DashboardUploadResponse> resultList = new ArrayList<DashboardUploadResponse>();
-
+		List<DashboardUploadResponse> resultList = new ArrayList<DashboardUploadResponse>();
+		
 		uploadList = amlBatchServiceImpl.findDashboardUploadByTableName("W8BeneFormDirect");
 
 		if(!uploadList.isEmpty()){
@@ -206,5 +264,23 @@ public class W8BeneFormController {
 		w8BeneFormService.deleteAll();
 
 		return "OK!";
+	}
+	
+	@RequestMapping(value = "/officerCodes", method = RequestMethod.POST)
+	public List<MailCodeResponse> getOfficerCodes(){
+		List<String> officerCodes = new ArrayList<String>();
+		List<MailCodeResponse> officerCodes2 = new ArrayList<MailCodeResponse>();
+		officerCodes = w8BeneFormDirectDao.findDistinctOfficerCodes();
+		
+		for(String m : officerCodes){
+			int count = w8BeneFormDirectDao.findByOfficer(m.trim()).size();
+			System.out.println(m + " - " + count);
+			MailCodeResponse r = new MailCodeResponse();
+			r.setCode(m);
+			r.setDescription(count + "");
+			officerCodes2.add(r);
+		}
+
+		return officerCodes2;
 	}
 }

@@ -47,7 +47,9 @@ import com.oceanbank.webapp.common.model.DataTablesRequest;
 import com.oceanbank.webapp.common.model.DataTablesResponse;
 import com.oceanbank.webapp.common.model.ExcelFileMeta;
 import com.oceanbank.webapp.common.model.IrsFormSelected;
+import com.oceanbank.webapp.common.model.MailCodeResponse;
 import com.oceanbank.webapp.common.model.W8BeneFormDatatableResponse;
+import com.oceanbank.webapp.common.model.W8BeneFormDirectDatatableResponse;
 import com.oceanbank.webapp.common.model.W8BeneFormResponse;
 import com.oceanbank.webapp.common.util.CommonUtil;
 import com.oceanbank.webapp.dashboard.service.AmlBatchServiceImpl;
@@ -90,16 +92,19 @@ public class W8BeneFormDirectController {
 		Integer pageLength = 0;
 		Integer draw = 0;
 		String searchParameter = null;
+		String officerCode = null;
 
 		searchParameter = CommonUtil.determineValue(allRequestParams, "search[value]");
 		pageNumber = Integer.valueOf(CommonUtil.determineValue(allRequestParams, "start"));
 		pageLength = Integer.valueOf(CommonUtil.determineValue(allRequestParams, "length"));
 		draw = Integer.valueOf(CommonUtil.determineValue(allRequestParams, "draw"));
+		officerCode = CommonUtil.determineValue(allRequestParams, "mailCode");
 
 		final DataTablesRequest datatableRequest = new DataTablesRequest();
 		datatableRequest.setValue(searchParameter);
 		datatableRequest.setStart(pageNumber);
 		datatableRequest.setLength(pageLength);
+		datatableRequest.setMailCode(officerCode);
 
 		// retrieve the Users from parameters given but only 50 rows for blank search for quickness....
 		final List<W8BeneFormResponse> responseList = w8BenFormService.searchFormDataTableDirect(datatableRequest);
@@ -107,20 +112,21 @@ public class W8BeneFormDirectController {
 		recordsTotal = responseList.size();
 		
 		// transform to Json Object
-		List<W8BeneFormDatatableResponse> responseDatatableList = new ArrayList<W8BeneFormDatatableResponse>();
+		List<W8BeneFormDirectDatatableResponse> responseDatatableList = new ArrayList<W8BeneFormDirectDatatableResponse>();
 		
 		for (W8BeneFormResponse u : responseList) {
-			final W8BeneFormDatatableResponse dt = new W8BeneFormDatatableResponse();
+			final W8BeneFormDirectDatatableResponse dt = new W8BeneFormDirectDatatableResponse();
 			dt.setW8BeneFormId(u.getCif());
 			dt.setCif(u.getCif());
 			dt.setName(u.getName());
 			dt.setPhysicalCountryInc(u.getPhysicalCountry());
+			dt.setOfficerCode(u.getOfficer());
 			
 			responseDatatableList.add(dt);
 		}
 
 		// create the Datatable Response
-		final DataTablesResponse<W8BeneFormDatatableResponse> response = new DataTablesResponse<W8BeneFormDatatableResponse>();
+		final DataTablesResponse<W8BeneFormDirectDatatableResponse> response = new DataTablesResponse<W8BeneFormDirectDatatableResponse>();
 		response.setDraw(draw);
 		response.setRecordsFiltered(recordsTotal);
 		response.setRecordsTotal(pageLength);
@@ -153,12 +159,53 @@ public class W8BeneFormDirectController {
 
 	}
 	
+	@RequestMapping(value = "/officerCodes", method = RequestMethod.GET)
+	public String showIrsMailCodeSearchModal(Model model) {
+
+		List<MailCodeResponse> list = w8BenFormService.getOfficerCodes();
+		model.addAttribute("codeList", list);
+		
+		return "/w8beneforms/officerCodeModal";
+	}
+	
 	@RequestMapping(value = "/createPdfToDisk", method = RequestMethod.POST)
 	public @ResponseBody IrsFormSelected createPdfToDisk(@RequestBody IrsFormSelected selected) throws IOException, DashboardException{
 		IrsFormSelected sel = new IrsFormSelected();
 		String result = null;
 		try {
 			result = w8BenFormService.createPdfToDiskDirect(selected);
+		} catch (RestClientException e) {
+			throw new DashboardException(e.getMessage(), e.getCause());
+		}
+
+
+		sel.setStatus(result);
+		sel.setSelected(new String[]{""});
+		return sel;			
+	}
+	
+	@RequestMapping(value = "/createPdfToDiskFromFilter", method = RequestMethod.POST)
+	public @ResponseBody IrsFormSelected createPdfToDiskFromFilter(@RequestBody IrsFormSelected selected) throws IOException, DashboardException{
+		IrsFormSelected sel = new IrsFormSelected();
+		String result = null;
+		try {
+			result = w8BenFormService.createPdfToDiskDirectFromFilter(selected);
+		} catch (RestClientException e) {
+			throw new DashboardException(e.getMessage(), e.getCause());
+		}
+
+
+		sel.setStatus(result);
+		sel.setSelected(new String[]{""});
+		return sel;			
+	}
+	
+	@RequestMapping(value = "/createPdfToDiskFromFilterCif", method = RequestMethod.POST)
+	public @ResponseBody IrsFormSelected createPdfToDiskFromFilterCif(@RequestBody IrsFormSelected selected) throws IOException, DashboardException{
+		IrsFormSelected sel = new IrsFormSelected();
+		String result = null;
+		try {
+			result = w8BenFormService.createPdfToDiskDirectFromFilterCif(selected);
 		} catch (RestClientException e) {
 			throw new DashboardException(e.getMessage(), e.getCause());
 		}
@@ -245,7 +292,7 @@ public class W8BeneFormDirectController {
 		Integer pageLength = 0;
 		Integer draw = 0;
 
-		final String searchParameter = CommonUtil.determineValue(allRequestParams, "search[value]");
+		String searchParameter = CommonUtil.determineValue(allRequestParams, "search[value]");
 		pageNumber = Integer.valueOf(CommonUtil.determineValue(allRequestParams, "start"));
 		pageLength = Integer.valueOf(CommonUtil.determineValue(allRequestParams, "length"));
 		draw = Integer.valueOf(CommonUtil.determineValue(allRequestParams, "draw"));

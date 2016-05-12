@@ -29,7 +29,10 @@ $(document).ready(function() {
 			"processing" : true,
 			"serverSide" : true,
 			"ajax" : {
-	            "url": "w8beneformDirect/dataTable"
+	            "url": "w8beneformDirect/dataTable",
+	            "data": function ( d ) {
+	                d.mailCode = $('#hide').val();
+	            }
 	        },
 			"rowCallback": function(row, data ) {
 				if ( $.inArray(data.DT_RowId, selected) !== -1 ) {
@@ -38,8 +41,9 @@ $(document).ready(function() {
 	        },
 	        "columnDefs": [
 	                       { className: "centerclass", "targets": [ 0 ] },
-	                       { "visible": true, "targets": 1 },
-	                       { "visible": true, "targets": 2 }
+	                       { "visible": true, "targets": 1, "width": "50%" },
+	                       { "visible": true, "targets": 2 },
+	                       { "visible": true, "targets": 3, "width": "15%", className: "centerclass" }
 	                     ]
 		});
 		
@@ -354,9 +358,88 @@ $(document).ready(function() {
 		
 		
 
+ 	    $('#openAllButton').on('click', function(event) {
+ 	    	var table = $('#w8BeneFormDirectDatatable').DataTable();
+ 	    	
+ 	    	var selected = table.columns(0).data().sort();
+ 	    	console.log(selected);
+ 	    	console.log(selected[0]);
+ 	    	var selectedPdf = '{"selected":' + JSON.stringify(selected[0]) + '}';	
+ 	    	console.log(selectedPdf);
+			var $btn = $(this);
+		    $btn.button('loading');
+			
+		    $.ajax({
+		    	type: "POST",
+			  	url: 'w8beneformDirect/createPdfToDiskFromFilterCif',
+			  	dataType: 'json', 
+			    data: selectedPdf, 
+			    contentType: 'application/json',
+			    mimeType: 'application/json',
+			    success: function(data) { 
+			    		$btn.button('reset');
+			    		window.open("w8beneformDirect/openPdf", '_blank');
+				        
+			    },
+			    error:function(data, status, er) {
+			    	var res = data.responseJSON.message;
+			    	var json = '[' + res + ']';
+			    	var errorMsg = '';
+			    	var code = '';
+			    	$.each(JSON.parse(json), function(idx, obj) {
+			    		code = obj.code;
+			    		errorMsg = obj.message;
+			    	});
 
+			    	BootstrapDialog.alert({
+		            	title: 'WARNING',
+			            message: code + '</br>' + errorMsg,
+			            type: BootstrapDialog.TYPE_DANGER,
+			            closable: true,
+			            draggable: true,
+			            buttonLabel: 'Ok'
+			        });
+			        $btn.button('reset');
+			    }
+			});
+			
+ 		});  // openAll
 		
-
+		
+		$('#filterByCode').on('click', function(event) {
+		 	
+	 		BootstrapDialog.show({
+					title : 'Filter by Officer Code',
+					draggable: true,
+					closable: false,
+					cssClass: 'filter-dialog',
+					message : function(dialog) {
+							var $message = $('<div></div>');
+							var pageToLoad = dialog.getData('pageToLoad');
+							
+							$message.load(pageToLoad);
+		
+							return $message;
+						},
+					data : {
+							'pageToLoad' : 'w8beneformDirect/officerCodes'
+						},
+		            buttons: [{
+			                id: 'btn-1',
+			                label: 'Cancel',
+			                action: function(dialog) {
+			                	
+			                	$('#hide').val('');
+			                	
+			                    dialog.close();
+			                }
+			            }]
+				 });
+			
+		});   
+		
+		
+		
 	});
 </script>
 
@@ -369,6 +452,8 @@ $(document).ready(function() {
 
 <p>
 	<button class="btn btn-default btn-sm" id="openButton">Open PDF</button>
+	<button class="btn btn-default btn-sm" id="openAllButton">Open All PDF</button>
+	<button class="btn btn-default btn-sm" id="filterByCode">Filter by Officer Code</button>
 </p>
 
 <table id="w8BeneFormDirectDatatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -377,6 +462,7 @@ $(document).ready(function() {
 			<th>CIF</th>
 			<th>Name</th>
 			<th>Country</th>
+			<th>Officer Code</th>
 		</tr>
 	</thead>
 </table>

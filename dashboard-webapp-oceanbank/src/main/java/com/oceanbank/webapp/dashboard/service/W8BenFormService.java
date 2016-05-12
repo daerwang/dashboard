@@ -35,6 +35,7 @@ import com.oceanbank.webapp.common.model.DashboardConstant;
 import com.oceanbank.webapp.common.model.DashboardUploadResponse;
 import com.oceanbank.webapp.common.model.DataTablesRequest;
 import com.oceanbank.webapp.common.model.IrsFormSelected;
+import com.oceanbank.webapp.common.model.MailCodeResponse;
 import com.oceanbank.webapp.common.model.OauthTokenBean;
 import com.oceanbank.webapp.common.model.W8BeneFormResponse;
 import com.oceanbank.webapp.common.util.CommonUtil;
@@ -88,6 +89,24 @@ public class W8BenFormService extends OauthTokenBean {
 		final HttpEntity<IrsFormSelected> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), selected);
 		
 		final ResponseEntity<String> response = restTemplate.exchange(getRestApi() + "/api/w8beneform/createPdfToDiskDirect", HttpMethod.POST, entity, String.class);
+		final String result = response.getBody();
+
+		return result;
+	}
+	
+	public String createPdfToDiskDirectFromFilter(IrsFormSelected selected){
+		final HttpEntity<IrsFormSelected> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), selected);
+		
+		final ResponseEntity<String> response = restTemplate.exchange(getRestApi() + "/api/w8beneform/createPdfToDiskDirectFromFilter", HttpMethod.POST, entity, String.class);
+		final String result = response.getBody();
+
+		return result;
+	}
+	
+	public String createPdfToDiskDirectFromFilterCif(IrsFormSelected selected){
+		final HttpEntity<IrsFormSelected> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), selected);
+		
+		final ResponseEntity<String> response = restTemplate.exchange(getRestApi() + "/api/w8beneform/createPdfToDiskDirectFromFilterCif", HttpMethod.POST, entity, String.class);
 		final String result = response.getBody();
 
 		return result;
@@ -149,6 +168,17 @@ public class W8BenFormService extends OauthTokenBean {
 		final ResponseEntity<DashboardUploadResponse> request = restTemplate.exchange(getRestApi() + "/api/w8beneform/pdfUploadDirect", HttpMethod.POST, entity, DashboardUploadResponse.class);
 
 		return request.getBody();
+	}
+	
+	public List<MailCodeResponse> getOfficerCodes(){
+
+		final HttpEntity<String> entity = CommonUtil.createHttpEntity(getAccessToken());
+
+		ResponseEntity<MailCodeResponse[]> response = restTemplate.exchange(getRestApi() + "/api/w8beneform/officerCodes", HttpMethod.POST, entity,MailCodeResponse[].class);
+
+		List<MailCodeResponse> list = Arrays.asList(response.getBody());
+
+		return list;
 	}
 
 	public List<DashboardUploadResponse> getDashboardUploadDataTable(DataTablesRequest datatableRequest) {

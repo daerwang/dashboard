@@ -100,6 +100,36 @@ public class W8BeneFormService {
 		return list;
 	}
 	
+	public List<W8BeneFormDirect> findByOfficerCodes(IrsFormSelected selected) throws DashboardException{
+		String[] selectedId = selected.getSelected();
+		List<String> codes = Arrays.asList(selectedId);
+		List<W8BeneFormDirect> list = new ArrayList<W8BeneFormDirect>();
+		
+		try {
+			list = w8BeneFormDirectDao.findByOfficers(codes);
+
+		} catch (Exception e) {
+			throw new DashboardException("The findByOfficerCodes() failed with an Exception.", e);
+		}
+		
+		return list;
+	}
+	
+	public List<W8BeneFormDirect> findByOfficerCodesCif(IrsFormSelected selected) throws DashboardException{
+		String[] selectedId = selected.getSelected();
+		List<String> cifs = Arrays.asList(selectedId);
+		List<W8BeneFormDirect> list = new ArrayList<W8BeneFormDirect>();
+		
+		try {
+			list = w8BeneFormDirectDao.findByCifs(cifs);
+
+		} catch (Exception e) {
+			throw new DashboardException("The findByOfficerCodes() failed with an Exception.", e);
+		}
+		
+		return list;
+	}
+	
 	public List<W8BeneFormResponse> findByDatatableSearch(String search){
 		final List<W8BeneFormResponse> list = new ArrayList<W8BeneFormResponse>();
 		List<W8BeneForm> entityList = new ArrayList<W8BeneForm>();
@@ -121,15 +151,21 @@ public class W8BeneFormService {
 		return list;
 	}
 	
-	public List<W8BeneFormResponse> findByDatatableSearchDirect(String search){
+	public List<W8BeneFormResponse> findByDatatableSearchDirect(String search, String officerCode) throws Exception{
 		final List<W8BeneFormResponse> list = new ArrayList<W8BeneFormResponse>();
 		List<W8BeneFormDirect> entityList = new ArrayList<W8BeneFormDirect>();
-
-		if (!RestUtil.isNullOrEmpty(search)){
-			entityList = w8BeneFormDirectDao.findByCifLike("%" + search + "%");
-		} else {
-			final Page<W8BeneFormDirect> data = w8BeneFormDirectDao.findAll(new PageRequest(0, 200));
-			entityList = data.getContent();
+		
+		if (!RestUtil.isNullOrEmpty(officerCode)){
+			List<String> codes = new ArrayList<String>();
+			codes = RestUtil.parseMailCodeFromDatatable(officerCode);
+			entityList = w8BeneFormDirectDao.findByOfficers(codes);
+		}else{
+			if (!RestUtil.isNullOrEmpty(search)){
+				entityList = w8BeneFormDirectDao.findByCifLike("%" + search + "%");
+			} else {
+				final Page<W8BeneFormDirect> data = w8BeneFormDirectDao.findAll(new PageRequest(0, 200));
+				entityList = data.getContent();
+			}
 		}
 			
 		for (W8BeneFormDirect entity : entityList) {
