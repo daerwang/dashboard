@@ -171,6 +171,32 @@ public class W8BeneFormController {
 		
 		return "OK!";
 	}
+	
+	@RequestMapping(value = "/createPdfToDiskDirectAll", method = RequestMethod.POST)
+	public String createPdfToDiskDirectFromFilterCif() throws DashboardException, IOException{
+		List<DashboardUpload> uploads = amlBatchServiceImpl.findDashboardUploadByTableNameAndDescription("W8BeneFormDirect", "active");
+		if(uploads.isEmpty()){
+
+			throw new DashboardException("There is no PDF template found", null);
+		
+		}else{
+			if(uploads.size() > 1){
+				throw new DashboardException("There are 1 or more template enabled. Please enable 1 only.", null);
+			}
+		}
+		DashboardUpload activeTemplate = uploads.get(0);
+		String fullLocation = DashboardConstant.W8BENEFORM_TEMPLATE_UPLOAD_DIRECTORY + activeTemplate.getId() + "//" + activeTemplate.getFileName();
+		
+		List<W8BeneFormDirect> list = new ArrayList<W8BeneFormDirect>();
+		list = w8BeneFormDirectDao.findAll();
+		
+		synchronized (this) {
+			w8BeneFormService.createPdfToDiskDirect(list, fullLocation);
+		}
+		
+		
+		return "OK!";
+	}
 
 	@RequestMapping(value = "/pdfUpload", method = RequestMethod.POST)
 	public DashboardUploadResponse createDashboardUpload(@RequestBody DashboardUploadResponse response) throws DashboardException{

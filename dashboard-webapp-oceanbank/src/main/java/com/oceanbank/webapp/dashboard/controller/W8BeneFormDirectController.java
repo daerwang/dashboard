@@ -216,6 +216,22 @@ public class W8BeneFormDirectController {
 		return sel;			
 	}
 	
+	@RequestMapping(value = "/createPdfToDiskAll", method = RequestMethod.POST)
+	public @ResponseBody IrsFormSelected createPdfToDiskAll(@RequestBody IrsFormSelected selected) throws IOException, DashboardException{
+		IrsFormSelected sel = new IrsFormSelected();
+		String result = null;
+		try {
+			result = w8BenFormService.createPdfToDiskDirectAll(selected);
+		} catch (RestClientException e) {
+			throw new DashboardException(e.getMessage(), e.getCause());
+		}
+
+
+		sel.setStatus(result);
+		sel.setSelected(new String[]{""});
+		return sel;			
+	}
+	
 	@RequestMapping(value = "/openPdf", method = RequestMethod.GET)
 	public void openPdf(HttpServletResponse response) throws IOException{
 		InputStream is = null;

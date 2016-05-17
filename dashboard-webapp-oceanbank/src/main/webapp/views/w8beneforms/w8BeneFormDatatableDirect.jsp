@@ -371,7 +371,7 @@ $(document).ready(function() {
 			
 		    $.ajax({
 		    	type: "POST",
-			  	url: 'w8beneformDirect/createPdfToDiskFromFilterCif',
+			  	url: 'w8beneformDirect/createPdfToDiskAll',
 			  	dataType: 'json', 
 			    data: selectedPdf, 
 			    contentType: 'application/json',

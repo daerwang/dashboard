@@ -163,7 +163,7 @@ public class W8BeneFormService {
 			if (!RestUtil.isNullOrEmpty(search)){
 				entityList = w8BeneFormDirectDao.findByCifLike("%" + search + "%");
 			} else {
-				final Page<W8BeneFormDirect> data = w8BeneFormDirectDao.findAll(new PageRequest(0, 200));
+				final Page<W8BeneFormDirect> data = w8BeneFormDirectDao.findAll(new PageRequest(0, 1000));
 				entityList = data.getContent();
 			}
 		}

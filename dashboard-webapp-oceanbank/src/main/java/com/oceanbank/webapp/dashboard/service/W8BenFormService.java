@@ -112,6 +112,15 @@ public class W8BenFormService extends OauthTokenBean {
 		return result;
 	}
 	
+	public String createPdfToDiskDirectAll(IrsFormSelected selected){
+		final HttpEntity<IrsFormSelected> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), selected);
+		
+		final ResponseEntity<String> response = restTemplate.exchange(getRestApi() + "/api/w8beneform/createPdfToDiskDirectAll", HttpMethod.POST, entity, String.class);
+		final String result = response.getBody();
+
+		return result;
+	}
+	
 	public void savePdfToDisk(MultipartFile mpf, String createdBy) throws DashboardException, IOException{
 
 		// 1. save pdf details to DB
