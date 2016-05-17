@@ -25,7 +25,6 @@ import com.oceanbank.webapp.restoauth.model.IrsFormCoordinate;
 import com.oceanbank.webapp.restoauth.model.W8BeneForm;
 import com.oceanbank.webapp.restoauth.model.W8BeneFormAddress;
 import com.oceanbank.webapp.restoauth.model.W8BeneFormDirect;
-import com.sun.jndi.cosnaming.IiopUrl.Address;
 
 public class W8BeneFormPdfWriter implements PdfFormWriter {
 	
@@ -254,10 +253,11 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 		
 		IrsFormCoordinate altAddress = new IrsFormCoordinate("altAddress", 34 + indent, 146 - a  + indent2, 10, altAddress1, 1);
 		IrsFormCoordinate altCity = new IrsFormCoordinate("altCity", 34 + indent, 122 - a  + indent2, 10, altAddress2, 1);
-		IrsFormCoordinate altCountry = new IrsFormCoordinate("altCountry", 440 + indent, 122 - a  + indent2, 10, altAddress3, 1);
-		IrsFormCoordinate account = new IrsFormCoordinate("account", 426, 122 - a - 25 + indent2, 10, "", 1);
+		IrsFormCoordinate altCountry = new IrsFormCoordinate("altCountry", 440 + indent, 122 - a + indent2, 10, altAddress3, 1);
+		IrsFormCoordinate giin = new IrsFormCoordinate("giin", 238 + indent, 122 - a - 25 + indent2, 10, entity.getGiin(), 1);
+		IrsFormCoordinate tin = new IrsFormCoordinate("tin", 440 + indent, 122 - a - 25 + indent2, 10, entity.getTin(), 1);
 		
-		// for Page 10
+		// for Page 10	
 		int left = 105;
 		IrsFormCoordinate labelName = new IrsFormCoordinate("labelName", left, 640, 8, entity.getPkId().getName(), 10);
 		IrsFormCoordinate officer = new IrsFormCoordinate("officer", 350, 640, 8, entity.getOfficer().trim() + "    " + entity.getBranch().trim(), 10);
@@ -280,7 +280,8 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 		coordinates.add(altAddress);
 		coordinates.add(altCity);
 		coordinates.add(altCountry);
-		coordinates.add(account);
+		coordinates.add(giin);
+		coordinates.add(tin);
 		coordinates.add(labelName);
 		coordinates.add(officer);
 		coordinates.add(altAddressLabel);

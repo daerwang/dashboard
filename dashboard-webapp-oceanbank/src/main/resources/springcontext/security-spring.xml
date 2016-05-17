@@ -8,9 +8,12 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd ">
 
 	
-	<context:property-placeholder location="classpath:database/obapplication.properties" />
+	<context:property-placeholder location="classpath:oauth/application.properties" />
 	
 	<sec:http use-expressions="true" auto-config="false" entry-point-ref="loginUrlAuthenticationEntryPoint">
+	
+<!-- 		<sec:intercept-url pattern="/**" requires-channel="https" />    -->
+	
 		<sec:access-denied-handler error-page="/error/403accessDeniedPage" />
 		
 		<!-- Secured Pages -->

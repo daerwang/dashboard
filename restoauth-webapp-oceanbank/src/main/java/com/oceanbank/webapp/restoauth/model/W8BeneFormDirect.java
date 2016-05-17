@@ -56,6 +56,12 @@ public class W8BeneFormDirect  implements java.io.Serializable {
     
     @Column(name="I1BRNN")
     private String branch;
+    
+    @Column(name="I1GIIN")
+    private String giin;
+    
+    @Column(name="I1FTIN")
+    private String tin;
 
 	public String getPhysicalAddress() {
 		return physicalAddress;
@@ -143,6 +149,22 @@ public class W8BeneFormDirect  implements java.io.Serializable {
 
 	public void setPkId(W8BeneFormDirectPK pkId) {
 		this.pkId = pkId;
+	}
+
+	public String getGiin() {
+		return giin;
+	}
+
+	public void setGiin(String giin) {
+		this.giin = giin;
+	}
+
+	public String getTin() {
+		return tin;
+	}
+
+	public void setTin(String tin) {
+		this.tin = tin;
 	}
 
 }
