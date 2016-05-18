@@ -15,6 +15,8 @@
 </style>
 <script type="text/javascript" charset="utf-8">
 
+var dataCode = '';
+
 $(document).ready(function() {
 		
 		var row_id;
@@ -31,7 +33,8 @@ $(document).ready(function() {
 			"ajax" : {
 	            "url": "w8beneformDirect/dataTable",
 	            "data": function ( d ) {
-	                d.mailCode = $('#hide').val();
+	            	console.log('dataCode - ' + dataCode);
+	                d.mailCode = dataCode;
 	            }
 	        },
 			"rowCallback": function(row, data ) {
@@ -46,9 +49,6 @@ $(document).ready(function() {
 	                       { "visible": true, "targets": 3, "width": "15%", className: "centerclass" }
 	                     ]
 		});
-		
-
-		
 	
 
 		$('#w8BeneFormDirectDatatable tbody').on('click', 'tr', function(){
@@ -108,7 +108,7 @@ $(document).ready(function() {
 				    mimeType: 'application/json',
 				    success: function(data) { 
 				    
-					        window.open("w8beneformDirect/openPdf", '_blank');
+				    	window.open("w8beneformDirect/openPdf2/" + data.status, '_blank');
 					        
 				    },
 				    error:function(data, status, er) {
@@ -359,13 +359,7 @@ $(document).ready(function() {
 		
 
  	    $('#openAllButton').on('click', function(event) {
- 	    	var table = $('#w8BeneFormDirectDatatable').DataTable();
- 	    	
- 	    	var selected = table.columns(0).data().sort();
- 	    	console.log(selected);
- 	    	console.log(selected[0]);
- 	    	var selectedPdf = '{"selected":' + JSON.stringify(selected[0]) + '}';	
- 	    	console.log(selectedPdf);
+
 			var $btn = $(this);
 		    $btn.button('loading');
 			
@@ -373,12 +367,12 @@ $(document).ready(function() {
 		    	type: "POST",
 			  	url: 'w8beneformDirect/createPdfToDiskAll',
 			  	dataType: 'json', 
-			    data: selectedPdf, 
+			    data: dataCode, 
 			    contentType: 'application/json',
 			    mimeType: 'application/json',
 			    success: function(data) { 
 			    		$btn.button('reset');
-			    		window.open("w8beneformDirect/openPdf", '_blank');
+			    		window.open("w8beneformDirect/openPdf2/" + data.status, '_blank');
 				        
 			    },
 			    error:function(data, status, er) {
@@ -439,6 +433,37 @@ $(document).ready(function() {
 		});   
 		
 		
+	$('#filterByHoldMail').on('click', function(event) {
+		 	
+	 		BootstrapDialog.show({
+					title : 'Filter by Hold Mail',
+					draggable: true,
+					closable: false,
+					cssClass: 'filter-dialog',
+					message : function(dialog) {
+							var $message = $('<div></div>');
+							var pageToLoad = dialog.getData('pageToLoad');
+							
+							$message.load(pageToLoad);
+		
+							return $message;
+						},
+					data : {
+							'pageToLoad' : 'w8beneformDirect/holdMailModal'
+						},
+		            buttons: [{
+			                id: 'btn-1',
+			                label: 'Cancel',
+			                action: function(dialog) {
+			                	
+			                	$('#hide').val('');
+			                	
+			                    dialog.close();
+			                }
+			            }]
+				 });
+			
+		});   
 		
 	});
 </script>
@@ -454,6 +479,7 @@ $(document).ready(function() {
 	<button class="btn btn-default btn-sm" id="openButton">Open PDF</button>
 	<button class="btn btn-default btn-sm" id="openAllButton">Open All PDF</button>
 	<button class="btn btn-default btn-sm" id="filterByCode">Filter by Officer Code</button>
+	<button class="btn btn-default btn-sm" id="filterByHoldMail">Filter by Hold Mail</button>
 </p>
 
 <table id="w8BeneFormDirectDatatable" class="table table-striped table-bordered" cellspacing="0" width="100%">

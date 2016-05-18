@@ -160,12 +160,18 @@ public class W8BeneFormDirectController {
 	}
 	
 	@RequestMapping(value = "/officerCodes", method = RequestMethod.GET)
-	public String showIrsMailCodeSearchModal(Model model) {
+	public String officerCodeModal(Model model) {
 
 		List<MailCodeResponse> list = w8BenFormService.getOfficerCodes();
 		model.addAttribute("codeList", list);
 		
 		return "/w8beneforms/officerCodeModal";
+	}
+	
+	@RequestMapping(value = "/holdMailModal", method = RequestMethod.GET)
+	public String mailCodeModal() {
+		
+		return "/w8beneforms/holdMailModal";
 	}
 	
 	@RequestMapping(value = "/createPdfToDisk", method = RequestMethod.POST)
@@ -200,6 +206,22 @@ public class W8BeneFormDirectController {
 		return sel;			
 	}
 	
+	@RequestMapping(value = "/createPdfToDiskFromFilterHoldMail", method = RequestMethod.POST)
+	public @ResponseBody IrsFormSelected createPdfToDiskFromFilterHoldMail(@RequestBody IrsFormSelected selected) throws IOException, DashboardException{
+		IrsFormSelected sel = new IrsFormSelected();
+		String result = null;
+		try {
+			result = w8BenFormService.createPdfToDiskDirectFromFilterHoldMail(selected);
+		} catch (RestClientException e) {
+			throw new DashboardException(e.getMessage(), e.getCause());
+		}
+
+
+		sel.setStatus(result);
+		sel.setSelected(new String[]{""});
+		return sel;			
+	}
+	
 	@RequestMapping(value = "/createPdfToDiskFromFilterCif", method = RequestMethod.POST)
 	public @ResponseBody IrsFormSelected createPdfToDiskFromFilterCif(@RequestBody IrsFormSelected selected) throws IOException, DashboardException{
 		IrsFormSelected sel = new IrsFormSelected();
@@ -217,18 +239,48 @@ public class W8BeneFormDirectController {
 	}
 	
 	@RequestMapping(value = "/createPdfToDiskAll", method = RequestMethod.POST)
-	public @ResponseBody IrsFormSelected createPdfToDiskAll(@RequestBody IrsFormSelected selected) throws IOException, DashboardException{
+	public @ResponseBody IrsFormSelected createPdfToDiskAll(@RequestBody String dataCode) throws IOException, DashboardException{
 		IrsFormSelected sel = new IrsFormSelected();
+		sel.setSelected(new String[]{""});
 		String result = null;
+		
+		IrsFormSelected sel2 = new IrsFormSelected();
+		String[] arr = dataCode.split(",");
+		
 		try {
-			result = w8BenFormService.createPdfToDiskDirectAll(selected);
+			if(arr.length == 1 && arr[0].trim().length() == 0){
+				
+				result = w8BenFormService.createPdfToDiskDirectAll(sel2);
+				
+			}else{
+				
+				boolean isHoldMail = false;
+				for(String s : arr){
+					if(s.trim().equalsIgnoreCase("HOLD_MAIL") || s.trim().equalsIgnoreCase("NO_HOLD_MAIL")){
+						isHoldMail = true;
+						break;	
+					}
+				}
+				if(isHoldMail){
+					sel2.setSelected(arr);
+					result = w8BenFormService.createPdfToDiskDirectFromFilterHoldMail(sel2);
+
+					
+				}else{
+					sel2.setSelected(arr);
+					result = w8BenFormService.createPdfToDiskDirectFromFilter(sel2);
+
+				}
+				
+			}
+			
+
 		} catch (RestClientException e) {
 			throw new DashboardException(e.getMessage(), e.getCause());
 		}
-
-
+		
 		sel.setStatus(result);
-		sel.setSelected(new String[]{""});
+		
 		return sel;			
 	}
 	
@@ -251,6 +303,45 @@ public class W8BeneFormDirectController {
 		        
 		        response.setContentType("application/pdf");
 		        response.setContentLength(byteArr.length);
+		        
+		        final OutputStream os = response.getOutputStream();
+		        os.write(byteArr);
+		        os.flush();
+		        os.close(); 
+		    	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if(is != null)
+				is.close();
+		}
+
+	}
+	
+	@RequestMapping(value = "/openPdf2/{fileName}", method = RequestMethod.GET)
+	public void openPdf2(HttpServletResponse response, @PathVariable("fileName") String fileName) throws IOException{
+		if(fileName != null && fileName.length() < 5){
+			fileName = "W8_BEN_E_merged";
+		}
+		
+		InputStream is = null;
+		try {
+			String mergedFilePath = W8BENEFORM_MERGE_DIRECTORY + "//" + MERGE_PDF_NAME;
+			is = new FileInputStream(new File(mergedFilePath));
+			 byte[] byteArr = null;
+			 final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+		        int nRead;
+		        final byte[] data = new byte[100000];
+		        while ((nRead = is.read(data, 0, data.length)) != -1) {
+		          buffer.write(data, 0, nRead);
+		        }
+		        buffer.flush();
+		        byteArr = buffer.toByteArray();
+		        
+		        response.setContentType("application/pdf");
+		        response.setContentLength(byteArr.length);
+		        response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf"); 
 		        
 		        final OutputStream os = response.getOutputStream();
 		        os.write(byteArr);

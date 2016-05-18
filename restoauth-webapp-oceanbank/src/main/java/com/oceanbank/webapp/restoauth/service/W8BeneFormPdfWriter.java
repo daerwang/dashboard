@@ -189,8 +189,13 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 		
 		
 		for(W8BeneFormDirect f : forms){
-			String cif = f.getPkId().getCif().trim();
-			individualFilePath = individualDirectory + "//W8BeneForm_" + cif + ".pdf";
+			String fileName = null;
+			if(f.getAltAddress().trim().equalsIgnoreCase("OCEAN BANK HOLD MAIL")){
+				fileName = "W8_BEN_E_" + f.getOfficer().trim() + "_" + f.getPkId().getCif().trim() + "_HOLD";
+			}else{
+				fileName = "W8_BEN_E_" + f.getOfficer().trim() + "_" + f.getPkId().getCif().trim();
+			}
+			individualFilePath = individualDirectory + "//" + fileName + ".pdf";
 			List<IrsFormCoordinate> coordinates = setupFormCoordinatesDirect(f);
 			try {
 				document = PDDocument.load(pdfFile);

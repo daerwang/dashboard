@@ -22,4 +22,8 @@ public interface W8BeneFormDirectDao extends JpaRepository<W8BeneFormDirect, Lon
 	List<W8BeneFormDirect> findByOfficer(@Param("code")String code);
 	
 	List<W8BeneFormDirect> findByOfficers(@Param("codes") List<String> codes);
+	
+	List<W8BeneFormDirect> findByAltAddress(@Param("altAddress") String altAddress);
+	
+	List<W8BeneFormDirect> findByNotAltAddress(@Param("altAddress") String altAddress);
 }

@@ -17,7 +17,9 @@ import org.hibernate.annotations.NamedQuery;
 	  @NamedQuery(name="W8BeneFormDirect.findDistinctOfficerCodes", query = "select DISTINCT c.officer from W8BeneFormDirect c ORDER BY c.officer asc"),
 	  @NamedQuery(name="W8BeneFormDirect.findByOfficer", query = "from W8BeneFormDirect where officer = :code"),
 	  @NamedQuery(name="W8BeneFormDirect.findByOfficers", query = "from W8BeneFormDirect where officer IN (:codes)"),
-	  @NamedQuery(name="W8BeneFormDirect.findByCifs", query = "from W8BeneFormDirect where pkId.cif IN (:cifs)")
+	  @NamedQuery(name="W8BeneFormDirect.findByCifs", query = "from W8BeneFormDirect where pkId.cif IN (:cifs)"), 
+	  @NamedQuery(name="W8BeneFormDirect.findByAltAddress", query = "from W8BeneFormDirect where altAddress = :altAddress"),
+	  @NamedQuery(name="W8BeneFormDirect.findByNotAltAddress", query = "from W8BeneFormDirect where altAddress != :altAddress")
 	})
 public class W8BeneFormDirect  implements java.io.Serializable {
 

@@ -117,7 +117,18 @@ public class W8BeneFormController {
 		}
 		
 		
-		return "OK!";
+		String result = "OK!";
+		if(list.size() == 1){
+			W8BeneFormDirect d = list.get(0);
+			if(d.getAltAddress().trim().equalsIgnoreCase("OCEAN BANK HOLD MAIL")){
+				result = "W8_BEN_E_" + d.getOfficer().trim() + "_" + d.getPkId().getCif().trim() + "_HOLD";
+			}else{
+				result = "W8_BEN_E_" + d.getOfficer().trim() + "_" + d.getPkId().getCif().trim();
+			}
+
+		}
+		
+		return result;
 	}
 	
 	@RequestMapping(value = "/createPdfToDiskDirectFromFilter", method = RequestMethod.POST)
@@ -142,8 +153,44 @@ public class W8BeneFormController {
 			w8BeneFormService.createPdfToDiskDirect(list, fullLocation);
 		}
 		
+		String result = "OK!";
+		if(list.size() == 1){
+			W8BeneFormDirect d = list.get(0);
+			result = "W8_BEN_E_" + d.getOfficer().trim() + "_" + d.getPkId().getCif().trim();
+		}
 		
-		return "OK!";
+		return result;
+	}
+	
+	@RequestMapping(value = "/createPdfToDiskDirectFromFilterHoldMail", method = RequestMethod.POST)
+	public String createPdfToDiskDirectFromFilterHoldMail(@RequestBody IrsFormSelected selected) throws DashboardException, IOException{
+		List<DashboardUpload> uploads = amlBatchServiceImpl.findDashboardUploadByTableNameAndDescription("W8BeneFormDirect", "active");
+		if(uploads.isEmpty()){
+
+			throw new DashboardException("There is no PDF template found", null);
+		
+		}else{
+			if(uploads.size() > 1){
+				throw new DashboardException("There are 1 or more template enabled. Please enable 1 only.", null);
+			}
+		}
+		DashboardUpload activeTemplate = uploads.get(0);
+		String fullLocation = DashboardConstant.W8BENEFORM_TEMPLATE_UPLOAD_DIRECTORY + activeTemplate.getId() + "//" + activeTemplate.getFileName();
+		
+		List<W8BeneFormDirect> list = new ArrayList<W8BeneFormDirect>();
+		list = w8BeneFormService.findByAltAddress(selected);
+		
+		synchronized (this) {
+			w8BeneFormService.createPdfToDiskDirect(list, fullLocation);
+		}
+		
+		String result = "OK!";
+		if(list.size() == 1){
+			W8BeneFormDirect d = list.get(0);
+			result = "W8_BEN_E_" + d.getOfficer() + "_" + d.getPkId().getCif() + "_HOLD" ;
+		}
+		
+		return result;
 	}
 	
 	@RequestMapping(value = "/createPdfToDiskDirectFromFilterCif", method = RequestMethod.POST)
@@ -194,8 +241,13 @@ public class W8BeneFormController {
 			w8BeneFormService.createPdfToDiskDirect(list, fullLocation);
 		}
 		
+		String result = "OK!";
+		if(list.size() == 1){
+			W8BeneFormDirect d = list.get(0);
+			result = "W8_BEN_E_" + d.getOfficer() + "_" + d.getPkId().getCif();
+		}
 		
-		return "OK!";
+		return result;
 	}
 
 	@RequestMapping(value = "/pdfUpload", method = RequestMethod.POST)

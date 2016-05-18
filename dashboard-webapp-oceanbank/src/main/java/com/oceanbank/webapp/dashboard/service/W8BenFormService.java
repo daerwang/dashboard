@@ -103,6 +103,16 @@ public class W8BenFormService extends OauthTokenBean {
 		return result;
 	}
 	
+	public String createPdfToDiskDirectFromFilterHoldMail(IrsFormSelected selected){
+		final HttpEntity<IrsFormSelected> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), selected);
+		
+		final ResponseEntity<String> response = restTemplate.exchange(getRestApi() + "/api/w8beneform/createPdfToDiskDirectFromFilterHoldMail", HttpMethod.POST, entity, String.class);
+		final String result = response.getBody();
+
+		return result;
+	}
+	
+	
 	public String createPdfToDiskDirectFromFilterCif(IrsFormSelected selected){
 		final HttpEntity<IrsFormSelected> entity = CommonUtil.createHttpEntityWithParameters(getAccessToken(), selected);
 		

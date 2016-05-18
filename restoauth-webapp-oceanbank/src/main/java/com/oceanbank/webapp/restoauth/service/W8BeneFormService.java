@@ -42,6 +42,9 @@ public class W8BeneFormService {
 	private static String W8BENEFORM_TEMP_DIRECTORY = "C://dashboard//w8beneform//temp";
 	private static String MERGE_PDF_NAME = "W8BeneForm_merged.pdf";
 	
+	private static String HOLD_MAIL = "HOLD_MAIL";
+	private static String NO_HOLD_MAIL = "NO_HOLD_MAIL";
+	
 	public void createPdfToDisk(List<W8BeneForm> forms, String templateFilePath){
 		PdfFormWriter pdfFormWriter = new W8BeneFormPdfWriter();
 		//pdfFormWriter.writeToTemplate(W8BENEFORM_CLASSPATH, W8BENEFORM_INDIVIDUAL_DIRECTORY, forms);
@@ -115,6 +118,34 @@ public class W8BeneFormService {
 		return list;
 	}
 	
+	public List<W8BeneFormDirect> findByAltAddress(IrsFormSelected selected) throws DashboardException{
+		String[] selectedId = selected.getSelected();
+		List<String> codes = Arrays.asList(selectedId);
+		List<W8BeneFormDirect> list = new ArrayList<W8BeneFormDirect>();
+		
+		try {
+			if(codes.size() > 1){
+				list = w8BeneFormDirectDao.findAll();
+				return list;
+			}
+			
+			if(codes.size() == 1 && codes.get(0).trim().equalsIgnoreCase(HOLD_MAIL)){
+				list = w8BeneFormDirectDao.findByAltAddress("OCEAN BANK HOLD MAIL");
+				return list;
+			}
+			
+			if(codes.size() == 1 && codes.get(0).trim().equalsIgnoreCase(NO_HOLD_MAIL)){
+				list = w8BeneFormDirectDao.findByNotAltAddress("OCEAN BANK HOLD MAIL");
+				return list;
+			}
+			
+		} catch (Exception e) {
+			throw new DashboardException("The findByOfficerCodes() failed with an Exception.", e);
+		}
+		
+		return list;
+	}
+	
 	public List<W8BeneFormDirect> findByOfficerCodesCif(IrsFormSelected selected) throws DashboardException{
 		String[] selectedId = selected.getSelected();
 		List<String> cifs = Arrays.asList(selectedId);
@@ -158,7 +189,26 @@ public class W8BeneFormService {
 		if (!RestUtil.isNullOrEmpty(officerCode)){
 			List<String> codes = new ArrayList<String>();
 			codes = RestUtil.parseMailCodeFromDatatable(officerCode);
-			entityList = w8BeneFormDirectDao.findByOfficers(codes);
+			
+			boolean isHoldMail = false;
+			for(String s: codes){
+				if(s.trim().equalsIgnoreCase(HOLD_MAIL) || s.trim().equalsIgnoreCase(NO_HOLD_MAIL)){
+					isHoldMail = true; 
+					break;
+				}
+			}
+			
+			if(isHoldMail){
+				
+				IrsFormSelected ss = new IrsFormSelected();
+				ss.setSelected(codes.toArray(new String[0]));
+				entityList = findByAltAddress(ss);
+				
+			}else{
+				
+				entityList = w8BeneFormDirectDao.findByOfficers(codes);
+			}
+			
 		}else{
 			if (!RestUtil.isNullOrEmpty(search)){
 				entityList = w8BeneFormDirectDao.findByCifLike("%" + search + "%");

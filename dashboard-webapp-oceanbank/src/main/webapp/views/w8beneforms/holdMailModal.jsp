@@ -2,18 +2,7 @@
 
 
 <style>
-   .filter-dialog .modal-dialog {
-        width: 490px;
-    }
-    
-    .filter-dialog .modal-content {
-    	height: 500px;
-	}
 
-	.filter-dialog .modal-body {
-	    max-height: calc(100% - 120px);
-	    overflow-y: scroll;
-	}
 </style>
 
 <script>
@@ -78,7 +67,7 @@ $(document).ready(function() {
 			
 			$.ajax({
 		    	type: "POST",
-			  	url: 'w8beneformDirect/createPdfToDiskFromFilter',
+			  	url: 'w8beneformDirect/createPdfToDiskFromFilterHoldMail',
 			  	dataType: 'json', 
 			    data: selectedPdf, 
 			    contentType: 'application/json',
@@ -137,27 +126,31 @@ $(document).ready(function() {
 
 <div class="row">
 	<div class="form-group">
-		<label class="control-label col-md-4">Officer Codes</label> 
+		<label class="control-label col-md-3">Hold Mail</label> 
 		
-		<div class="col-sm-4">
-			<c:forEach var="code" items="${codeList}">
-				<div class="checkbox">
-					<label>
-						<input type="checkbox" name="mailcbx" value="<c:out value="${code.code}" />">${code.code} - ${code.description}
-					</label>
-				</div>
-			</c:forEach>
+		<div class="col-md-6">
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name="mailcbx" value="HOLD_MAIL" />Hold Mail
+				</label>
+			</div>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name="mailcbx" value="NO_HOLD_MAIL" />Without Hold Mail
+				</label>
+			</div>
 		</div>
 		
 	</div>
 </div>
 <div class="row">
 	<div class="form-group">
-		<label class="control-label col-sm-4"></label> 
-		<div class="col-xs-8 col-sm-3">
+		<label class="control-label col-md-3"></label> 
+		
+		<div class="col-md-3">
 			<button class="btn btn-info" id="searchButton">Refresh Table</button>
 		</div>
-		<div class="col-xs-8 col-sm-3">
+		<div class="col-md-3">
 			<button class="btn btn-info" id="openPdfButton">Open PDF</button>
 		</div>
 	</div>

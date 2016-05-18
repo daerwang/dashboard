@@ -16,6 +16,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Ignore
 public class UserTest {
 	
+	@Test
+	public void test_array(){
+		//String holdmail = "AA, BB,";
+		String holdmail = "";
+		
+		String []arr = holdmail.split(",");
+		
+		System.out.println("it is " + arr.length);
+		for(String s: arr){
+			System.out.println("it is " + s);
+		}
+		
+	}
+	
 	
 	@Test
 	public void test_content() throws JsonProcessingException, IOException{
