@@ -182,10 +182,14 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 		
 		PDDocument document = null;
 		String individualFilePath = null;
+		String officercodeFilePath = null;
 		PDFont font = PDType1Font.HELVETICA_BOLD;
 		//File pdfFile = w8BeneFormService.getFile(templateFilePath);
 		File pdfFile = new File(templateFilePath);
 		w8BeneFormService.clearDirectory(individualDirectory);
+		
+		String officercodeDirectory = "C://dashboard//w8beneform//officercode";
+		w8BeneFormService.clearDirectory(officercodeDirectory);
 		
 		
 		for(W8BeneFormDirect f : forms){
@@ -196,6 +200,15 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 				fileName = "W8_BEN_E_" + f.getOfficer().trim() + "_" + f.getPkId().getCif().trim();
 			}
 			individualFilePath = individualDirectory + "//" + fileName + ".pdf";
+			
+			// for officer code
+			officercodeFilePath = officercodeDirectory + "//" + f.getOfficer().trim(); 
+			File file = new File(officercodeFilePath);
+			if (!file.exists()) {
+				file.mkdir();
+	        }
+			officercodeFilePath = officercodeFilePath + "//" + fileName + ".pdf";
+			
 			List<IrsFormCoordinate> coordinates = setupFormCoordinatesDirect(f);
 			try {
 				document = PDDocument.load(pdfFile);
@@ -209,6 +222,7 @@ public class W8BeneFormPdfWriter implements PdfFormWriter {
 				}
 
 				document.save(individualFilePath);
+				document.save(officercodeFilePath);
 				document.close();
 				
 			} catch (IOException e) {

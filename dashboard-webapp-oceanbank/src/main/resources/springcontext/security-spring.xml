@@ -49,7 +49,7 @@
 		<sec:session-management invalid-session-url="/login" session-fixation-protection="none" />
 
 		<sec:logout invalidate-session="false" 
-			logout-success-url="/login?loggedout=true"
+			logout-success-url="/login?loggedout=loggedout"
 			logout-url="/j_spring_security_logout" 
 			delete-cookies="JSESSIONID" />
 			

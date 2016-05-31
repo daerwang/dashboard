@@ -34,6 +34,22 @@
 	<!-- Dialog 3 -->
 	<link href="<c:url value="/bootstrap/dialog3/css/bootstrap-dialog.min.css" />" rel="stylesheet">
 	<script src="<c:url value="/bootstrap/dialog3/js/bootstrap-dialog.min.js" />"></script>
+	
+	<!-- Timeout -->
+	<script src="<c:url value="/bootstrap/timeout/bootstrap-session-timeout.min.js" />"></script>
+	
+	<script type="text/javascript" charset="utf-8">
+	$(document).ready(function() {
+		$.sessionTimeout({
+            keepAliveUrl: 'login/keep-alive',
+            logoutUrl: 'login?loggedout=loggedout',
+            redirUrl: 'login?loggedout=redirect',
+            warnAfter: 500000,
+            redirAfter: 600000,
+            countdownMessage: 'Redirecting in {timer} seconds.'
+        });
+	});
+	</script>
 </head>
 <body>
 

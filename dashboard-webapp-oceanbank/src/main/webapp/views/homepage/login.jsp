@@ -197,9 +197,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cedce7', end
 					There is bad server connection. Please contact Admin.
 			</div>
 			</c:if>
-			<c:if test="${param.loggedout != null}">
+			<c:if test="${param.loggedout eq 'loggedout'}">
 			<div class="alert alert-error text-center" style="color:GREEN;">
-					You have been logged out.
+					You have logged out.
+			</div>
+			</c:if>
+			<c:if test="${param.loggedout eq 'redirect'}">
+			<div class="alert alert-error text-center" style="color:GREEN;">
+					You have been logged out by the system.
 			</div>
 			</c:if>
     </div><!-- /container -->

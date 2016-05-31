@@ -9,6 +9,8 @@ import java.util.Locale;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -38,9 +40,13 @@ public class LoginController extends OauthTokenBean{
 	@Autowired
 	private UserServiceImpl userService;
 	
+	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	
-	
-	
+	@RequestMapping(value = "/login/keep-alive", method = RequestMethod.POST)
+	public @ResponseBody String keepAlive() {
+		LOGGER.info("session keep alive");
+		return "alive";	
+	}
 	
 	
 	
