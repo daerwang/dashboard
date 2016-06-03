@@ -872,13 +872,13 @@ select option{color: #555;}
 		<div class="col-md-11">
 	
 			<h4>CIF table for Execution</h4>
-			<p>Please upload or create CIF to be executed for this request. <strong class="text-danger">This is required table.</strong></p>
+			<p>Upload or create CIF to be executed for this request. The "Load CIF From Excel" button will automatically save the loaded Excel file in Attachment section.<strong class="text-danger"> This table is required to have CIF data.</strong></p>
 			<hr>
 			<p>
 				<button type="button" class="btn btn-default btn-sm" id="newButton">New</button>
 				<button type="button" class="btn btn-default btn-sm" id="editButton">Edit</button>
 				<button type="button" class="btn btn-default btn-sm" id="deleteButton">Delete</button>
-				<button type="button" class="btn btn-default btn-sm" id="uploadButton">Transfer Data From Excel</button>
+				<button type="button" class="btn btn-default btn-sm" id="uploadButton">Load CIF From Excel</button>
 			</p>
 			
 			<table id="amlBatchCifDatatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -900,12 +900,12 @@ select option{color: #555;}
 		<div class="col-md-11">
 	
 			<h4>Attachments</h4>
-			<p>Please attach your Excel file here.</p>
+			<p>All other Excel files can be uploaded manually here for reference. This can only upload Excel files.</p>
 			<hr>
 			<p>
 				<button type="button" class="btn btn-default btn-sm" id="openUploadButton">Open</button>
 				<button type="button" class="btn btn-default btn-sm" id="deleteUploadButton">Delete</button>
-				<button type="button" class="btn btn-default btn-sm" id="newUploadButton">Upload Attachment</button>
+				<button type="button" class="btn btn-default btn-sm" id="newUploadButton">Upload Excel</button>
 			</p>
 			
 			<table id="dashboardUploadDatatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
