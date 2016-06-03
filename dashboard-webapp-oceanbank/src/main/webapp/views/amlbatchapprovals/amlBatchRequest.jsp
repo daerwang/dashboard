@@ -638,14 +638,25 @@ select option{color: #555;}
             }]
         });
 		
+		function getContextPath() {
+			return window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
+		}
+		
 		function submitAmlBatchRequestForm(form){
 			$('#selectedType').attr('disabled', false);
-
+			var url = getContextPath() + '/aml';
+			console.log('it is ' + url);
+			
+			var formObj = form.serializeObject();
+        	delete formObj.amlBatchCifDatatable_length
+        	delete formObj.dashboardCommentDatatable_length
+        	delete formObj.dashboardUploadDatatable_length
+			var jsonData = JSON.stringify(formObj);
 		    $.ajax({
 		    	type: "POST",
-			  	url: amlBatchRequestPage,
+			  	url: url,
 			  	dataType: 'json', 
-			    data: JSON.stringify(form.serializeObject()), 
+			    data: jsonData, 
 			    contentType: 'application/json',
 			    mimeType: 'application/json',
 			    success: function(data) { 
@@ -693,6 +704,8 @@ select option{color: #555;}
 			            buttons: [{
 			                label: 'Save',
 			                action: function(dialog){
+			                	
+			                	console.log('saving here ....');
 			                	submitAmlBatchRequestForm(form);
 							    dialog.close();
 			                }

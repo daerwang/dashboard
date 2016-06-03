@@ -1,7 +1,3 @@
-/**
- * 
- * Copyright (c) 2014-2015 the original author or authors.
- */
 package com.oceanbank.webapp.common.model;
 
 import java.util.Date;
@@ -11,39 +7,21 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import com.oceanbank.webapp.common.handler.JsonDateSerializer;
 
-/**
- * The Class DashboardAmlBatchRequestResponse.
- * 
- * @author Marinell Medina
- * @since 03.10.2015
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AmlBatchRequestResponse {
 	
-	/** The id. */
+	
 	private Integer id;
-    
-    /** The name. */
     private String name;
-    
-    /** The description. */
     private String description;
-    
-    /** The request id. */
     private String requestId;
-    
-    /** The transaction type. */
     private String transactionType;
     private String status;
     private String bankSchema;
-    
-    /** The createdby. */
     private String createdby;
-	
-	/** The modifiedby. */
 	private String modifiedby;
     
-    /** The created on. */
     @JsonSerialize(using = JsonDateSerializer.class)
     private Date createdOn;
     

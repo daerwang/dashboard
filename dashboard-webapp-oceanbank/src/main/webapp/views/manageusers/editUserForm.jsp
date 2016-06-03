@@ -57,7 +57,7 @@ $(document).ready(function() {
         },
         submitHandler: function(validator, form, submitButton){
 
-        	var formObj = form.serializeObject()
+        	var formObj = form.serializeObject();
         	console.log(formObj);
         	formObj.accountNonLocked = 1;
         	formObj.accountNonExpired = 1;

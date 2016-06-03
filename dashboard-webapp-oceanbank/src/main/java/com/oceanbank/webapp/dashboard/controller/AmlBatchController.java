@@ -572,11 +572,9 @@ public class AmlBatchController {
 	 * @param response the response
 	 * @return the dashboard aml batch request response
 	 */
-	@RequestMapping(value = DashboardConstant.SHOW_AML_BATCH_REQUEST_PAGE_BY_REQUEST_ID, method = RequestMethod.POST)
+	@RequestMapping(value = "/aml", method = RequestMethod.POST)
 	public @ResponseBody AmlBatchRequestResponse updateAmlBatchRequest(Model model, @RequestBody AmlBatchRequestResponse response) {
-		
-		final String pageTitle = "AML Batch Request";
-		model.addAttribute("title1",pageTitle);
+
 		completeAmlBatchRequestModel(model);
 		
 		response.setModifiedby(CommonUtil.getAuthenticatedUserDetails().getUsername());
