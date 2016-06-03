@@ -40,14 +40,22 @@
 	
 	<script type="text/javascript" charset="utf-8">
 	$(document).ready(function() {
+		
+		var url = getContextPath() + '/login/keep-alive';
+		
 		$.sessionTimeout({
-            keepAliveUrl: 'login/keep-alive',
+            keepAliveUrl: url,
             logoutUrl: 'login?loggedout=loggedout',
             redirUrl: 'login?loggedout=redirect',
             warnAfter: 500000,
             redirAfter: 600000,
             countdownMessage: 'Redirecting in {timer} seconds.'
         });
+		
+		
+		function getContextPath() {
+			return window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
+		}
 	});
 	</script>
 </head>

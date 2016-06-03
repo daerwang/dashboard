@@ -609,7 +609,7 @@ public class AmlBatchController {
 		if(!isUserOwnerOfAmlBatchRequest(response)){
 			throw new DashboardException("You are not allowed to delete " + requestId + ".", null);
 		}
-		if(response.getStatus().equalsIgnoreCase(DashboardConstant.AML_BATCH_STATUS_COMPLETE)){
+		if(response.getStatus() != null && response.getStatus().equalsIgnoreCase(DashboardConstant.AML_BATCH_STATUS_COMPLETE)){
 			throw new DashboardException("You are not allowed to delete " + requestId + " because its already Completed.", null);
 		}
 		

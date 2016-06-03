@@ -652,8 +652,24 @@ select option{color: #555;}
 			    	$('#selectedType').attr('disabled', true);
 					successDialog.open();        	
 			    },
-			    error:function(data,status,er) { 
-			        alert("error: "+data+" status: "+status+" er:"+er);
+			    error:function(data) { 
+			    	var res = data.responseJSON.message;
+			    	var json = '[' + res + ']';
+			    	var errorMsg = '';
+			    	var code = '';
+			    	$.each(JSON.parse(json), function(idx, obj) {
+			    		code = obj.code;
+			    		errorMsg = obj.message;
+			    	});
+
+			    	BootstrapDialog.alert({
+		            	title: 'WARNING',
+			            message: code + '</br>' + errorMsg,
+			            type: BootstrapDialog.TYPE_DANGER,
+			            closable: true,
+			            draggable: true,
+			            buttonLabel: 'Ok'
+			        });
 			    }
 			});
 		}
