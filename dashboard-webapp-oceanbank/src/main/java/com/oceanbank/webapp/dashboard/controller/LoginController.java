@@ -44,7 +44,7 @@ public class LoginController extends OauthTokenBean{
 	
 	@RequestMapping(value = "/login/keep-alive", method = RequestMethod.POST)
 	public @ResponseBody String keepAlive() {
-		LOGGER.info("session keep alive");
+		LOGGER.debug("session keep alive");
 		return "alive";	
 	}
 	

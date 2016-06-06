@@ -45,9 +45,9 @@
 		
 		$.sessionTimeout({
             keepAliveUrl: url,
-            logoutUrl: 'login?loggedout=loggedout',
-            redirUrl: 'login?loggedout=redirect',
-            warnAfter: 500000,
+            logoutUrl: getContextPath() + '/login?loggedout=loggedout',
+            redirUrl: getContextPath() + '/login?loggedout=redirect',
+            warnAfter: 450000,
             redirAfter: 600000,
             countdownMessage: 'Redirecting in {timer} seconds.'
         });
