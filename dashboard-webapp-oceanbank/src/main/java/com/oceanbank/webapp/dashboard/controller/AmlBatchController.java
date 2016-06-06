@@ -1000,7 +1000,12 @@ public class AmlBatchController {
         final String fileName = itr.next();
 
     	mpf = request.getFile(fileName); 
-    	validateExcelFileForUpload(mpf);
+    	//validateExcelFileForUpload(mpf);
+    	
+    	// allow only less than 4MB excel file
+    	if(mpf.getSize()/1024 > 4000){
+        	throw new DashboardException("The upload should be less than 4MB in size.");
+        }
     	
     	String createdBy = CommonUtil.getAuthenticatedUserDetails().getUsername();
     	

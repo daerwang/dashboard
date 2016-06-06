@@ -900,7 +900,7 @@ select option{color: #555;}
 		<div class="col-md-11">
 	
 			<h4>Attachments</h4>
-			<p>All other Excel files can be uploaded manually here for reference. This can only upload Excel files.</p>
+			<p>All other files can be uploaded manually here for reference.</p>
 			<hr>
 			<p>
 				<button type="button" class="btn btn-default btn-sm" id="openUploadButton">Open</button>
