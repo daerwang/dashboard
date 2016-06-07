@@ -38,7 +38,7 @@
 	<filter-mapping>
 		<filter-name>uploadFilter</filter-name>
 		<url-pattern>/fileUpload/excelConverter/.progress</url-pattern>
-		<url-pattern>/fileUpload/aml/.progress</url-pattern>
+		<url-pattern>/aml/cifUpload/.progress</url-pattern>
 	</filter-mapping>
 
 	<!-- Spring Security -->

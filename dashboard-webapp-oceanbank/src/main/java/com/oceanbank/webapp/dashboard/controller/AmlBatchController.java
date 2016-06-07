@@ -889,48 +889,32 @@ public class AmlBatchController {
 	}
 	
 	@RequestMapping(value = DashboardConstant.SHOW_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL_BY_REQUEST_ID, method = RequestMethod.GET)
-	public String showUploadExcelModal(Model model, @PathVariable("requestId") String requestId) {
+	public String showCifModal(Model model, @PathVariable("requestId") String requestId) {
 		
 		model.addAttribute("title1", "Upload Excel File");
 		model.addAttribute("cifReference1", "CIF Reference");
 		model.addAttribute("executeUploadExcel", DashboardConstant.EXECUTE_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL);
 		model.addAttribute("requestId", requestId);
 		
-		return DashboardConstant.SHOW_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL;
+		return "/amlbatchapprovals/cifUpload";
 	}
 	
-	@RequestMapping(value = DashboardConstant.EXECUTE_UPLOAD_EXCEL_AML_BATCH_CIF_MODAL, method = RequestMethod.POST)
-	public void executeUploadExcelAmlBatchCif(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
+	@RequestMapping(value = "/aml/cifUpload", method = RequestMethod.POST)
+	public @ResponseBody String cifUpload(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
 		
-		final String requestId = CommonUtil.determineValue(allRequestParams, "requestId");
-
+		String requestId = CommonUtil.determineValue(allRequestParams, "requestId");
         Iterator<String> itr =  request.getFileNames();
-        MultipartFile mpf = null;
-        ExcelFileMeta fileMeta = null;
-        
-        final String fileName = itr.next();
+        String fileName = itr.next();
+        MultipartFile mpf = request.getFile(fileName); 
 
-    	mpf = request.getFile(fileName); 
-    	// allow only less than 4MB excel file
-    	if(mpf.getSize()/1024 > 4000){
-        	throw new DashboardException("The upload should be less than 4MB in size.");
-        }
-    	// allow only xls or xlsx file name
-    	String ext = FilenameUtils.getExtension(mpf.getOriginalFilename());
-    	if(ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx")){
-    		// do nothing
-    	}else{
-    		throw new DashboardException("The upload should be an Excel file.");
-    	}
+    	validateExcelFileForUpload(mpf);
     	
     	String createdBy = CommonUtil.getAuthenticatedUserDetails().getUsername();
     	
     	final List<AmlBatchCifResponse> cifList = amlBatchService.createAmlBatchCifFromExcel(requestId, mpf, createdBy);
-    	
-    	String result = null;
-    	
     	Long cifListCount = new Long(cifList.size());
     	request.getSession().setAttribute("cifListCount", cifListCount);
+    	
     	Future<String> future = executor.submit(new Callable<String>() {
 
 			@Override
@@ -956,40 +940,35 @@ public class AmlBatchController {
 				e.printStackTrace();
 			}
     	}
-
+    	
     	try {
-
-        	result =  future.get();
-
+        	String result =  future.get();
+        	LOGGER.info(result);
         } catch (InterruptedException e) {
-            result = "Exception caused by InterruptedException";
+        	throw new DashboardException(e.getMessage(), e.getCause());
         } catch (ExecutionException e) {
-        	result = "Exception caused by ExecutionException";
+        	throw new DashboardException(e.getMessage(), e.getCause());
         } catch(Exception e){
-        	result = "Exception caused by General Exception";
+        	throw new DashboardException(e.getMessage(), e.getCause());
         }
     	
-        fileMeta = new ExcelFileMeta();
-        fileMeta.setFileName(mpf.getOriginalFilename());
-        fileMeta.setFileSize(mpf.getSize()/1024+" Kb - " + result);
-        fileMeta.setFileType(mpf.getContentType());
-    
-        amlBatchService.saveAmlBatchRequestUploadFileToDisk(mpf, createdBy, requestId);
-		//return fileMeta;
+    	amlBatchService.saveAmlBatchRequestUploadFileToDisk(mpf, createdBy, requestId);
+		
+    	return "{\"message\": \"OK!\"}";
 	}
 	
 	@RequestMapping(value = DashboardConstant.SHOW_AML_BATCH_REQUEST_UPLOAD_BY_REQUEST_ID, method = RequestMethod.GET)
-	public String showDashboardUploadModal(Model model, @PathVariable("requestId") String requestId) {
+	public String showAttachmentModal(Model model, @PathVariable("requestId") String requestId) {
 		
 		model.addAttribute("title1", "Upload Excel File");
 		model.addAttribute("executeAmlBatchRequestUpload", DashboardConstant.EXECUTE_AML_BATCH_REQUEST_UPLOAD);
 		model.addAttribute("requestId", requestId);
 		
-		return DashboardConstant.SHOW_AML_BATCH_REQUEST_UPLOAD_MODAL;
+		return "/amlbatchapprovals/attachmentUpload";
 	}
 	
-	@RequestMapping(value = DashboardConstant.EXECUTE_AML_BATCH_REQUEST_UPLOAD, method = RequestMethod.POST)
-	public void executeDashboardUpload(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
+	@RequestMapping(value = "/aml/attachment", method = RequestMethod.POST)
+	public void attachmentUpload(MultipartHttpServletRequest request, @RequestParam Map<String, String> allRequestParams) throws DashboardException, IOException {
 		//@ResponseBody ExcelFileMeta
 		final String requestId = CommonUtil.determineValue(allRequestParams, "requestId");
 		

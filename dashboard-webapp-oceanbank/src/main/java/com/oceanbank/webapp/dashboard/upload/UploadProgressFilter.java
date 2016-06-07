@@ -3,7 +3,6 @@ package com.oceanbank.webapp.dashboard.upload;
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +32,12 @@ public class UploadProgressFilter extends OncePerRequestFilter{
         }else{
         	Long currentCount = (Long)request.getSession().getAttribute("currentCount");
         	Long cifListCount = (Long)request.getSession().getAttribute("cifListCount");
-        	ProgressDescriptor descriptor = new ProgressDescriptor(currentCount, cifListCount);
+        	ProgressDescriptor descriptor = new ProgressDescriptor();
+        	try {
+        		descriptor = new ProgressDescriptor(currentCount, cifListCount);
+			} catch (Exception e) {
+			}
+        	
         	response.getOutputStream().write(descriptor.toString().getBytes());
         }
     }
