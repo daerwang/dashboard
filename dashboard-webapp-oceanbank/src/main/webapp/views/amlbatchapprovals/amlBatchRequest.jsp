@@ -355,8 +355,9 @@ select option{color: #555;}
 			e.preventDefault();
 			
 			uploadExcelFileDialog = new BootstrapDialog({
-				title : 'Transfer Data From Excel',
+				title : 'Loading CIF - please wait to complete ...',
 				draggable: true, 
+				closable: false,
 				message : function(dialog) {
 					var $message = $('<div></div>');
 					var pageToLoad = dialog.getData('pageToLoad');
@@ -365,7 +366,14 @@ select option{color: #555;}
 				},
 				data : {
 					'pageToLoad' : '../..' + uploadExcelModal + amlBatchCifRequestId
-				}
+				},
+	            buttons: [{
+	                label: 'Close the dialog',
+	                cssClass: 'btn-warning',
+	                action: function(dialogRef){
+	                    dialogRef.close();
+	                }
+	            }]
 			 });
 			
 			if($('#selectedType').is(':enabled')){
