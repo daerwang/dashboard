@@ -229,7 +229,6 @@ public class As400JdbcTokenStore implements TokenStore{
 			LOG.warn("Failed to deserialize access token for " + tokenValue, e);
 			removeAccessToken(tokenValue);
 		}
-
 		return accessToken;
 	}
 

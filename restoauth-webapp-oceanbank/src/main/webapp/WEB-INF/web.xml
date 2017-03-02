@@ -22,7 +22,7 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>  
 			/WEB-INF/mvc-servlet.xml,  
-			classpath*:springcontext/as400-jdbc-security-spring.xml,
+			classpath*:springcontext/mysql-jdbc-security-spring.xml,
 			classpath*:springcontext/datajpa-spring.xml
         </param-value>
 	</context-param>
@@ -31,11 +31,19 @@
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
+	<filter>
+	    <filter-name>TokenFilter</filter-name>
+	    <filter-class>com.oceanbank.webapp.restoauth.service.TokenFilter</filter-class>
+	  </filter>
 
 	<filter-mapping>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	<filter-mapping>
+	    <filter-name>TokenFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	  </filter-mapping>
 
 	<filter>
 		<filter-name>SetCharacterEncodingFilter</filter-name>

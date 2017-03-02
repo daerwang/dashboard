@@ -7,6 +7,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
+import org.springframework.web.context.ContextLoaderListener;
 
 @Entity
 @Table(name="IBTN007F1", schema="IBMOB100")
